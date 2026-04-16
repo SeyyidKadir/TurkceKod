@@ -1,0 +1,229 @@
+// ⏱️ PREMIUM KRONOMETRE - TAM ÇALIŞAN SÜRÜM
+// TürkçeKod v10 ile yazılmıştır
+
+Pencere pen;
+pen.baslik = "⏱️ PREMIUM KRONOMETRE";
+pen.genislik = 420;
+pen.yukseklik = 400;
+pen.arkaplan = "#0d1117";
+
+// Zaman değişkenleri
+Sayi saat = 0;
+Sayi dakika = 0;
+Sayi saniye = 0;
+Sayi salise = 0;
+Mantiksal calisiyor = Yanlis;
+Sayi turSayisi = 0;
+
+// Arayüz elemanları
+Etiket lblBaslik;
+lblBaslik.x = 20;
+lblBaslik.y = 20;
+lblBaslik.yazi = "⏱️ PREMIUM KRONOMETRE";
+lblBaslik.renk = "#f0f000";
+lblBaslik.stil = "font-size:18px;font-weight:bold;";
+
+// Ana zaman göstergesi
+Etiket lblZaman;
+lblZaman.x = 30;
+lblZaman.y = 60;
+lblZaman.yazi = "00:00:00.00";
+lblZaman.renk = "#ffffff";
+lblZaman.stil = "font-size:40px;font-weight:bold;font-family:Consolas;";
+
+// Durum göstergesi
+Etiket lblDurum;
+lblDurum.x = 30;
+lblDurum.y = 115;
+lblDurum.yazi = "⚫ DURDURULDU";
+lblDurum.renk = "#8b949e";
+lblDurum.stil = "font-size:12px;font-weight:bold;";
+
+// Tur sayısı göstergesi
+Etiket lblTur;
+lblTur.x = 30;
+lblTur.y = 140;
+lblTur.yazi = "Tur: 0";
+lblTur.renk = "#f0a000";
+lblTur.stil = "font-size:11px;";
+
+// Tur listesi
+Liste lstTur;
+lstTur.x = 20;
+lstTur.y = 165;
+lstTur.genislik = 370;
+lstTur.yukseklik = 140;
+lstTur.stil = "background:#161b22;color:#ffffff;border:none;border-radius:8px;padding:8px;font-family:Consolas;font-size:11px;";
+
+// Butonlar
+Dugme btnBaslat;
+btnBaslat.yazi = "▶ BAŞLAT";
+btnBaslat.x = 20;
+btnBaslat.y = 320;
+btnBaslat.genislik = 85;
+btnBaslat.yukseklik = 40;
+btnBaslat.arkaplan = "#2ea043";
+btnBaslat.renk = "#ffffff";
+btnBaslat.stil = "font-size:12px;font-weight:bold;border-radius:8px;";
+
+Dugme btnDurdur;
+btnDurdur.yazi = "⏸ DURDUR";
+btnDurdur.x = 115;
+btnDurdur.y = 320;
+btnDurdur.genislik = 85;
+btnDurdur.yukseklik = 40;
+btnDurdur.arkaplan = "#da3633";
+btnDurdur.renk = "#ffffff";
+btnDurdur.stil = "font-size:12px;font-weight:bold;border-radius:8px;";
+
+Dugme btnSifirla;
+btnSifirla.yazi = "🔄 SIFIRLA";
+btnSifirla.x = 210;
+btnSifirla.y = 320;
+btnSifirla.genislik = 85;
+btnSifirla.yukseklik = 40;
+btnSifirla.arkaplan = "#6e7681";
+btnSifirla.renk = "#ffffff";
+btnSifirla.stil = "font-size:12px;font-weight:bold;border-radius:8px;";
+
+Dugme btnTur;
+btnTur.yazi = "🚩 TUR";
+btnTur.x = 305;
+btnTur.y = 320;
+btnTur.genislik = 85;
+btnTur.yukseklik = 40;
+btnTur.arkaplan = "#1f6feb";
+btnTur.renk = "#ffffff";
+btnTur.stil = "font-size:12px;font-weight:bold;border-radius:8px;";
+
+// Ses
+Ses ses;
+
+// Zamanlayıcı
+Zamanlayici zm;
+zm.aralik = 10;
+
+// ========== İKİ BASAMAKLI YAP ==========
+Fonksiyon ikiBasamakli(sayi)
+    Eger sayi < 10 Ise
+        Don "0" + MetineKonvert(sayi);
+    Degilse
+        Don MetineKonvert(sayi);
+    EgerBitti
+FonksiyonBitti
+
+// ========== ZAMAN GÜNCELLE ==========
+Fonksiyon zamanGuncelle()
+    Eger calisiyor == Dogru Ise
+        salise = salise + 1;
+        
+        Eger salise >= 100 Ise
+            salise = 0;
+            saniye = saniye + 1;
+        EgerBitti
+        
+        Eger saniye >= 60 Ise
+            saniye = 0;
+            dakika = dakika + 1;
+        EgerBitti
+        
+        Eger dakika >= 60 Ise
+            dakika = 0;
+            saat = saat + 1;
+        EgerBitti
+        
+        Metin yeniZaman = ikiBasamakli(saat) + ":" + ikiBasamakli(dakika) + ":" + ikiBasamakli(saniye) + "." + ikiBasamakli(salise);
+        lblZaman.yazi = yeniZaman;
+    EgerBitti
+FonksiyonBitti
+
+// ========== TUR EKLE ==========
+Fonksiyon turEkle()
+    Eger calisiyor == Dogru Ise
+        turSayisi = turSayisi + 1;
+        Metin turZamani = ikiBasamakli(saat) + ":" + ikiBasamakli(dakika) + ":" + ikiBasamakli(saniye) + "." + ikiBasamakli(salise);
+        Metin turKaydi = "Tur " + ikiBasamakli(turSayisi) + "  " + turZamani;
+        lstTur.EkleOge(turKaydi);
+        lstTur.deger = turKaydi;
+        lblTur.yazi = "Tur: " + turSayisi;
+        SesEfekti(ses, "ding");
+    EgerBitti
+FonksiyonBitti
+
+// ========== SIFIRLA ==========
+Fonksiyon sifirla()
+    Eger calisiyor == Yanlis Ise
+        saat = 0;
+        dakika = 0;
+        saniye = 0;
+        salise = 0;
+        turSayisi = 0;
+        lblZaman.yazi = "00:00:00.00";
+        lblTur.yazi = "Tur: 0";
+        
+        lstTur.Temizle();
+        
+        SesEfekti(ses, "bip");
+    EgerBitti
+FonksiyonBitti
+
+// ========== BAŞLAT ==========
+Fonksiyon baslat()
+    Eger calisiyor == Yanlis Ise
+        calisiyor = Dogru;
+        lblDurum.yazi = "🟢 ÇALIŞIYOR";
+        lblDurum.renk = "#2ea043";
+        zm.Baslat();
+        SesEfekti(ses, "bip");
+    EgerBitti
+FonksiyonBitti
+
+// ========== DURDUR ==========
+Fonksiyon durdur()
+    Eger calisiyor == Dogru Ise
+        calisiyor = Yanlis;
+        lblDurum.yazi = "🔴 DURDURULDU";
+        lblDurum.renk = "#da3633";
+        zm.Durdur();
+        SesEfekti(ses, "bip");
+    EgerBitti
+FonksiyonBitti
+
+// ========== ZAMANLAYICI OLAYI ==========
+zm.her_tikta = Fonksiyon()
+    zamanGuncelle();
+FonksiyonBitti
+
+// ========== BUTON OLAYLARI ==========
+btnBaslat.tiklaninca = Fonksiyon()
+    baslat();
+FonksiyonBitti
+
+btnDurdur.tiklaninca = Fonksiyon()
+    durdur();
+FonksiyonBitti
+
+btnSifirla.tiklaninca = Fonksiyon()
+    sifirla();
+FonksiyonBitti
+
+btnTur.tiklaninca = Fonksiyon()
+    turEkle();
+FonksiyonBitti
+
+// ========== PENCEREYE EKLE ==========
+pen.Ekle(lblBaslik);
+pen.Ekle(lblZaman);
+pen.Ekle(lblDurum);
+pen.Ekle(lblTur);
+pen.Ekle(lstTur);
+pen.Ekle(btnBaslat);
+pen.Ekle(btnDurdur);
+pen.Ekle(btnSifirla);
+pen.Ekle(btnTur);
+
+pen.Goster();
+
+Yaz("⏱️ PREMIUM KRONOMETRE HAZIR!");
+Yaz("▶ BAŞLAT ile başlat!");
+Yaz("🚩 TUR ile tur sürelerini kaydet!");
