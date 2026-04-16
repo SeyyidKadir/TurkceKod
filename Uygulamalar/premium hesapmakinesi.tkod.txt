@@ -1,0 +1,605 @@
+// 🧮 PREMIUM HESAP MAKİNESİ - Bilimsel + Geçmiş + Temalar (DÜZELTİLDİ v2)
+// TürkçeKod v10 ile yazılmıştır
+
+Pencere pen;
+pen.baslik = "🧮 PREMIUM HESAP MAKİNESİ";
+pen.genislik = 380;
+pen.yukseklik = 620;
+pen.arkaplan = "#0d1117";
+
+// Ana canvas - TÜM ÇİZİMLER BUNUN ÜZERİNE
+Kanvas kv;
+kv.x = 0;
+kv.y = 0;
+kv.genislik = 380;
+kv.yukseklik = 620;
+kv.arkaplan = "#0d1117";
+
+// Hesap makinesi değişkenleri
+Metin ekran = "0";
+Metin oncekiIslem = "";
+Ondalik oncekiDeger = 0;
+Mantiksal yeniSayi = Dogru;
+Mantiksal bilimselMod = Yanlis;
+Mantiksal geceModu = Yanlis;
+Mantiksal sesAcik = Dogru;
+
+// Geçmiş
+Dizi gecmis = [];
+
+// Ses
+Ses ses;
+
+// ========== SES EFEKTİ ==========
+Fonksiyon sesCal(efekt)
+    Eger sesAcik == Dogru Ise
+        SesEfekti(ses, efekt);
+    EgerBitti
+FonksiyonBitti
+
+// ========== GEÇMİŞE EKLE ==========
+Fonksiyon gecmiseEkle(islem, sonuc)
+    Metin kayit = islem + " = " + sonuc;
+    DiziBasaEkle(gecmis, kayit);
+    Eger DiziUzunluk(gecmis) > 8 Ise
+        DiziCikar(gecmis, DiziUzunluk(gecmis) - 1);
+    EgerBitti
+FonksiyonBitti
+
+// ========== GEÇMİŞİ TEMİZLE ==========
+Fonksiyon gecmisiTemizle()
+    gecmis = [];
+    sesCal("bip");
+FonksiyonBitti
+
+// ========== SAYI EKLE ==========
+Fonksiyon sayiEkle(sayi)
+    sesCal("bip");
+    Eger yeniSayi == Dogru Ise
+        ekran = sayi;
+        yeniSayi = Yanlis;
+    Degilse
+        Eger ekran == "0" Ise
+            ekran = sayi;
+        Degilse
+            ekran = ekran + sayi;
+        EgerBitti
+    EgerBitti
+FonksiyonBitti
+
+// ========== NOKTA EKLE ==========
+Fonksiyon noktaEkle()
+    Eger yeniSayi == Dogru Ise
+        ekran = "0.";
+        yeniSayi = Yanlis;
+    Degilse
+        Eger !MetinIceriyorMu(ekran, ".") Ise
+            ekran = ekran + ".";
+        EgerBitti
+    EgerBitti
+    sesCal("bip");
+FonksiyonBitti
+
+// ========== İŞLEM YAP ==========
+Fonksiyon islemYap(op)
+    sesCal("bip");
+    oncekiDeger = SayiyaKonvert(ekran);
+    oncekiIslem = ekran + " " + op;
+    yeniSayi = Dogru;
+FonksiyonBitti
+
+// ========== HESAPLA ==========
+Fonksiyon hesapla()
+    Eger oncekiIslem == "" Ise
+        Don;
+    EgerBitti
+    
+    Ondalik simdikiDeger = SayiyaKonvert(ekran);
+    Ondalik sonuc = 0;
+    Metin islemStr = "";
+    
+    Eger MetinIceriyorMu(oncekiIslem, "+") Ise
+        sonuc = oncekiDeger + simdikiDeger;
+        islemStr = MetineKonvert(oncekiDeger) + "+" + MetineKonvert(simdikiDeger);
+    EgerBitti
+    
+    Eger MetinIceriyorMu(oncekiIslem, "-") Ise
+        sonuc = oncekiDeger - simdikiDeger;
+        islemStr = MetineKonvert(oncekiDeger) + "-" + MetineKonvert(simdikiDeger);
+    EgerBitti
+    
+    Eger MetinIceriyorMu(oncekiIslem, "×") Ise
+        sonuc = oncekiDeger * simdikiDeger;
+        islemStr = MetineKonvert(oncekiDeger) + "×" + MetineKonvert(simdikiDeger);
+    EgerBitti
+    
+    Eger MetinIceriyorMu(oncekiIslem, "÷") Ise
+        Eger simdikiDeger != 0 Ise
+            sonuc = oncekiDeger / simdikiDeger;
+            islemStr = MetineKonvert(oncekiDeger) + "÷" + MetineKonvert(simdikiDeger);
+        Degilse
+            ekran = "Hata";
+            oncekiIslem = "";
+            yeniSayi = Dogru;
+            sesCal("alarm");
+            Don;
+        EgerBitti
+    EgerBitti
+    
+    Eger MetinIceriyorMu(oncekiIslem, "^") Ise
+        sonuc = UsKuvvet(oncekiDeger, simdikiDeger);
+        islemStr = MetineKonvert(oncekiDeger) + "^" + MetineKonvert(simdikiDeger);
+    EgerBitti
+    
+    Eger sonuc == Taban(sonuc) Ise
+        ekran = MetineKonvert(Taban(sonuc));
+    Degilse
+        ekran = MetineKonvert(Yuvarla(sonuc, 6));
+    EgerBitti
+    
+    gecmiseEkle(islemStr, ekran);
+    oncekiIslem = "";
+    yeniSayi = Dogru;
+    sesCal("ding");
+FonksiyonBitti
+
+// ========== TEMİZLE ==========
+Fonksiyon temizle()
+    ekran = "0";
+    oncekiIslem = "";
+    oncekiDeger = 0;
+    yeniSayi = Dogru;
+    sesCal("bip");
+FonksiyonBitti
+
+// ========== SİL ==========
+Fonksiyon sil()
+    Eger Uzunluk(ekran) > 1 Ise
+        ekran = MetinKes(ekran, 0, Uzunluk(ekran) - 1);
+    Degilse
+        ekran = "0";
+        yeniSayi = Dogru;
+    EgerBitti
+    sesCal("bip");
+FonksiyonBitti
+
+// ========== İŞARET DEĞİŞTİR ==========
+Fonksiyon isaretDegistir()
+    Eger ekran != "0" Ise
+        Eger MetinKes(ekran, 0, 1) == "-" Ise
+            ekran = MetinKes(ekran, 1, Uzunluk(ekran));
+        Degilse
+            ekran = "-" + ekran;
+        EgerBitti
+    EgerBitti
+    sesCal("bip");
+FonksiyonBitti
+
+// ========== YÜZDE ==========
+Fonksiyon yuzde()
+    Ondalik deger = SayiyaKonvert(ekran);
+    Eger oncekiIslem != "" Ise
+        deger = oncekiDeger * deger / 100;
+    Degilse
+        deger = deger / 100;
+    EgerBitti
+    
+    Eger deger == Taban(deger) Ise
+        ekran = MetineKonvert(Taban(deger));
+    Degilse
+        ekran = MetineKonvert(Yuvarla(deger, 6));
+    EgerBitti
+    
+    sesCal("ding");
+FonksiyonBitti
+
+// ========== KAREKÖK ==========
+Fonksiyon karekok()
+    Ondalik deger = SayiyaKonvert(ekran);
+    Eger deger >= 0 Ise
+        Ondalik sonuc = KareKok(deger);
+        gecmiseEkle("√" + MetineKonvert(deger), MetineKonvert(sonuc));
+        Eger sonuc == Taban(sonuc) Ise
+            ekran = MetineKonvert(Taban(sonuc));
+        Degilse
+            ekran = MetineKonvert(Yuvarla(sonuc, 6));
+        EgerBitti
+        yeniSayi = Dogru;
+        sesCal("ding");
+    Degilse
+        ekran = "Hata";
+        yeniSayi = Dogru;
+        sesCal("alarm");
+    EgerBitti
+FonksiyonBitti
+
+// ========== KARE ==========
+Fonksiyon kare()
+    Ondalik deger = SayiyaKonvert(ekran);
+    Ondalik sonuc = deger * deger;
+    
+    gecmiseEkle(MetineKonvert(deger) + "²", MetineKonvert(sonuc));
+    
+    Eger sonuc == Taban(sonuc) Ise
+        ekran = MetineKonvert(Taban(sonuc));
+    Degilse
+        ekran = MetineKonvert(Yuvarla(sonuc, 6));
+    EgerBitti
+    
+    yeniSayi = Dogru;
+    sesCal("ding");
+FonksiyonBitti
+
+// ========== TERS (1/x) ==========
+Fonksiyon ters()
+    Ondalik deger = SayiyaKonvert(ekran);
+    Eger deger != 0 Ise
+        Ondalik sonuc = 1 / deger;
+        gecmiseEkle("1/" + MetineKonvert(deger), MetineKonvert(sonuc));
+        ekran = MetineKonvert(Yuvarla(sonuc, 6));
+        yeniSayi = Dogru;
+        sesCal("ding");
+    Degilse
+        ekran = "Hata";
+        yeniSayi = Dogru;
+        sesCal("alarm");
+    EgerBitti
+FonksiyonBitti
+
+// ========== BİLİMSEL MOD TOGGLE ==========
+Fonksiyon bilimselToggle()
+    bilimselMod = !bilimselMod;
+    sesCal("bip");
+FonksiyonBitti
+
+// ========== GECE MODU TOGGLE ==========
+Fonksiyon geceModuToggle()
+    geceModu = !geceModu;
+FonksiyonBitti
+
+// ========== SES TOGGLE ==========
+Fonksiyon sesToggle()
+    sesAcik = !sesAcik;
+FonksiyonBitti
+
+// ========== BUTON ÇİZİM ==========
+Fonksiyon cizButon(x, y, gen, yuk, yazi, renk)
+    KanvasDikdortgen(kv, x, y, gen, yuk, renk);
+    KanvasDikdortgen(kv, x, y, gen, 2, "#ffffff20");
+    
+    Sayi yaziX = x + gen/2 - 10;
+    Sayi yaziY = y + yuk/2 + 6;
+    
+    KanvasMetin(kv, yazi, yaziX, yaziY, "#ffffff", "bold 14px Segoe UI");
+FonksiyonBitti
+
+// ========== EKRAN ÇİZİM ==========
+Fonksiyon ekranCiz()
+    Sayi ekranX = 15;
+    Sayi ekranY = 15;
+    Sayi ekranGen = 350;
+    Sayi ekranYuk = 80;
+    
+    Eger geceModu == Dogru Ise
+        KanvasDikdortgen(kv, ekranX, ekranY, ekranGen, ekranYuk, "#161b22");
+        KanvasCizgi(kv, ekranX, ekranY + 78, ekranX + ekranGen, ekranY + 78, "#30363d", 1);
+    Degilse
+        KanvasDikdortgen(kv, ekranX, ekranY, ekranGen, ekranYuk, "#f0f0f0");
+        KanvasCizgi(kv, ekranX, ekranY + 78, ekranX + ekranGen, ekranY + 78, "#cccccc", 1);
+    EgerBitti
+    
+    Eger oncekiIslem != "" Ise
+        Eger geceModu == Dogru Ise
+            KanvasMetin(kv, oncekiIslem, ekranX + 15, ekranY + 25, "#8b949e", "12px Segoe UI");
+        Degilse
+            KanvasMetin(kv, oncekiIslem, ekranX + 15, ekranY + 25, "#666666", "12px Segoe UI");
+        EgerBitti
+    EgerBitti
+    
+    Eger geceModu == Dogru Ise
+        KanvasMetin(kv, ekran, ekranX + 15, ekranY + 60, "#ffffff", "bold 28px Segoe UI");
+    Degilse
+        KanvasMetin(kv, ekran, ekranX + 15, ekranY + 60, "#000000", "bold 28px Segoe UI");
+    EgerBitti
+FonksiyonBitti
+
+// ========== GEÇMİŞ PANELİ ÇİZİM ==========
+Fonksiyon gecmisPanelCiz()
+    Sayi panelX = 15;
+    Sayi panelY = 105;
+    Sayi panelGen = 350;
+    Sayi panelYuk = 120;
+    
+    Eger geceModu == Dogru Ise
+        KanvasDikdortgen(kv, panelX, panelY, panelGen, panelYuk, "#0d1117");
+        KanvasMetin(kv, "📋 GEÇMİŞ", panelX + 10, panelY + 18, "#8b949e", "bold 10px Segoe UI");
+        KanvasMetin(kv, "🗑️ Temizle", panelX + 270, panelY + 18, "#f0a000", "bold 9px Segoe UI");
+        KanvasCizgi(kv, panelX, panelY + 25, panelX + panelGen, panelY + 25, "#30363d", 1);
+    Degilse
+        KanvasDikdortgen(kv, panelX, panelY, panelGen, panelYuk, "#e8e8e8");
+        KanvasMetin(kv, "📋 GEÇMİŞ", panelX + 10, panelY + 18, "#666666", "bold 10px Segoe UI");
+        KanvasMetin(kv, "🗑️ Temizle", panelX + 270, panelY + 18, "#d06000", "bold 9px Segoe UI");
+        KanvasCizgi(kv, panelX, panelY + 25, panelX + panelGen, panelY + 25, "#cccccc", 1);
+    EgerBitti
+    
+    Sayi i = 0;
+    Sayi yPos = panelY + 42;
+    Tekrarla DiziUzunluk(gecmis) Kez
+        Eger i < 5 Ise
+            Eger geceModu == Dogru Ise
+                KanvasMetin(kv, gecmis[i], panelX + 10, yPos, "#2ec4b6", "11px Consolas");
+            Degilse
+                KanvasMetin(kv, gecmis[i], panelX + 10, yPos, "#006060", "11px Consolas");
+            EgerBitti
+            yPos = yPos + 18;
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+FonksiyonBitti
+
+// ========== TÜM ARAYÜZÜ ÇİZ ==========
+Fonksiyon tumunuCiz()
+    KanvasTemizle(kv);
+    KanvasArkaplan(kv, "#0d1117");
+    
+    ekranCiz();
+    gecmisPanelCiz();
+    
+    // Kontrol butonları
+    cizButon(15, 235, 60, 35, "🧪", "#6e7681");
+    cizButon(85, 235, 60, 35, "🌙", "#6e7681");
+    cizButon(155, 235, 60, 35, "🔊", sesAcik ? "#2ea043" : "#6e7681");
+    cizButon(225, 235, 60, 35, "CE", "#da3633");
+    cizButon(295, 235, 60, 35, "⌫", "#da3633");
+    
+    Sayi basY = 280;
+    
+    // Bilimsel mod butonları
+    Eger bilimselMod == Dogru Ise
+        cizButon(15, basY, 60, 35, "x²", "#1f6feb");
+        cizButon(85, basY, 60, 35, "√", "#1f6feb");
+        cizButon(155, basY, 60, 35, "1/x", "#1f6feb");
+        cizButon(225, basY, 60, 35, "x^y", "#1f6feb");
+        cizButon(295, basY, 60, 35, "%", "#1f6feb");
+        basY = 325;
+    EgerBitti
+    
+    // Ana butonlar - Satır 1
+    cizButon(15, basY, 60, 45, "7", "#2d3748");
+    cizButon(85, basY, 60, 45, "8", "#2d3748");
+    cizButon(155, basY, 60, 45, "9", "#2d3748");
+    cizButon(225, basY, 60, 45, "÷", "#f0a000");
+    cizButon(295, basY, 60, 45, "C", "#da3633");
+    
+    basY = basY + 52;
+    cizButon(15, basY, 60, 45, "4", "#2d3748");
+    cizButon(85, basY, 60, 45, "5", "#2d3748");
+    cizButon(155, basY, 60, 45, "6", "#2d3748");
+    cizButon(225, basY, 60, 45, "×", "#f0a000");
+    cizButon(295, basY, 60, 45, "±", "#6e7681");
+    
+    basY = basY + 52;
+    cizButon(15, basY, 60, 45, "1", "#2d3748");
+    cizButon(85, basY, 60, 45, "2", "#2d3748");
+    cizButon(155, basY, 60, 45, "3", "#2d3748");
+    cizButon(225, basY, 60, 45, "-", "#f0a000");
+    cizButon(295, basY, 60, 45, ".", "#6e7681");
+    
+    basY = basY + 52;
+    cizButon(15, basY, 60, 45, "0", "#2d3748");
+    cizButon(85, basY, 130, 45, "=", "#2ea043");
+    cizButon(225, basY, 60, 45, "+", "#f0a000");
+FonksiyonBitti
+
+// ========== GEÇMİŞE TIKLAMA ==========
+Fonksiyon gecmiseTikla(mx, my)
+    // Temizle butonu
+    Eger mx >= 285 Ve mx <= 355 Ve my >= 110 Ve my <= 128 Ise
+        gecmisiTemizle();
+        tumunuCiz();
+        Don;
+    EgerBitti
+    
+    // Geçmiş kayıtları
+    Sayi tiklananSatir = (my - 147) / 18;
+    Eger tiklananSatir >= 0 Ve tiklananSatir < DiziUzunluk(gecmis) Ise
+        Eger tiklananSatir < 5 Ise
+            Metin kayit = gecmis[tiklananSatir];
+            Sayi esitIndex = MetinIndeks(kayit, "=");
+            Eger esitIndex >= 0 Ise
+                Metin sonuc = MetinKes(kayit, esitIndex + 2, Uzunluk(kayit));
+                ekran = sonuc;
+                yeniSayi = Dogru;
+                sesCal("bip");
+                tumunuCiz();
+            EgerBitti
+        EgerBitti
+    EgerBitti
+FonksiyonBitti
+
+// ========== BUTON TIKLAMA ==========
+Fonksiyon butonTiklandi(mx, my)
+    // Kontrol butonları
+    Eger mx >= 15 Ve mx <= 75 Ve my >= 235 Ve my <= 270 Ise
+        bilimselToggle();
+        tumunuCiz();
+        Don;
+    EgerBitti
+    
+    Eger mx >= 85 Ve mx <= 145 Ve my >= 235 Ve my <= 270 Ise
+        geceModuToggle();
+        tumunuCiz();
+        Don;
+    EgerBitti
+    
+    Eger mx >= 155 Ve mx <= 215 Ve my >= 235 Ve my <= 270 Ise
+        sesToggle();
+        tumunuCiz();
+        Don;
+    EgerBitti
+    
+    Eger mx >= 225 Ve mx <= 285 Ve my >= 235 Ve my <= 270 Ise
+        temizle();
+        tumunuCiz();
+        Don;
+    EgerBitti
+    
+    Eger mx >= 295 Ve mx <= 355 Ve my >= 235 Ve my <= 270 Ise
+        sil();
+        tumunuCiz();
+        Don;
+    EgerBitti
+    
+    Sayi basY = 280;
+    
+    // Bilimsel mod butonları
+    Eger bilimselMod == Dogru Ise
+        Eger mx >= 15 Ve mx <= 75 Ve my >= basY Ve my <= basY + 35 Ise
+            kare();
+            tumunuCiz();
+            Don;
+        EgerBitti
+        
+        Eger mx >= 85 Ve mx <= 145 Ve my >= basY Ve my <= basY + 35 Ise
+            karekok();
+            tumunuCiz();
+            Don;
+        EgerBitti
+        
+        Eger mx >= 155 Ve mx <= 215 Ve my >= basY Ve my <= basY + 35 Ise
+            ters();
+            tumunuCiz();
+            Don;
+        EgerBitti
+        
+        Eger mx >= 225 Ve mx <= 285 Ve my >= basY Ve my <= basY + 35 Ise
+            islemYap("^");
+            tumunuCiz();
+            Don;
+        EgerBitti
+        
+        Eger mx >= 295 Ve mx <= 355 Ve my >= basY Ve my <= basY + 35 Ise
+            yuzde();
+            tumunuCiz();
+            Don;
+        EgerBitti
+        
+        basY = 325;
+    EgerBitti
+    
+    // Ana butonlar - Satır 1
+    Eger mx >= 15 Ve mx <= 75 Ve my >= basY Ve my <= basY + 45 Ise
+        sayiEkle("7");
+        tumunuCiz();
+        Don;
+    EgerBitti
+    Eger mx >= 85 Ve mx <= 145 Ve my >= basY Ve my <= basY + 45 Ise
+        sayiEkle("8");
+        tumunuCiz();
+        Don;
+    EgerBitti
+    Eger mx >= 155 Ve mx <= 215 Ve my >= basY Ve my <= basY + 45 Ise
+        sayiEkle("9");
+        tumunuCiz();
+        Don;
+    EgerBitti
+    Eger mx >= 225 Ve mx <= 285 Ve my >= basY Ve my <= basY + 45 Ise
+        islemYap("÷");
+        tumunuCiz();
+        Don;
+    EgerBitti
+    Eger mx >= 295 Ve mx <= 355 Ve my >= basY Ve my <= basY + 45 Ise
+        temizle();
+        tumunuCiz();
+        Don;
+    EgerBitti
+    
+    basY = basY + 52;
+    Eger mx >= 15 Ve mx <= 75 Ve my >= basY Ve my <= basY + 45 Ise
+        sayiEkle("4");
+        tumunuCiz();
+        Don;
+    EgerBitti
+    Eger mx >= 85 Ve mx <= 145 Ve my >= basY Ve my <= basY + 45 Ise
+        sayiEkle("5");
+        tumunuCiz();
+        Don;
+    EgerBitti
+    Eger mx >= 155 Ve mx <= 215 Ve my >= basY Ve my <= basY + 45 Ise
+        sayiEkle("6");
+        tumunuCiz();
+        Don;
+    EgerBitti
+    Eger mx >= 225 Ve mx <= 285 Ve my >= basY Ve my <= basY + 45 Ise
+        islemYap("×");
+        tumunuCiz();
+        Don;
+    EgerBitti
+    Eger mx >= 295 Ve mx <= 355 Ve my >= basY Ve my <= basY + 45 Ise
+        isaretDegistir();
+        tumunuCiz();
+        Don;
+    EgerBitti
+    
+    basY = basY + 52;
+    Eger mx >= 15 Ve mx <= 75 Ve my >= basY Ve my <= basY + 45 Ise
+        sayiEkle("1");
+        tumunuCiz();
+        Don;
+    EgerBitti
+    Eger mx >= 85 Ve mx <= 145 Ve my >= basY Ve my <= basY + 45 Ise
+        sayiEkle("2");
+        tumunuCiz();
+        Don;
+    EgerBitti
+    Eger mx >= 155 Ve mx <= 215 Ve my >= basY Ve my <= basY + 45 Ise
+        sayiEkle("3");
+        tumunuCiz();
+        Don;
+    EgerBitti
+    Eger mx >= 225 Ve mx <= 285 Ve my >= basY Ve my <= basY + 45 Ise
+        islemYap("-");
+        tumunuCiz();
+        Don;
+    EgerBitti
+    Eger mx >= 295 Ve mx <= 355 Ve my >= basY Ve my <= basY + 45 Ise
+        noktaEkle();
+        tumunuCiz();
+        Don;
+    EgerBitti
+    
+    basY = basY + 52;
+    Eger mx >= 15 Ve mx <= 75 Ve my >= basY Ve my <= basY + 45 Ise
+        sayiEkle("0");
+        tumunuCiz();
+        Don;
+    EgerBitti
+    Eger mx >= 85 Ve mx <= 215 Ve my >= basY Ve my <= basY + 45 Ise
+        hesapla();
+        tumunuCiz();
+        Don;
+    EgerBitti
+    Eger mx >= 225 Ve mx <= 285 Ve my >= basY Ve my <= basY + 45 Ise
+        islemYap("+");
+        tumunuCiz();
+        Don;
+    EgerBitti
+FonksiyonBitti
+
+// ========== TIKLAMA OLAYI ==========
+kv.tiklaninca = Fonksiyon()
+    Eger kv._mouseY >= 105 Ve kv._mouseY <= 225 Ise
+        gecmiseTikla(kv._mouseX, kv._mouseY);
+    Degilse
+        butonTiklandi(kv._mouseX, kv._mouseY);
+    EgerBitti
+FonksiyonBitti
+
+pen.Ekle(kv);
+pen.Goster();
+
+tumunuCiz();
+
+Yaz("🧮 PREMIUM HESAP MAKİNESİ HAZIR!");
+Yaz("🧪 Bilimsel mod için tıkla!");
+Yaz("🌙 Gece/Gündüz modu!");
