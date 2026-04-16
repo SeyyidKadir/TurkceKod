@@ -1,0 +1,462 @@
+// 🐍 PREMIUM SNAKE - Şık Tasarım + Ses Efektleri
+// TürkçeKod v10 ile yazılmıştır
+
+Pencere pen;
+pen.baslik = "🐍 PREMIUM SNAKE";
+pen.genislik = 520;
+pen.yukseklik = 620;
+pen.arkaplan = "#0d1117";
+
+// Ana oyun alanı
+Kanvas kv;
+kv.x = 20;
+kv.y = 50;
+kv.genislik = 300;
+kv.yukseklik = 300;
+kv.arkaplan = "#0d1117";
+
+// Oyun değişkenleri
+Sayi hucre = 20;
+Sayi sutun = 15;
+Sayi satir = 15;
+
+Dizi yilanX = [7, 6, 5];
+Dizi yilanY = [7, 7, 7];
+Sayi yonX = 1;
+Sayi yonY = 0;
+Sayi sonrakiX = 1;
+Sayi sonrakiY = 0;
+
+Sayi yemekX = 10;
+Sayi yemekY = 10;
+Sayi altinX = -1;
+Sayi altinY = -1;
+Sayi altinSayac = 0;
+
+Sayi skor = 0;
+Sayi enYuksekSkor = 0;
+Sayi seviye = 1;
+Mantiksal oyunAktif = Yanlis;
+Mantiksal oyunBitti = Yanlis;
+Mantiksal sesAcik = Dogru;
+Mantiksal altinAktif = Yanlis;
+
+Ses ses;
+Ses sesEfekt;
+
+// Sağ panel
+Kanvas panelKv;
+panelKv.x = 335;
+panelKv.y = 50;
+panelKv.genislik = 165;
+panelKv.yukseklik = 550;
+panelKv.arkaplan = "#161b22";
+
+// Butonlar
+Dugme btnYukari;
+btnYukari.yazi = "⬆️";
+btnYukari.x = 365;
+btnYukari.y = 150;
+btnYukari.genislik = 50;
+btnYukari.yukseklik = 50;
+btnYukari.arkaplan = "#238636";
+btnYukari.renk = "#ffffff";
+btnYukari.stil = "font-size:24px;font-weight:bold;border-radius:8px;";
+
+Dugme btnAsagi;
+btnAsagi.yazi = "⬇️";
+btnAsagi.x = 365;
+btnAsagi.y = 250;
+btnAsagi.genislik = 50;
+btnAsagi.yukseklik = 50;
+btnAsagi.arkaplan = "#238636";
+btnAsagi.renk = "#ffffff";
+btnAsagi.stil = "font-size:24px;font-weight:bold;border-radius:8px;";
+
+Dugme btnSol;
+btnSol.yazi = "⬅️";
+btnSol.x = 310;
+btnSol.y = 200;
+btnSol.genislik = 50;
+btnSol.yukseklik = 50;
+btnSol.arkaplan = "#238636";
+btnSol.renk = "#ffffff";
+btnSol.stil = "font-size:24px;font-weight:bold;border-radius:8px;";
+
+Dugme btnSag;
+btnSag.yazi = "➡️";
+btnSag.x = 420;
+btnSag.y = 200;
+btnSag.genislik = 50;
+btnSag.yukseklik = 50;
+btnSag.arkaplan = "#238636";
+btnSag.renk = "#ffffff";
+btnSag.stil = "font-size:24px;font-weight:bold;border-radius:8px;";
+
+Dugme btnBaslat;
+btnBaslat.yazi = "▶ BAŞLAT";
+btnBaslat.x = 345;
+btnBaslat.y = 320;
+btnBaslat.genislik = 100;
+btnBaslat.yukseklik = 40;
+btnBaslat.arkaplan = "#2ea043";
+btnBaslat.renk = "#ffffff";
+btnBaslat.stil = "font-size:13px;font-weight:bold;border-radius:8px;";
+
+Dugme btnDurdur;
+btnDurdur.yazi = "⏸ DURDUR";
+btnDurdur.x = 345;
+btnDurdur.y = 370;
+btnDurdur.genislik = 100;
+btnDurdur.yukseklik = 35;
+btnDurdur.arkaplan = "#6e7681";
+btnDurdur.renk = "#ffffff";
+btnDurdur.stil = "font-size:11px;font-weight:bold;border-radius:8px;";
+
+Dugme btnSes;
+btnSes.yazi = "🔊 SES AÇIK";
+btnSes.x = 345;
+btnSes.y = 415;
+btnSes.genislik = 100;
+btnSes.yukseklik = 35;
+btnSes.arkaplan = "#1f6feb";
+btnSes.renk = "#ffffff";
+btnSes.stil = "font-size:11px;font-weight:bold;border-radius:8px;";
+
+Dugme btnYeniden;
+btnYeniden.yazi = "🔄 YENİDEN";
+btnYeniden.x = 345;
+btnYeniden.y = 470;
+btnYeniden.genislik = 100;
+btnYeniden.yukseklik = 40;
+btnYeniden.arkaplan = "#da3633";
+btnYeniden.renk = "#ffffff";
+btnYeniden.stil = "font-size:12px;font-weight:bold;border-radius:8px;";
+btnYeniden.gorunum = Yanlis;
+
+Zamanlayici zm;
+zm.aralik = 200;
+
+// ========== PANEL ÇİZİM ==========
+Fonksiyon panelCiz()
+    KanvasArkaplan(panelKv, "#161b22");
+    KanvasMetin(panelKv, "SNAKE", 35, 25, "#2ea043", "bold 18px Segoe UI");
+    KanvasCizgi(panelKv, 10, 40, 155, 40, "#30363d", 1);
+    
+    KanvasMetin(panelKv, "SKOR", 15, 60, "#8b949e", "bold 10px Segoe UI");
+    KanvasMetin(panelKv, MetineKonvert(skor), 15, 78, "#f0f000", "bold 20px Segoe UI");
+    
+    KanvasMetin(panelKv, "EN YÜKSEK", 15, 110, "#8b949e", "bold 10px Segoe UI");
+    KanvasMetin(panelKv, MetineKonvert(enYuksekSkor), 15, 128, "#00f0f0", "bold 16px Segoe UI");
+    
+    KanvasMetin(panelKv, "SEVIYE", 15, 160, "#8b949e", "bold 10px Segoe UI");
+    KanvasMetin(panelKv, MetineKonvert(seviye), 15, 178, "#a000f0", "bold 16px Segoe UI");
+    
+    KanvasCizgi(panelKv, 10, 205, 155, 205, "#30363d", 1);
+    
+    Eger oyunAktif == Yanlis Ise
+        Eger oyunBitti == Dogru Ise
+            KanvasMetin(panelKv, "OYUN BİTTİ!", 25, 230, "#f00000", "bold 13px Segoe UI");
+        Degilse
+            KanvasMetin(panelKv, "BAŞLAT", 40, 230, "#00f000", "bold 13px Segoe UI");
+        EgerBitti
+    Degilse
+        KanvasMetin(panelKv, "OYNANIYOR", 30, 230, "#00f000", "bold 12px Segoe UI");
+    EgerBitti
+FonksiyonBitti
+
+// ========== SES EFEKTLERİ ==========
+Fonksiyon sesCal(efekt)
+    Eger sesAcik == Dogru Ise
+        SesEfekti(ses, efekt);
+    EgerBitti
+FonksiyonBitti
+
+// ========== YENİ YEMEK ==========
+Fonksiyon yeniYemek()
+    yemekX = Rastgele(0, sutun - 1);
+    yemekY = Rastgele(0, satir - 1);
+    
+    // Yılanın üstüne gelmemesi için kontrol
+    Mantiksal gecerli = Yanlis;
+    Suresince gecerli == Yanlis Ise
+        gecerli = Dogru;
+        Sayi i = 0;
+        Tekrarla DiziUzunluk(yilanX) Kez
+            Eger yilanX[i] == yemekX Ve yilanY[i] == yemekY Ise
+                gecerli = Yanlis;
+                yemekX = Rastgele(0, sutun - 1);
+                yemekY = Rastgele(0, satir - 1);
+            EgerBitti
+            i = i + 1;
+        TekrarlaBitti
+    SuresinceBitti
+FonksiyonBitti
+
+// ========== ALTIN YEMEK ==========
+Fonksiyon altinOlustur()
+    Eger altinAktif == Yanlis Ise
+        altinX = Rastgele(0, sutun - 1);
+        altinY = Rastgele(0, satir - 1);
+        altinAktif = Dogru;
+        altinSayac = 30;
+    EgerBitti
+FonksiyonBitti
+
+// ========== ÇİZİM ==========
+Fonksiyon ciz()
+    KanvasTemizle(kv);
+    KanvasArkaplan(kv, "#0d1117");
+    
+    // Grid çizgileri
+    Sayi i = 0;
+    Tekrarla satir Kez
+        Sayi j = 0;
+        Tekrarla sutun Kez
+            KanvasCizgi(kv, j * hucre, i * hucre, (j+1) * hucre, i * hucre, "#1e242c", 1);
+            KanvasCizgi(kv, j * hucre, i * hucre, j * hucre, (i+1) * hucre, "#1e242c", 1);
+            j = j + 1;
+        TekrarlaBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Yılan
+    i = 0;
+    Tekrarla DiziUzunluk(yilanX) Kez
+        Sayi renkSec = i;
+        Eger i == 0 Ise
+            KanvasDikdortgen(kv, yilanX[i] * hucre + 2, yilanY[i] * hucre + 2, hucre - 4, hucre - 4, "#2ea043");
+            // Gözler
+            Eger yonX == 1 Ise
+                KanvasDaire(kv, yilanX[i] * hucre + 14, yilanY[i] * hucre + 7, 2, "#ffffff");
+                KanvasDaire(kv, yilanX[i] * hucre + 14, yilanY[i] * hucre + 14, 2, "#ffffff");
+            EgerBitti
+            Eger yonX == -1 Ise
+                KanvasDaire(kv, yilanX[i] * hucre + 6, yilanY[i] * hucre + 7, 2, "#ffffff");
+                KanvasDaire(kv, yilanX[i] * hucre + 6, yilanY[i] * hucre + 14, 2, "#ffffff");
+            EgerBitti
+            Eger yonY == 1 Ise
+                KanvasDaire(kv, yilanX[i] * hucre + 7, yilanY[i] * hucre + 14, 2, "#ffffff");
+                KanvasDaire(kv, yilanX[i] * hucre + 14, yilanY[i] * hucre + 14, 2, "#ffffff");
+            EgerBitti
+            Eger yonY == -1 Ise
+                KanvasDaire(kv, yilanX[i] * hucre + 7, yilanY[i] * hucre + 6, 2, "#ffffff");
+                KanvasDaire(kv, yilanX[i] * hucre + 14, yilanY[i] * hucre + 6, 2, "#ffffff");
+            EgerBitti
+        Degilse
+            KanvasDikdortgen(kv, yilanX[i] * hucre + 2, yilanY[i] * hucre + 2, hucre - 4, hucre - 4, "#238636");
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Yemek
+    KanvasDaire(kv, yemekX * hucre + hucre/2, yemekY * hucre + hucre/2, 8, "#f00000");
+    KanvasDaire(kv, yemekX * hucre + hucre/2, yemekY * hucre + hucre/2, 4, "#ff6666");
+    
+    // Altın yemek
+    Eger altinAktif == Dogru Ise
+        KanvasDaire(kv, altinX * hucre + hucre/2, altinY * hucre + hucre/2, 10, "#f0f000");
+        KanvasDaire(kv, altinX * hucre + hucre/2, altinY * hucre + hucre/2, 5, "#ffff66");
+        KanvasMetin(kv, "★", altinX * hucre + 5, altinY * hucre + 6, "#000000", "bold 12px Segoe UI");
+    EgerBitti
+    
+    panelCiz();
+FonksiyonBitti
+
+// ========== HAREKET ==========
+Fonksiyon hareket()
+    Eger oyunAktif == Yanlis Ise Don; EgerBitti
+    
+    yonX = sonrakiX;
+    yonY = sonrakiY;
+    
+    Sayi yeniX = yilanX[0] + yonX;
+    Sayi yeniY = yilanY[0] + yonY;
+    
+    // Duvara çarpma kontrolü
+    Eger yeniX < 0 Veya yeniX >= sutun Veya yeniY < 0 Veya yeniY >= satir Ise
+        oyunBitti = Dogru;
+        oyunAktif = Yanlis;
+        zm.Durdur();
+        sesCal("alarm");
+        btnYeniden.gorunum = Dogru;
+        btnBaslat.gorunum = Yanlis;
+        btnDurdur.gorunum = Yanlis;
+        ciz();
+        Don;
+    EgerBitti
+    
+    // Yemek kontrolü
+    Mantiksal yedi = Yanlis;
+    Mantiksal altinYedi = Yanlis;
+    Eger yeniX == yemekX Ve yeniY == yemekY Ise
+        yedi = Dogru;
+    EgerBitti
+    
+    Eger altinAktif == Dogru Ise
+        Eger yeniX == altinX Ve yeniY == altinY Ise
+            altinYedi = Dogru;
+            altinAktif = Yanlis;
+        EgerBitti
+    EgerBitti
+    
+    // Yılanı güncelle
+    DiziBasaEkle(yilanX, yeniX);
+    DiziBasaEkle(yilanY, yeniY);
+    
+    Eger yedi == Yanlis Ve altinYedi == Yanlis Ise
+        DiziCikar(yilanX, DiziUzunluk(yilanX) - 1);
+        DiziCikar(yilanY, DiziUzunluk(yilanY) - 1);
+    EgerBitti
+    
+    // Kendine çarpma kontrolü
+    Sayi i = 1;
+    Tekrarla DiziUzunluk(yilanX) - 1 Kez
+        Eger yilanX[0] == yilanX[i] Ve yilanY[0] == yilanY[i] Ise
+            oyunBitti = Dogru;
+            oyunAktif = Yanlis;
+            zm.Durdur();
+            sesCal("alarm");
+            btnYeniden.gorunum = Dogru;
+            btnBaslat.gorunum = Yanlis;
+            btnDurdur.gorunum = Yanlis;
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Skor güncelle
+    Eger yedi == Dogru Ise
+        skor = skor + 10 * seviye;
+        sesCal("bip");
+        yeniYemek();
+        
+        // Altın yemek oluşturma şansı
+        Sayi sans = Rastgele(1, 5);
+        Eger sans == 1 Ise
+            altinOlustur();
+        EgerBitti
+    EgerBitti
+    
+    Eger altinYedi == Dogru Ise
+        skor = skor + 50 * seviye;
+        sesCal("ding");
+    EgerBitti
+    
+    // Altın sayacı
+    Eger altinAktif == Dogru Ise
+        altinSayac = altinSayac - 1;
+        Eger altinSayac <= 0 Ise
+            altinAktif = Yanlis;
+        EgerBitti
+    EgerBitti
+    
+    // Seviye kontrolü
+    Sayi yeniSeviye = Taban(skor / 100) + 1;
+    Eger yeniSeviye > seviye Ise
+        seviye = yeniSeviye;
+        zm.aralik = 200 / seviye;
+        sesCal("zil");
+    EgerBitti
+    
+    // En yüksek skor
+    Eger skor > enYuksekSkor Ise
+        enYuksekSkor = skor;
+    EgerBitti
+    
+    ciz();
+FonksiyonBitti
+
+// ========== YÖN KONTROL ==========
+Fonksiyon yonDegistir(x, y)
+    Eger oyunAktif == Yanlis Ise Don; EgerBitti
+    
+    // Ters yöne dönemez
+    Eger (yonX == -x Ve yonY == -y) Ise
+        Don;
+    EgerBitti
+    
+    sonrakiX = x;
+    sonrakiY = y;
+FonksiyonBitti
+
+// ========== OYUN KONTROL ==========
+Fonksiyon oyunuBaslat()
+    yilanX = [7, 6, 5];
+    yilanY = [7, 7, 7];
+    yonX = 1;
+    yonY = 0;
+    sonrakiX = 1;
+    sonrakiY = 0;
+    skor = 0;
+    seviye = 1;
+    zm.aralik = 200;
+    altinAktif = Yanlis;
+    oyunBitti = Yanlis;
+    oyunAktif = Dogru;
+    btnYeniden.gorunum = Yanlis;
+    btnBaslat.gorunum = Yanlis;
+    btnDurdur.gorunum = Dogru;
+    
+    yeniYemek();
+    ciz();
+    zm.Baslat();
+FonksiyonBitti
+
+Fonksiyon oyunuDurdur()
+    oyunAktif = Yanlis;
+    zm.Durdur();
+    btnBaslat.gorunum = Dogru;
+    btnDurdur.gorunum = Yanlis;
+    panelCiz();
+FonksiyonBitti
+
+Fonksiyon yenidenBaslat()
+    oyunAktif = Yanlis;
+    zm.Durdur();
+    oyunuBaslat();
+FonksiyonBitti
+
+Fonksiyon sesToggle()
+    sesAcik = !sesAcik;
+    Eger sesAcik == Dogru Ise
+        btnSes.yazi = "🔊 SES AÇIK";
+    Degilse
+        btnSes.yazi = "🔇 SES KAPALI";
+    EgerBitti
+FonksiyonBitti
+
+// ========== BAĞLANTILAR ==========
+zm.her_tikta = Fonksiyon()
+    Eger oyunAktif == Dogru Ise
+        hareket();
+    EgerBitti
+FonksiyonBitti
+
+btnYukari.tiklaninca = Fonksiyon() yonDegistir(0, -1); FonksiyonBitti
+btnAsagi.tiklaninca = Fonksiyon() yonDegistir(0, 1); FonksiyonBitti
+btnSol.tiklaninca = Fonksiyon() yonDegistir(-1, 0); FonksiyonBitti
+btnSag.tiklaninca = Fonksiyon() yonDegistir(1, 0); FonksiyonBitti
+btnBaslat.tiklaninca = oyunuBaslat;
+btnDurdur.tiklaninca = oyunuDurdur;
+btnYeniden.tiklaninca = yenidenBaslat;
+btnSes.tiklaninca = sesToggle;
+
+pen.Ekle(kv);
+pen.Ekle(panelKv);
+pen.Ekle(btnYukari);
+pen.Ekle(btnAsagi);
+pen.Ekle(btnSol);
+pen.Ekle(btnSag);
+pen.Ekle(btnBaslat);
+pen.Ekle(btnDurdur);
+pen.Ekle(btnSes);
+pen.Ekle(btnYeniden);
+
+pen.Goster();
+
+yeniYemek();
+ciz();
+
+Yaz("🐍 PREMIUM SNAKE HAZIR!");
+Yaz("▶ BAŞLAT ile oyuna başla!");
+Yaz("⭐ Altın yemekler +50 puan!");
