@@ -1,0 +1,515 @@
+// 🟦 TETRIS PREMIUM - BAŞTAN YAZILMIŞ (STRING PARAMETRELİ)
+// TürkçeKod v10 ile uyumlu
+
+Pencere pen;
+pen.baslik = "🟦 TETRIS PREMIUM";
+pen.genislik = 520;
+pen.yukseklik = 660;
+pen.arkaplan = "#0d1117";
+
+Kanvas kv;
+kv.x = 20;
+kv.y = 50;
+kv.genislik = 300;
+kv.yukseklik = 600;
+kv.arkaplan = "#0d1117";
+
+Sayi sutun = 10;
+Sayi satir = 20;
+Sayi hucre = 30;
+
+Dizi tahta = [];
+Dizi aktifParca = [];
+Sayi aktifX = 0;
+Sayi aktifY = 0;
+Sayi aktifRenk = 0;
+Sayi sonrakiTip = 0;
+
+Sayi skor = 0;
+Sayi seviye = 1;
+Sayi satirSayisi = 0;
+Mantiksal oyunAktif = Yanlis;
+Mantiksal sesAcik = Dogru;
+
+Ses ses;
+Ses sesEfekt;
+
+// Renk paleti
+Dizi renkler = ["#00f0f0", "#f0f000", "#a000f0", "#f0a000", "#0000f0", "#00f000", "#f00000"];
+
+// 7 parça - HER BİRİ AYRI DİZİ OLARAK
+Dizi parcalar = [];
+Dizi pI = [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]];
+DiziEkle(parcalar, pI);
+Dizi pO = [[0,0,0,0],[0,1,1,0],[0,1,1,0],[0,0,0,0]];
+DiziEkle(parcalar, pO);
+Dizi pT = [[0,0,0,0],[0,1,0,0],[1,1,1,0],[0,0,0,0]];
+DiziEkle(parcalar, pT);
+Dizi pL = [[0,0,0,0],[1,0,0,0],[1,1,1,0],[0,0,0,0]];
+DiziEkle(parcalar, pL);
+Dizi pJ = [[0,0,0,0],[0,0,1,0],[1,1,1,0],[0,0,0,0]];
+DiziEkle(parcalar, pJ);
+Dizi pS = [[0,0,0,0],[0,1,1,0],[1,1,0,0],[0,0,0,0]];
+DiziEkle(parcalar, pS);
+Dizi pZ = [[0,0,0,0],[1,1,0,0],[0,1,1,0],[0,0,0,0]];
+DiziEkle(parcalar, pZ);
+
+// Sağ panel
+Kanvas panelKv;
+panelKv.x = 335;
+panelKv.y = 50;
+panelKv.genislik = 165;
+panelKv.yukseklik = 600;
+panelKv.arkaplan = "#161b22";
+
+// Butonlar
+Dugme btnSol;
+btnSol.yazi = "◀";
+btnSol.x = 345;
+btnSol.y = 230;
+btnSol.genislik = 45;
+btnSol.yukseklik = 45;
+btnSol.arkaplan = "#238636";
+btnSol.renk = "#ffffff";
+btnSol.stil = "font-size:20px;font-weight:bold;border-radius:8px;";
+
+Dugme btnSag;
+btnSag.yazi = "▶";
+btnSag.x = 400;
+btnSag.y = 230;
+btnSag.genislik = 45;
+btnSag.yukseklik = 45;
+btnSag.arkaplan = "#238636";
+btnSag.renk = "#ffffff";
+btnSag.stil = "font-size:20px;font-weight:bold;border-radius:8px;";
+
+Dugme btnDondur;
+btnDondur.yazi = "↻";
+btnDondur.x = 345;
+btnDondur.y = 285;
+btnDondur.genislik = 45;
+btnDondur.yukseklik = 45;
+btnDondur.arkaplan = "#1f6feb";
+btnDondur.renk = "#ffffff";
+btnDondur.stil = "font-size:22px;font-weight:bold;border-radius:8px;";
+
+Dugme btnAsagi;
+btnAsagi.yazi = "▼";
+btnAsagi.x = 400;
+btnAsagi.y = 285;
+btnAsagi.genislik = 45;
+btnAsagi.yukseklik = 45;
+btnAsagi.arkaplan = "#f0a000";
+btnAsagi.renk = "#ffffff";
+btnAsagi.stil = "font-size:20px;font-weight:bold;border-radius:8px;";
+
+Dugme btnHizli;
+btnHizli.yazi = "▼▼ HIZLI";
+btnHizli.x = 345;
+btnHizli.y = 340;
+btnHizli.genislik = 100;
+btnHizli.yukseklik = 35;
+btnHizli.arkaplan = "#da3633";
+btnHizli.renk = "#ffffff";
+btnHizli.stil = "font-size:11px;font-weight:bold;border-radius:8px;";
+
+Dugme btnBaslat;
+btnBaslat.yazi = "▶ BAŞLAT";
+btnBaslat.x = 345;
+btnBaslat.y = 395;
+btnBaslat.genislik = 100;
+btnBaslat.yukseklik = 40;
+btnBaslat.arkaplan = "#2ea043";
+btnBaslat.renk = "#ffffff";
+btnBaslat.stil = "font-size:13px;font-weight:bold;border-radius:8px;";
+
+Dugme btnDurdur;
+btnDurdur.yazi = "⏸ DURDUR";
+btnDurdur.x = 345;
+btnDurdur.y = 445;
+btnDurdur.genislik = 100;
+btnDurdur.yukseklik = 35;
+btnDurdur.arkaplan = "#6e7681";
+btnDurdur.renk = "#ffffff";
+btnDurdur.stil = "font-size:11px;font-weight:bold;border-radius:8px;";
+
+Dugme btnSes;
+btnSes.yazi = "🔊 SES AÇIK";
+btnSes.x = 345;
+btnSes.y = 490;
+btnSes.genislik = 100;
+btnSes.yukseklik = 35;
+btnSes.arkaplan = "#1f6feb";
+btnSes.renk = "#ffffff";
+btnSes.stil = "font-size:11px;font-weight:bold;border-radius:8px;";
+
+Dugme btnYeniden;
+btnYeniden.yazi = "🔄 YENİDEN";
+btnYeniden.x = 345;
+btnYeniden.y = 545;
+btnYeniden.genislik = 100;
+btnYeniden.yukseklik = 40;
+btnYeniden.arkaplan = "#da3633";
+btnYeniden.renk = "#ffffff";
+btnYeniden.stil = "font-size:12px;font-weight:bold;border-radius:8px;";
+btnYeniden.gorunum = Yanlis;
+
+Zamanlayici zm;
+zm.aralik = 500;
+
+// ========== PANEL ÇİZİM ==========
+Fonksiyon panelCiz()
+    KanvasArkaplan(panelKv, "#161b22");
+    KanvasMetin(panelKv, "TETRIS", 35, 25, "#f0f000", "bold 16px Segoe UI");
+    KanvasCizgi(panelKv, 10, 40, 155, 40, "#30363d", 1);
+    KanvasMetin(panelKv, "SKOR", 15, 60, "#8b949e", "bold 10px Segoe UI");
+    KanvasMetin(panelKv, MetineKonvert(skor), 15, 78, "#f0f000", "bold 20px Segoe UI");
+    KanvasMetin(panelKv, "SEVIYE", 15, 110, "#8b949e", "bold 10px Segoe UI");
+    KanvasMetin(panelKv, MetineKonvert(seviye), 15, 128, "#00f0f0", "bold 16px Segoe UI");
+    KanvasMetin(panelKv, "SATIR", 15, 160, "#8b949e", "bold 10px Segoe UI");
+    KanvasMetin(panelKv, MetineKonvert(satirSayisi), 15, 178, "#00f000", "bold 16px Segoe UI");
+    KanvasCizgi(panelKv, 10, 205, 155, 205, "#30363d", 1);
+    KanvasMetin(panelKv, "SONRAKI", 15, 220, "#8b949e", "bold 10px Segoe UI");
+FonksiyonBitti
+
+// ========== SES EFEKTLERİ (STRING PARAMETRE İLE!) ==========
+Fonksiyon sesCal(efekt)
+    Eger sesAcik == Dogru Ise
+        SesEfekti(ses, efekt);
+    EgerBitti
+FonksiyonBitti
+
+Fonksiyon notaCal(frekans)
+    Eger sesAcik == Dogru Ise
+        SesNotaCal(sesEfekt, frekans, 0.1, 0.08);
+    EgerBitti
+FonksiyonBitti
+
+// ========== TAHTA OLUŞTUR ==========
+Fonksiyon tahtaOlustur()
+    tahta = [];
+    Sayi i = 0;
+    Tekrarla satir Kez
+        Dizi sat = [];
+        Sayi j = 0;
+        Tekrarla sutun Kez
+            DiziEkle(sat, 0);
+            j = j + 1;
+        TekrarlaBitti
+        DiziEkle(tahta, sat);
+        i = i + 1;
+    TekrarlaBitti
+FonksiyonBitti
+
+// ========== ÇARPIŞMA KONTROLÜ ==========
+Fonksiyon carpismaVarMi(x, y, parca)
+    Sayi i = 0;
+    Tekrarla 4 Kez
+        Sayi j = 0;
+        Tekrarla 4 Kez
+            Eger parca[i][j] > 0 Ise
+                Sayi tx = x + j;
+                Sayi ty = y + i;
+                Eger tx < 0 Ise Don Dogru; EgerBitti
+                Eger tx >= sutun Ise Don Dogru; EgerBitti
+                Eger ty >= satir Ise Don Dogru; EgerBitti
+                Eger ty >= 0 Ise
+                    Eger tahta[ty][tx] > 0 Ise
+                        Don Dogru;
+                    EgerBitti
+                EgerBitti
+            EgerBitti
+            j = j + 1;
+        TekrarlaBitti
+        i = i + 1;
+    TekrarlaBitti
+    Don Yanlis;
+FonksiyonBitti
+
+// ========== YENİ PARÇA ==========
+Fonksiyon yeniParca()
+    aktifParca = parcalar[sonrakiTip];
+    aktifRenk = sonrakiTip;
+    sonrakiTip = Rastgele(0, 6);
+    aktifX = 3;
+    aktifY = 0;
+    
+    Eger carpismaVarMi(aktifX, aktifY, aktifParca) == Dogru Ise
+        oyunAktif = Yanlis;
+        zm.Durdur();
+        sesCal("alarm");
+        btnYeniden.gorunum = Dogru;
+        btnBaslat.gorunum = Yanlis;
+        btnDurdur.gorunum = Yanlis;
+    EgerBitti
+    
+    ciz();
+    panelCiz();
+FonksiyonBitti
+
+// ========== PARÇAYI SABİTLE ==========
+Fonksiyon parcayiSabitle()
+    Sayi i = 0;
+    Tekrarla 4 Kez
+        Sayi j = 0;
+        Tekrarla 4 Kez
+            Eger aktifParca[i][j] > 0 Ise
+                Sayi tx = aktifX + j;
+                Sayi ty = aktifY + i;
+                Eger ty >= 0 Ise
+                    tahta[ty][tx] = aktifRenk + 1;
+                EgerBitti
+            EgerBitti
+            j = j + 1;
+        TekrarlaBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    sesCal("bip");
+    
+    Sayi silinen = 0;
+    i = satir - 1;
+    Suresince i >= 0 Ise
+        Sayi doluSay = 0;
+        Sayi j = 0;
+        Tekrarla sutun Kez
+            Eger tahta[i][j] > 0 Ise
+                doluSay = doluSay + 1;
+            EgerBitti
+            j = j + 1;
+        TekrarlaBitti
+        
+        Eger doluSay == sutun Ise
+            Sayi k = i;
+            Suresince k > 0 Ise
+                tahta[k] = tahta[k - 1];
+                k = k - 1;
+            SuresinceBitti
+            tahta[0] = [];
+            j = 0;
+            Tekrarla sutun Kez
+                DiziEkle(tahta[0], 0);
+                j = j + 1;
+            TekrarlaBitti
+            silinen = silinen + 1;
+            i = i + 1;
+            sesCal("ding");
+        EgerBitti
+        i = i - 1;
+    SuresinceBitti
+    
+    Eger silinen > 0 Ise
+        skor = skor + silinen * 100 * seviye;
+        satirSayisi = satirSayisi + silinen;
+        
+        Eger satirSayisi >= seviye * 5 Ise
+            seviye = seviye + 1;
+            zm.aralik = 500 / seviye;
+            sesCal("zil");
+        EgerBitti
+    EgerBitti
+    
+    yeniParca();
+FonksiyonBitti
+
+// ========== AŞAĞI HAREKET ==========
+Fonksiyon asagiHareket()
+    Eger oyunAktif == Yanlis Ise Don; EgerBitti
+    
+    Eger carpismaVarMi(aktifX, aktifY + 1, aktifParca) == Yanlis Ise
+        aktifY = aktifY + 1;
+        ciz();
+        Don;
+    EgerBitti
+    parcayiSabitle();
+    ciz();
+    panelCiz();
+FonksiyonBitti
+
+// ========== HAREKET FONKSİYONLARI ==========
+Fonksiyon solHareket()
+    Eger oyunAktif == Yanlis Ise Don; EgerBitti
+    Eger carpismaVarMi(aktifX - 1, aktifY, aktifParca) == Yanlis Ise
+        aktifX = aktifX - 1;
+        ciz();
+    EgerBitti
+FonksiyonBitti
+
+Fonksiyon sagHareket()
+    Eger oyunAktif == Yanlis Ise Don; EgerBitti
+    Eger carpismaVarMi(aktifX + 1, aktifY, aktifParca) == Yanlis Ise
+        aktifX = aktifX + 1;
+        ciz();
+    EgerBitti
+FonksiyonBitti
+
+Fonksiyon dondur()
+    Eger oyunAktif == Yanlis Ise Don; EgerBitti
+    
+    Dizi yeni = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+    Sayi i = 0;
+    Tekrarla 4 Kez
+        Sayi j = 0;
+        Tekrarla 4 Kez
+            yeni[j][3 - i] = aktifParca[i][j];
+            j = j + 1;
+        TekrarlaBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    Eger carpismaVarMi(aktifX, aktifY, yeni) == Yanlis Ise
+        aktifParca = yeni;
+        ciz();
+    EgerBitti
+FonksiyonBitti
+
+Fonksiyon tekAdimAsagi()
+    Eger oyunAktif == Yanlis Ise Don; EgerBitti
+    asagiHareket();
+    panelCiz();
+FonksiyonBitti
+
+Fonksiyon hizliAsagi()
+    Eger oyunAktif == Dogru Ise
+        Suresince carpismaVarMi(aktifX, aktifY + 1, aktifParca) == Yanlis Ise
+            aktifY = aktifY + 1;
+        SuresinceBitti
+        parcayiSabitle();
+        ciz();
+        panelCiz();
+    EgerBitti
+FonksiyonBitti
+
+// ========== ÇİZİM ==========
+Fonksiyon ciz()
+    KanvasTemizle(kv);
+    KanvasArkaplan(kv, "#0d1117");
+    
+    Sayi i = 0;
+    Tekrarla satir Kez
+        Sayi j = 0;
+        Tekrarla sutun Kez
+            Eger tahta[i][j] > 0 Ise
+                KanvasDikdortgen(kv, j * hucre + 1, i * hucre + 1, hucre - 2, hucre - 2, renkler[tahta[i][j] - 1]);
+                KanvasDikdortgen(kv, j * hucre + 1, i * hucre + 1, hucre - 2, 3, "#ffffff20");
+            Degilse
+                KanvasDikdortgen(kv, j * hucre + 1, i * hucre + 1, hucre - 2, hucre - 2, "#161b22");
+            EgerBitti
+            j = j + 1;
+        TekrarlaBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    i = 0;
+    Tekrarla 4 Kez
+        j = 0;
+        Tekrarla 4 Kez
+            Eger aktifParca[i][j] > 0 Ise
+                Sayi x = (aktifX + j) * hucre;
+                Sayi y = (aktifY + i) * hucre;
+                Eger y >= 0 Ise
+                    KanvasDikdortgen(kv, x + 1, y + 1, hucre - 2, hucre - 2, renkler[aktifRenk]);
+                    KanvasDikdortgen(kv, x + 1, y + 1, hucre - 2, 3, "#ffffff40");
+                EgerBitti
+            EgerBitti
+            j = j + 1;
+        TekrarlaBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    panelCiz();
+    
+    Dizi sonrakiParca = parcalar[sonrakiTip];
+    i = 0;
+    Tekrarla 4 Kez
+        j = 0;
+        Tekrarla 4 Kez
+            Eger sonrakiParca[i][j] > 0 Ise
+                Sayi px = 30 + j * 12;
+                Sayi py = 240 + i * 12;
+                KanvasDikdortgen(panelKv, px, py, 10, 10, renkler[sonrakiTip]);
+            EgerBitti
+            j = j + 1;
+        TekrarlaBitti
+        i = i + 1;
+    TekrarlaBitti
+FonksiyonBitti
+
+// ========== OYUN KONTROL ==========
+Fonksiyon oyunuBaslat()
+    tahtaOlustur();
+    skor = 0;
+    seviye = 1;
+    satirSayisi = 0;
+    zm.aralik = 500;
+    oyunAktif = Dogru;
+    btnYeniden.gorunum = Yanlis;
+    btnBaslat.gorunum = Yanlis;
+    btnDurdur.gorunum = Dogru;
+    sonrakiTip = Rastgele(0, 6);
+    yeniParca();
+    ciz();
+    zm.Baslat();
+FonksiyonBitti
+
+Fonksiyon oyunuDurdur()
+    oyunAktif = Yanlis;
+    zm.Durdur();
+    btnBaslat.gorunum = Dogru;
+    btnDurdur.gorunum = Yanlis;
+    panelCiz();
+FonksiyonBitti
+
+Fonksiyon yenidenBaslat()
+    oyunAktif = Yanlis;
+    zm.Durdur();
+    oyunuBaslat();
+FonksiyonBitti
+
+Fonksiyon sesToggle()
+    sesAcik = !sesAcik;
+    Eger sesAcik == Dogru Ise
+        btnSes.yazi = "🔊 SES AÇIK";
+    Degilse
+        btnSes.yazi = "🔇 SES KAPALI";
+    EgerBitti
+FonksiyonBitti
+
+// ========== BAĞLANTILAR ==========
+zm.her_tikta = Fonksiyon()
+    Eger oyunAktif == Dogru Ise
+        asagiHareket();
+    EgerBitti
+FonksiyonBitti
+
+btnSol.tiklaninca = solHareket;
+btnSag.tiklaninca = sagHareket;
+btnDondur.tiklaninca = dondur;
+btnAsagi.tiklaninca = tekAdimAsagi;
+btnHizli.tiklaninca = hizliAsagi;
+btnBaslat.tiklaninca = oyunuBaslat;
+btnDurdur.tiklaninca = oyunuDurdur;
+btnYeniden.tiklaninca = yenidenBaslat;
+btnSes.tiklaninca = sesToggle;
+
+pen.Ekle(kv);
+pen.Ekle(panelKv);
+pen.Ekle(btnSol);
+pen.Ekle(btnSag);
+pen.Ekle(btnDondur);
+pen.Ekle(btnAsagi);
+pen.Ekle(btnHizli);
+pen.Ekle(btnBaslat);
+pen.Ekle(btnDurdur);
+pen.Ekle(btnSes);
+pen.Ekle(btnYeniden);
+
+pen.Goster();
+
+tahtaOlustur();
+sonrakiTip = Rastgele(0, 6);
+ciz();
+
+Yaz("🟦 TETRIS PREMIUM HAZIR!");
+Yaz("String parametreler çalışıyor!");
+Yaz("▶ BAŞLAT ile oyuna başla!");
