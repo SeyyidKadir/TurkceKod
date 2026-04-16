@@ -1,0 +1,704 @@
+// 🗄️ PREMIUM GUI MEMORY VERİTABANI - Tam CRUD İşlemleri
+// TürkçeKod v10 ile yazılmıştır
+// Ekle, Sil, Güncelle, Listele, Ara, Filtrele, Sırala, İstatistik
+
+Pencere pen;
+pen.baslik = "🗄️ PREMIUM VERİTABANI YÖNETİMİ";
+pen.genislik = 750;
+pen.yukseklik = 600;
+pen.arkaplan = "#0d1117";
+
+// Ana dizi - Veritabanı
+Dizi kayitlar;
+
+// Seçili kayıt ID'si
+Sayi seciliId = -1;
+
+// Tema değişkeni
+Mantiksal karanlikTema = Dogru;
+
+// ========== BAŞLIK ==========
+Etiket lblBaslik;
+lblBaslik.x = 20;
+lblBaslik.y = 15;
+lblBaslik.yazi = "🗄️ PREMIUM VERİTABANI YÖNETİM PANELİ";
+lblBaslik.renk = "#f0f000";
+lblBaslik.stil = "font-size:18px;font-weight:bold;";
+
+// ========== SOL PANEL - FORM ==========
+Etiket lblFormBaslik;
+lblFormBaslik.x = 20;
+lblFormBaslik.y = 55;
+lblFormBaslik.yazi = "📝 KAYIT FORMU";
+lblFormBaslik.renk = "#8b949e";
+lblFormBaslik.stil = "font-size:12px;font-weight:bold;text-transform:uppercase;";
+
+Etiket lblAd;
+lblAd.x = 20;
+lblAd.y = 85;
+lblAd.yazi = "Ad Soyad:";
+lblAd.renk = "#c9d1d9";
+lblAd.stil = "font-size:11px;";
+
+GirisSatiri txtAd;
+txtAd.x = 20;
+txtAd.y = 105;
+txtAd.genislik = 280;
+txtAd.yukseklik = 32;
+txtAd.ipucu = "Ad Soyad giriniz...";
+txtAd.stil = "background:#161b22;color:#ffffff;border:1px solid #30363d;border-radius:6px;padding:8px;font-size:12px;";
+
+Etiket lblYas;
+lblYas.x = 20;
+lblYas.y = 145;
+lblYas.yazi = "Yaş:";
+lblYas.renk = "#c9d1d9";
+lblYas.stil = "font-size:11px;";
+
+GirisSatiri txtYas;
+txtYas.x = 20;
+txtYas.y = 165;
+txtYas.genislik = 280;
+txtYas.yukseklik = 32;
+txtYas.ipucu = "Yaş giriniz...";
+txtYas.stil = "background:#161b22;color:#ffffff;border:1px solid #30363d;border-radius:6px;padding:8px;font-size:12px;";
+
+Etiket lblSehir;
+lblSehir.x = 20;
+lblSehir.y = 205;
+lblSehir.yazi = "Şehir:";
+lblSehir.renk = "#c9d1d9";
+lblSehir.stil = "font-size:11px;";
+
+GirisSatiri txtSehir;
+txtSehir.x = 20;
+txtSehir.y = 225;
+txtSehir.genislik = 280;
+txtSehir.yukseklik = 32;
+txtSehir.ipucu = "Şehir giriniz...";
+txtSehir.stil = "background:#161b22;color:#ffffff;border:1px solid #30363d;border-radius:6px;padding:8px;font-size:12px;";
+
+Etiket lblMaas;
+lblMaas.x = 20;
+lblMaas.y = 265;
+lblMaas.yazi = "Maaş (TL):";
+lblMaas.renk = "#c9d1d9";
+lblMaas.stil = "font-size:11px;";
+
+GirisSatiri txtMaas;
+txtMaas.x = 20;
+txtMaas.y = 285;
+txtMaas.genislik = 280;
+txtMaas.yukseklik = 32;
+txtMaas.ipucu = "Maaş giriniz...";
+txtMaas.stil = "background:#161b22;color:#ffffff;border:1px solid #30363d;border-radius:6px;padding:8px;font-size:12px;";
+
+// CRUD Butonları
+Dugme btnEkle;
+btnEkle.yazi = "➕ EKLE";
+btnEkle.x = 20;
+btnEkle.y = 335;
+btnEkle.genislik = 85;
+btnEkle.yukseklik = 38;
+btnEkle.arkaplan = "#2ea043";
+btnEkle.renk = "#ffffff";
+btnEkle.stil = "font-size:12px;font-weight:bold;border-radius:6px;";
+
+Dugme btnGuncelle;
+btnGuncelle.yazi = "✏️ GÜNCELLE";
+btnGuncelle.x = 115;
+btnGuncelle.y = 335;
+btnGuncelle.genislik = 90;
+btnGuncelle.yukseklik = 38;
+btnGuncelle.arkaplan = "#1f6feb";
+btnGuncelle.renk = "#ffffff";
+btnGuncelle.stil = "font-size:12px;font-weight:bold;border-radius:6px;";
+
+Dugme btnSil;
+btnSil.yazi = "🗑️ SİL";
+btnSil.x = 215;
+btnSil.y = 335;
+btnSil.genislik = 85;
+btnSil.yukseklik = 38;
+btnSil.arkaplan = "#da3633";
+btnSil.renk = "#ffffff";
+btnSil.stil = "font-size:12px;font-weight:bold;border-radius:6px;";
+
+Dugme btnTemizle;
+btnTemizle.yazi = "🧹 TEMİZLE";
+btnTemizle.x = 20;
+btnTemizle.y = 383;
+btnTemizle.genislik = 280;
+btnTemizle.yukseklik = 35;
+btnTemizle.arkaplan = "#6e7681";
+btnTemizle.renk = "#ffffff";
+btnTemizle.stil = "font-size:11px;font-weight:bold;border-radius:6px;";
+
+// Arama ve Filtreleme
+Etiket lblArama;
+lblArama.x = 20;
+lblArama.y = 435;
+lblArama.yazi = "🔍 ARAMA / FİLTRELE";
+lblArama.renk = "#8b949e";
+lblArama.stil = "font-size:12px;font-weight:bold;text-transform:uppercase;";
+
+GirisSatiri txtArama;
+txtArama.x = 20;
+txtArama.y = 458;
+txtArama.genislik = 200;
+txtArama.yukseklik = 32;
+txtArama.ipucu = "İsim veya şehir ara...";
+txtArama.stil = "background:#161b22;color:#ffffff;border:1px solid #30363d;border-radius:6px;padding:8px;font-size:12px;";
+
+Dugme btnAra;
+btnAra.yazi = "🔍 ARA";
+btnAra.x = 228;
+btnAra.y = 458;
+btnAra.genislik = 72;
+btnAra.yukseklik = 32;
+btnAra.arkaplan = "#1f6feb";
+btnAra.renk = "#ffffff";
+btnAra.stil = "font-size:11px;font-weight:bold;border-radius:6px;";
+
+Dugme btnYenile;
+btnYenile.yazi = "🔄 YENİLE";
+btnYenile.x = 20;
+btnYenile.y = 498;
+btnYenile.genislik = 280;
+btnYenile.yukseklik = 35;
+btnYenile.arkaplan = "#2ea043";
+btnYenile.renk = "#ffffff";
+btnYenile.stil = "font-size:11px;font-weight:bold;border-radius:6px;";
+
+// Tema butonu
+Dugme btnTema;
+btnTema.yazi = "🌙 KOYU TEMA";
+btnTema.x = 20;
+btnTema.y = 543;
+btnTema.genislik = 280;
+btnTema.yukseklik = 32;
+btnTema.arkaplan = "#6e7681";
+btnTema.renk = "#ffffff";
+btnTema.stil = "font-size:11px;border-radius:6px;";
+
+// ========== SAĞ PANEL - LİSTE ==========
+Etiket lblListeBaslik;
+lblListeBaslik.x = 320;
+lblListeBaslik.y = 55;
+lblListeBaslik.yazi = "📋 KAYIT LİSTESİ";
+lblListeBaslik.renk = "#8b949e";
+lblListeBaslik.stil = "font-size:12px;font-weight:bold;text-transform:uppercase;";
+
+Liste lstKayitlar;
+lstKayitlar.x = 320;
+lstKayitlar.y = 75;
+lstKayitlar.genislik = 410;
+lstKayitlar.yukseklik = 310;
+lstKayitlar.stil = "background:#161b22;color:#ffffff;border:1px solid #30363d;border-radius:8px;padding:8px;font-family:Consolas;font-size:11px;";
+
+// Sıralama Butonları
+Dugme btnSiralamaAd;
+btnSiralamaAd.yazi = "📋 ADA GÖRE";
+btnSiralamaAd.x = 320;
+btnSiralamaAd.y = 395;
+btnSiralamaAd.genislik = 98;
+btnSiralamaAd.yukseklik = 32;
+btnSiralamaAd.arkaplan = "#6e7681";
+btnSiralamaAd.renk = "#ffffff";
+btnSiralamaAd.stil = "font-size:10px;border-radius:6px;";
+
+Dugme btnSiralamaYas;
+btnSiralamaYas.yazi = "📊 YAŞA GÖRE";
+btnSiralamaYas.x = 424;
+btnSiralamaYas.y = 395;
+btnSiralamaYas.genislik = 98;
+btnSiralamaYas.yukseklik = 32;
+btnSiralamaYas.arkaplan = "#6e7681";
+btnSiralamaYas.renk = "#ffffff";
+btnSiralamaYas.stil = "font-size:10px;border-radius:6px;";
+
+Dugme btnSiralamaMaas;
+btnSiralamaMaas.yazi = "💰 MAAŞA GÖRE";
+btnSiralamaMaas.x = 528;
+btnSiralamaMaas.y = 395;
+btnSiralamaMaas.genislik = 100;
+btnSiralamaMaas.yukseklik = 32;
+btnSiralamaMaas.arkaplan = "#6e7681";
+btnSiralamaMaas.renk = "#ffffff";
+btnSiralamaMaas.stil = "font-size:10px;border-radius:6px;";
+
+Dugme btnSiralamaSehir;
+btnSiralamaSehir.yazi = "📍 ŞEHİRE GÖRE";
+btnSiralamaSehir.x = 634;
+btnSiralamaSehir.y = 395;
+btnSiralamaSehir.genislik = 96;
+btnSiralamaSehir.yukseklik = 32;
+btnSiralamaSehir.arkaplan = "#6e7681";
+btnSiralamaSehir.renk = "#ffffff";
+btnSiralamaSehir.stil = "font-size:10px;border-radius:6px;";
+
+// ========== İSTATİSTİK PANELİ ==========
+Etiket lblIstatistikBaslik;
+lblIstatistikBaslik.x = 320;
+lblIstatistikBaslik.y = 445;
+lblIstatistikBaslik.yazi = "📊 İSTATİSTİKLER";
+lblIstatistikBaslik.renk = "#8b949e";
+lblIstatistikBaslik.stil = "font-size:12px;font-weight:bold;text-transform:uppercase;";
+
+Etiket lblIstatistik;
+lblIstatistik.x = 320;
+lblIstatistik.y = 470;
+lblIstatistik.yazi = "Toplam: 0 kayıt | Ort. Yaş: 0 | Top. Maaş: 0 TL";
+lblIstatistik.renk = "#2ec4b6";
+lblIstatistik.stil = "font-size:12px;font-family:Consolas;";
+
+Etiket lblSecili;
+lblSecili.x = 320;
+lblSecili.y = 500;
+lblSecili.yazi = "Seçili: Yok";
+lblSecili.renk = "#f0a000";
+lblSecili.stil = "font-size:11px;";
+
+// Ses
+Ses ses;
+
+// ========== VERİTABANI FONKSİYONLARI ==========
+
+Sayi sonId = 0;
+
+Fonksiyon ekle(ad, yas, sehir, maas)
+    sonId = sonId + 1;
+    
+    Dizi yeniKayit;
+    DiziEkle(yeniKayit, sonId);
+    DiziEkle(yeniKayit, ad);
+    DiziEkle(yeniKayit, yas);
+    DiziEkle(yeniKayit, sehir);
+    DiziEkle(yeniKayit, maas);
+    
+    DiziEkle(kayitlar, yeniKayit);
+    Don sonId;
+FonksiyonBitti
+
+Fonksiyon sil(id)
+    Sayi index = -1;
+    Sayi i = 0;
+    Tekrarla DiziUzunluk(kayitlar) Kez
+        Dizi kayit = kayitlar[i];
+        Eger kayit[0] == id Ise
+            index = i;
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    Eger index >= 0 Ise
+        DiziCikar(kayitlar, index);
+        Don Dogru;
+    EgerBitti
+    Don Yanlis;
+FonksiyonBitti
+
+Fonksiyon guncelle(id, ad, yas, sehir, maas)
+    Sayi i = 0;
+    Tekrarla DiziUzunluk(kayitlar) Kez
+        Dizi kayit = kayitlar[i];
+        Eger kayit[0] == id Ise
+            kayit[1] = ad;
+            kayit[2] = yas;
+            kayit[3] = sehir;
+            kayit[4] = maas;
+            Don Dogru;
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    Don Yanlis;
+FonksiyonBitti
+
+Fonksiyon ara(aranan)
+    Dizi sonuclar;
+    DiziEkle(sonuclar, 0);
+    DiziCikar(sonuclar, 0);
+    
+    Sayi i = 0;
+    Tekrarla DiziUzunluk(kayitlar) Kez
+        Dizi kayit = kayitlar[i];
+        Eger MetinIceriyorMu(KucukHarf(kayit[1]), KucukHarf(aranan)) Veya MetinIceriyorMu(KucukHarf(kayit[3]), KucukHarf(aranan)) Ise
+            DiziEkle(sonuclar, kayit);
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    Don sonuclar;
+FonksiyonBitti
+
+Fonksiyon adaGoreSirala()
+    Dizi sirali;
+    Sayi i = 0;
+    Tekrarla DiziUzunluk(kayitlar) Kez
+        DiziEkle(sirali, kayitlar[i]);
+        i = i + 1;
+    TekrarlaBitti
+    
+    Sayi n = DiziUzunluk(sirali);
+    i = 0;
+    Tekrarla n - 1 Kez
+        Sayi j = 0;
+        Tekrarla n - i - 1 Kez
+            Dizi a = sirali[j];
+            Dizi b = sirali[j + 1];
+            Eger a[1] > b[1] Ise
+                sirali[j] = b;
+                sirali[j + 1] = a;
+            EgerBitti
+            j = j + 1;
+        TekrarlaBitti
+        i = i + 1;
+    TekrarlaBitti
+    Don sirali;
+FonksiyonBitti
+
+Fonksiyon yasaGoreSirala()
+    Dizi sirali;
+    Sayi i = 0;
+    Tekrarla DiziUzunluk(kayitlar) Kez
+        DiziEkle(sirali, kayitlar[i]);
+        i = i + 1;
+    TekrarlaBitti
+    
+    Sayi n = DiziUzunluk(sirali);
+    i = 0;
+    Tekrarla n - 1 Kez
+        Sayi j = 0;
+        Tekrarla n - i - 1 Kez
+            Dizi a = sirali[j];
+            Dizi b = sirali[j + 1];
+            Eger a[2] > b[2] Ise
+                sirali[j] = b;
+                sirali[j + 1] = a;
+            EgerBitti
+            j = j + 1;
+        TekrarlaBitti
+        i = i + 1;
+    TekrarlaBitti
+    Don sirali;
+FonksiyonBitti
+
+Fonksiyon maasaGoreSirala()
+    Dizi sirali;
+    Sayi i = 0;
+    Tekrarla DiziUzunluk(kayitlar) Kez
+        DiziEkle(sirali, kayitlar[i]);
+        i = i + 1;
+    TekrarlaBitti
+    
+    Sayi n = DiziUzunluk(sirali);
+    i = 0;
+    Tekrarla n - 1 Kez
+        Sayi j = 0;
+        Tekrarla n - i - 1 Kez
+            Dizi a = sirali[j];
+            Dizi b = sirali[j + 1];
+            Eger a[4] > b[4] Ise
+                sirali[j] = b;
+                sirali[j + 1] = a;
+            EgerBitti
+            j = j + 1;
+        TekrarlaBitti
+        i = i + 1;
+    TekrarlaBitti
+    Don sirali;
+FonksiyonBitti
+
+Fonksiyon sehireGoreSirala()
+    Dizi sirali;
+    Sayi i = 0;
+    Tekrarla DiziUzunluk(kayitlar) Kez
+        DiziEkle(sirali, kayitlar[i]);
+        i = i + 1;
+    TekrarlaBitti
+    
+    Sayi n = DiziUzunluk(sirali);
+    i = 0;
+    Tekrarla n - 1 Kez
+        Sayi j = 0;
+        Tekrarla n - i - 1 Kez
+            Dizi a = sirali[j];
+            Dizi b = sirali[j + 1];
+            Eger a[3] > b[3] Ise
+                sirali[j] = b;
+                sirali[j + 1] = a;
+            EgerBitti
+            j = j + 1;
+        TekrarlaBitti
+        i = i + 1;
+    TekrarlaBitti
+    Don sirali;
+FonksiyonBitti
+
+// ========== LİSTE YENİLEME ==========
+Fonksiyon listeYenile(liste)
+    lstKayitlar.Temizle();
+    
+    Eger DiziUzunluk(liste) == 0 Ise
+        lstKayitlar.EkleOge("(Kayıt bulunamadı)");
+        Don;
+    EgerBitti
+    
+    Sayi i = 0;
+    Tekrarla DiziUzunluk(liste) Kez
+        Dizi k = liste[i];
+        Metin satir = "ID:" + k[0] + " | " + k[1] + " | Yaş:" + k[2] + " | " + k[3] + " | " + k[4] + " TL";
+        lstKayitlar.EkleOge(satir);
+        i = i + 1;
+    TekrarlaBitti
+FonksiyonBitti
+
+// ========== İSTATİSTİK GÜNCELLEME ==========
+Fonksiyon istatistikGuncelle()
+    Sayi toplam = DiziUzunluk(kayitlar);
+    
+    Eger toplam == 0 Ise
+        lblIstatistik.yazi = "Toplam: 0 kayıt | Ort. Yaş: 0 | Top. Maaş: 0 TL";
+        Don;
+    EgerBitti
+    
+    Sayi yasToplam = 0;
+    Sayi maasToplam = 0;
+    Sayi i = 0;
+    Tekrarla toplam Kez
+        Dizi k = kayitlar[i];
+        yasToplam = yasToplam + k[2];
+        maasToplam = maasToplam + k[4];
+        i = i + 1;
+    TekrarlaBitti
+    
+    Sayi ortYas = yasToplam / toplam;
+    lblIstatistik.yazi = "Toplam: " + toplam + " kayıt | Ort. Yaş: " + Yuvarla(ortYas, 1) + " | Top. Maaş: " + maasToplam + " TL";
+FonksiyonBitti
+
+// ========== FORM TEMİZLEME ==========
+Fonksiyon formTemizle()
+    txtAd.deger = "";
+    txtYas.deger = "";
+    txtSehir.deger = "";
+    txtMaas.deger = "";
+    seciliId = -1;
+    lblSecili.yazi = "Seçili: Yok";
+FonksiyonBitti
+
+// ========== TÜMÜNÜ YENİLE ==========
+Fonksiyon tumunuYenile()
+    listeYenile(kayitlar);
+    istatistikGuncelle();
+FonksiyonBitti
+
+// ========== BAŞLANGIÇ VERİLERİ ==========
+Fonksiyon baslangicVerileri()
+    ekle("Ahmet Yilmaz", 28, "Istanbul", 25000);
+    ekle("Ayse Kaya", 32, "Ankara", 32000);
+    ekle("Mehmet Demir", 24, "Izmir", 18500);
+    ekle("Zeynep Celik", 35, "Istanbul", 45000);
+    ekle("Ali Ozturk", 29, "Bursa", 22000);
+    ekle("Fatma Sahin", 41, "Ankara", 38000);
+    ekle("Mustafa Aydin", 26, "Izmir", 19500);
+FonksiyonBitti
+
+// ========== TEMA DEĞİŞTİR ==========
+Fonksiyon temaDegistir()
+    karanlikTema = !karanlikTema;
+    
+    Eger karanlikTema == Dogru Ise
+        pen.arkaplan = "#0d1117";
+        btnTema.yazi = "🌙 KOYU TEMA";
+        lblAd.renk = "#c9d1d9";
+        lblYas.renk = "#c9d1d9";
+        lblSehir.renk = "#c9d1d9";
+        lblMaas.renk = "#c9d1d9";
+    Degilse
+        pen.arkaplan = "#f0f0f0";
+        btnTema.yazi = "☀️ AÇIK TEMA";
+        lblAd.renk = "#333333";
+        lblYas.renk = "#333333";
+        lblSehir.renk = "#333333";
+        lblMaas.renk = "#333333";
+    EgerBitti
+FonksiyonBitti
+
+// ========== LİSTEDEN SEÇİM ==========
+Fonksiyon listedenSec()
+    Metin secili = lstKayitlar.deger;
+    Eger secili == "" Veya secili == "(Kayıt bulunamadı)" Ise
+        Don;
+    EgerBitti
+    
+    // ID'yi parse et
+    Sayi idBas = MetinIndeks(secili, "ID:") + 3;
+    Sayi idBit = MetinIndeks(secili, "|");
+    Metin idStr = MetinKes(secili, idBas, idBit);
+    idStr = MetinBosYer(idStr);
+    seciliId = SayiyaKonvert(idStr);
+    
+    // Kaydı bul
+    Sayi i = 0;
+    Tekrarla DiziUzunluk(kayitlar) Kez
+        Dizi k = kayitlar[i];
+        Eger k[0] == seciliId Ise
+            txtAd.deger = k[1];
+            txtYas.deger = MetineKonvert(k[2]);
+            txtSehir.deger = k[3];
+            txtMaas.deger = MetineKonvert(k[4]);
+            lblSecili.yazi = "Seçili: ID " + seciliId + " - " + k[1];
+            Don;
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+FonksiyonBitti
+
+// ========== BUTON OLAYLARI ==========
+btnEkle.tiklaninca = Fonksiyon()
+    Eger txtAd.deger != "" Ve txtYas.deger != "" Ve txtSehir.deger != "" Ve txtMaas.deger != "" Ise
+        Sayi yas = SayiyaKonvert(txtYas.deger);
+        Sayi maas = SayiyaKonvert(txtMaas.deger);
+        Sayi yeniId = ekle(txtAd.deger, yas, txtSehir.deger, maas);
+        SesEfekti(ses, "ding");
+        formTemizle();
+        tumunuYenile();
+        Yaz("✓ Yeni kayıt eklendi - ID: " + yeniId);
+    Degilse
+        SesEfekti(ses, "alarm");
+        Yaz("⚠ Tüm alanları doldurun!");
+    EgerBitti
+FonksiyonBitti
+
+btnGuncelle.tiklaninca = Fonksiyon()
+    Eger seciliId == -1 Ise
+        SesEfekti(ses, "alarm");
+        Yaz("⚠ Lütfen listeden bir kayıt seçin!");
+        Don;
+    EgerBitti
+    
+    Eger txtAd.deger != "" Ve txtYas.deger != "" Ve txtSehir.deger != "" Ve txtMaas.deger != "" Ise
+        Sayi yas = SayiyaKonvert(txtYas.deger);
+        Sayi maas = SayiyaKonvert(txtMaas.deger);
+        guncelle(seciliId, txtAd.deger, yas, txtSehir.deger, maas);
+        SesEfekti(ses, "ding");
+        formTemizle();
+        tumunuYenile();
+        Yaz("✓ Kayıt güncellendi - ID: " + seciliId);
+    Degilse
+        SesEfekti(ses, "alarm");
+        Yaz("⚠ Tüm alanları doldurun!");
+    EgerBitti
+FonksiyonBitti
+
+btnSil.tiklaninca = Fonksiyon()
+    Eger seciliId == -1 Ise
+        SesEfekti(ses, "alarm");
+        Yaz("⚠ Lütfen listeden bir kayıt seçin!");
+        Don;
+    EgerBitti
+    
+    sil(seciliId);
+    SesEfekti(ses, "bip");
+    formTemizle();
+    tumunuYenile();
+    Yaz("🗑️ Kayıt silindi - ID: " + seciliId);
+FonksiyonBitti
+
+btnTemizle.tiklaninca = Fonksiyon()
+    formTemizle();
+    SesEfekti(ses, "bip");
+FonksiyonBitti
+
+btnAra.tiklaninca = Fonksiyon()
+    Eger txtArama.deger != "" Ise
+        Dizi sonuclar = ara(txtArama.deger);
+        listeYenile(sonuclar);
+        Yaz("🔍 Arama sonucu: " + DiziUzunluk(sonuclar) + " kayıt bulundu");
+    Degilse
+        tumunuYenile();
+    EgerBitti
+FonksiyonBitti
+
+btnYenile.tiklaninca = Fonksiyon()
+    tumunuYenile();
+    txtArama.deger = "";
+    SesEfekti(ses, "bip");
+    Yaz("🔄 Liste yenilendi");
+FonksiyonBitti
+
+btnTema.tiklaninca = Fonksiyon()
+    temaDegistir();
+    SesEfekti(ses, "bip");
+FonksiyonBitti
+
+btnSiralamaAd.tiklaninca = Fonksiyon()
+    Dizi sirali = adaGoreSirala();
+    listeYenile(sirali);
+    SesEfekti(ses, "bip");
+    Yaz("📋 Ada göre sıralandı");
+FonksiyonBitti
+
+btnSiralamaYas.tiklaninca = Fonksiyon()
+    Dizi sirali = yasaGoreSirala();
+    listeYenile(sirali);
+    SesEfekti(ses, "bip");
+    Yaz("📊 Yaşa göre sıralandı");
+FonksiyonBitti
+
+btnSiralamaMaas.tiklaninca = Fonksiyon()
+    Dizi sirali = maasaGoreSirala();
+    listeYenile(sirali);
+    SesEfekti(ses, "bip");
+    Yaz("💰 Maaşa göre sıralandı");
+FonksiyonBitti
+
+btnSiralamaSehir.tiklaninca = Fonksiyon()
+    Dizi sirali = sehireGoreSirala();
+    listeYenile(sirali);
+    SesEfekti(ses, "bip");
+    Yaz("📍 Şehire göre sıralandı");
+FonksiyonBitti
+
+lstKayitlar.degisince = Fonksiyon()
+    listedenSec();
+FonksiyonBitti
+
+// ========== PENCEREYE EKLE ==========
+pen.Ekle(lblBaslik);
+pen.Ekle(lblFormBaslik);
+pen.Ekle(lblAd);
+pen.Ekle(txtAd);
+pen.Ekle(lblYas);
+pen.Ekle(txtYas);
+pen.Ekle(lblSehir);
+pen.Ekle(txtSehir);
+pen.Ekle(lblMaas);
+pen.Ekle(txtMaas);
+pen.Ekle(btnEkle);
+pen.Ekle(btnGuncelle);
+pen.Ekle(btnSil);
+pen.Ekle(btnTemizle);
+pen.Ekle(lblArama);
+pen.Ekle(txtArama);
+pen.Ekle(btnAra);
+pen.Ekle(btnYenile);
+pen.Ekle(btnTema);
+pen.Ekle(lblListeBaslik);
+pen.Ekle(lstKayitlar);
+pen.Ekle(btnSiralamaAd);
+pen.Ekle(btnSiralamaYas);
+pen.Ekle(btnSiralamaMaas);
+pen.Ekle(btnSiralamaSehir);
+pen.Ekle(lblIstatistikBaslik);
+pen.Ekle(lblIstatistik);
+pen.Ekle(lblSecili);
+
+pen.Goster();
+
+// Başlangıç verilerini yükle
+baslangicVerileri();
+tumunuYenile();
+
+Yaz("🗄️ PREMIUM VERİTABANI YÖNETİMİ BAŞLATILDI!");
+Yaz("✅ Ekle, Sil, Güncelle, Ara, Filtrele, Sırala!");
+Yaz("📊 İstatistikler anlık güncellenir!");
