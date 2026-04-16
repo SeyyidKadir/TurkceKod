@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TürkçeKod - Anahtar Kelimeler Sözlüğü</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        h1 {
+            color: #e63946;
+            border-bottom: 2px solid #e63946;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #f4a261;
+            margin-top: 30px;
+            border-left: 4px solid #f4a261;
+            padding-left: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: #16213e;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th {
+            background: #0f3460;
+            color: #e63946;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #0f3460;
+        }
+        td:first-child {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #2ec4b6;
+            white-space: nowrap;
+        }
+        td:nth-child(2) {
+            color: #ccc;
+        }
+        td:last-child {
+            font-family: 'Courier New', monospace;
+            color: #a78bfa;
+        }
+        code {
+            background: #0f3460;
+            padding: 15px;
+            display: block;
+            border-radius: 8px;
+            color: #2ec4b6;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .note {
+            background: #0f3460;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #f4a261;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🇹🇷 TürkçeKod Anahtar Kelimeler (Keyword) Sözlüğü</h1>
+<p style="color: #aaa;">Basit ve sade örneklerle tüm komutlar.</p>
+
+<!-- ========================================== -->
+<h2>⌨️ GİRDİ / ÇIKTI</h2>
+<table>
+    <tr><th>Komut</th><th>Açıklama</th><th>Örnek</th></tr>
+    <tr><td>Yaz()</td><td>Konsola yazdırır</td><td>Yaz("Merhaba");</td></tr>
+    <tr><td>Oku()</td><td>Kullanıcıdan girdi alır</td><td>Metin ad = Oku("Adın?");</td></tr>
+    <tr><td>Mesaj()</td><td>Popup mesaj kutusu</td><td>Mesaj("Tamam!");</td></tr>
+    <tr><td>Onayla()</td><td>Evet/Hayır popup'u</td><td>Onayla("Emin misin?");</td></tr>
+</table>
+
+<!-- ========================================== -->
+<h2>📦 DEĞİŞKEN TANIMLAMA</h2>
+<table>
+    <tr><th>Komut</th><th>Açıklama</th><th>Örnek</th></tr>
+    <tr><td>Sayi</td><td>Tam sayı</td><td>Sayi x = 10;</td></tr>
+    <tr><td>Ondalik</td><td>Ondalıklı sayı</td><td>Ondalik pi = 3.14;</td></tr>
+    <tr><td>Metin</td><td>Yazı (string)</td><td>Metin isim = "Ali";</td></tr>
+    <tr><td>Mantiksal</td><td>Doğru/Yanlış</td><td>Mantiksal ok = Dogru;</td></tr>
+    <tr><td>Dizi</td><td>Liste / Array</td><td>Dizi sayilar = [1, 2, 3];</td></tr>
+    <tr><td>Varyant</td><td>Her tür değer</td><td>Varyant v = 42; v = "Ali";</td></tr>
+</table>
+
+<!-- ========================================== -->
+<h2>🔀 KOŞUL İFADELERİ</h2>
+<table>
+    <tr><th>Komut</th><th>Açıklama</th><th>Örnek</th></tr>
+    <tr><td>Eger</td><td>Koşul başlangıcı</td><td>Eger x > 5 Ise</td></tr>
+    <tr><td>Ise</td><td>Koşul sonu, kod başı</td><td>Eger x > 5 Ise</td></tr>
+    <tr><td>Degilse</td><td>Alternatif dal</td><td>Degilse</td></tr>
+    <tr><td>EgerBitti</td><td>Koşul bloğu sonu</td><td>EgerBitti</td></tr>
+</table>
+<code>Eger x > 5 Ise
+    Yaz("Büyük");
+Degilse
+    Yaz("Küçük");
+EgerBitti</code>
+
+<!-- ========================================== -->
+<h2>🔁 DÖNGÜLER</h2>
+<table>
+    <tr><th>Komut</th><th>Açıklama</th><th>Örnek</th></tr>
+    <tr><td>Dongu</td><td>For döngüsü</td><td>Dongu i = 1 To 10 Adim 1</td></tr>
+    <tr><td>To</td><td>Bitiş değeri</td><td>Dongu i = 0 To 9</td></tr>
+    <tr><td>Adim</td><td>Artış miktarı</td><td>Adim 2</td></tr>
+    <tr><td>DonguBitti</td><td>Döngü sonu</td><td>DonguBitti</td></tr>
+    <tr><td>Tekrarla</td><td>N kez tekrar</td><td>Tekrarla 5 Kez</td></tr>
+    <tr><td>Kez</td><td>Tekrar sayısı</td><td>Tekrarla 5 Kez</td></tr>
+    <tr><td>TekrarlaBitti</td><td>Tekrar sonu</td><td>TekrarlaBitti</td></tr>
+    <tr><td>Suresince</td><td>While döngüsü</td><td>Suresince x < 10 Ise</td></tr>
+    <tr><td>SuresinceBitti</td><td>While sonu</td><td>SuresinceBitti</td></tr>
+    <tr><td>Kes</td><td>Döngüden çık</td><td>Kes;</td></tr>
+    <tr><td>Devam</td><td>Sonraki adıma geç</td><td>Devam;</td></tr>
+</table>
+<code>Dongu i = 1 To 5 Adim 1
+    Yaz(i);
+DonguBitti
+
+Tekrarla 3 Kez
+    Yaz("Merhaba");
+TekrarlaBitti
+
+Suresince sayac < 5 Ise
+    sayac = sayac + 1;
+SuresinceBitti</code>
+
+<!-- ========================================== -->
+<h2>🔧 FONKSİYONLAR</h2>
+<table>
+    <tr><th>Komut</th><th>Açıklama</th><th>Örnek</th></tr>
+    <tr><td>Fonksiyon</td><td>Fonksiyon tanımı</td><td>Fonksiyon topla(a, b)</td></tr>
+    <tr><td>Don</td><td>Değer döndür</td><td>Don a + b;</td></tr>
+    <tr><td>FonksiyonBitti</td><td>Fonksiyon sonu</td><td>FonksiyonBitti</td></tr>
+</table>
+<code>Fonksiyon kareAl(x)
+    Don x * x;
+FonksiyonBitti
+
+Sayi sonuc = kareAl(5);  // 25</code>
+
+<!-- ========================================== -->
+<h2>🏛️ SINIFLAR (OOP)</h2>
+<table>
+    <tr><th>Komut</th><th>Açıklama</th><th>Örnek</th></tr>
+    <tr><td>Sinif</td><td>Sınıf tanımı</td><td>Sinif Araba</td></tr>
+    <tr><td>bu</td><td>Sınıfın kendisi</td><td>bu.hiz</td></tr>
+    <tr><td>SinifBitti</td><td>Sınıf sonu</td><td>SinifBitti</td></tr>
+</table>
+<code>Sinif Araba
+    Metin marka;
+    Sayi hiz;
+    
+    Fonksiyon hizlan(m)
+        bu.hiz = bu.hiz + m;
+    FonksiyonBitti
+SinifBitti
+
+Araba bmw;
+bmw.marka = "BMW";
+bmw.hizlan(50);</code>
+
+<!-- ========================================== -->
+<h2>🎯 SWITCH / DURUM</h2>
+<table>
+    <tr><th>Komut</th><th>Açıklama</th><th>Örnek</th></tr>
+    <tr><td>Durum</td><td>Switch başlangıcı</td><td>Durum x</td></tr>
+    <tr><td>Diger</td><td>Default case</td><td>Diger:</td></tr>
+    <tr><td>DurumBitti</td><td>Switch sonu</td><td>DurumBitti</td></tr>
+</table>
+<code>Durum renk
+    Durum 1:
+        Yaz("Kırmızı");
+        Kes;
+    Diger:
+        Yaz("Diğer");
+DurumBitti</code>
+
+<!-- ========================================== -->
+<h2>🛡️ HATA YAKALAMA</h2>
+<table>
+    <tr><th>Komut</th><th>Açıklama</th><th>Örnek</th></tr>
+    <tr><td>Dene</td><td>Try bloğu</td><td>Dene</td></tr>
+    <tr><td>Yakala</td><td>Catch bloğu</td><td>Yakala hata</td></tr>
+    <tr><td>DeneBitti</td><td>Try-Catch sonu</td><td>DeneBitti</td></tr>
+</table>
+<code>Dene
+    Sayi x = 10 / 0;
+Yakala hata
+    Yaz("Hata: " + hata);
+DeneBitti</code>
+
+<!-- ========================================== -->
+<h2>⚡ MANTIKSAL OPERATÖRLER</h2>
+<table>
+    <tr><th>Operatör</th><th>Açıklama</th><th>Örnek</th></tr>
+    <tr><td>Ve</td><td>Mantıksal VE</td><td>x > 5 Ve y < 10</td></tr>
+    <tr><td>Veya</td><td>Mantıksal VEYA</td><td>x > 5 Veya y < 10</td></tr>
+    <tr><td>Degil</td><td>Mantıksal DEĞİL</td><td>Degil(x > 5)</td></tr>
+    <tr><td>Dogru</td><td>Boolean true</td><td>Mantiksal m = Dogru;</td></tr>
+    <tr><td>Yanlis</td><td>Boolean false</td><td>Mantiksal m = Yanlis;</td></tr>
+</table>
+
+<!-- ========================================== -->
+<h2>🪟 GUI BİLEŞENLERİ</h2>
+<table>
+    <tr><th>Komut</th><th>Açıklama</th><th>Örnek</th></tr>
+    <tr><td>Pencere</td><td>Ana pencere</td><td>Pencere pen;</td></tr>
+    <tr><td>Dugme</td><td>Buton</td><td>Dugme btn;</td></tr>
+    <tr><td>Etiket</td><td>Yazı etiketi</td><td>Etiket lbl;</td></tr>
+    <tr><td>GirisSatiri</td><td>Input box</td><td>GirisSatiri gs;</td></tr>
+    <tr><td>CokluMetin</td><td>Textarea</td><td>CokluMetin cm;</td></tr>
+    <tr><td>Kanvas</td><td>Çizim alanı</td><td>Kanvas kv;</td></tr>
+    <tr><td>Zamanlayici</td><td>Timer</td><td>Zamanlayici zm;</td></tr>
+    <tr><td>Ses</td><td>Ses çalar</td><td>Ses s;</td></tr>
+    <tr><td>OnayKutusu</td><td>Checkbox</td><td>OnayKutusu chk;</td></tr>
+    <tr><td>Liste</td><td>Select</td><td>Liste lst;</td></tr>
+    <tr><td>IlerlemeCubuqu</td><td>Progress bar</td><td>IlerlemeCubuqu pb;</td></tr>
+</table>
+<code>Pencere pen;
+pen.baslik = "Uygulama";
+pen.genislik = 400;
+pen.Goster();</code>
+
+<!-- ========================================== -->
+<div class="note">
+    <strong>📌 Not:</strong> Bu döküman TürkçeKod v10 için hazırlanmıştır. 
+    Tüm komutlar birebir çalışan örneklerdir.
+</div>
+
+<p style="text-align: center; color: #666; margin-top: 30px;">
+    © 2026 TürkçeKod - AcizBirKul (Kadir Çakmak)
+</p>
+
+</body>
+</html>
