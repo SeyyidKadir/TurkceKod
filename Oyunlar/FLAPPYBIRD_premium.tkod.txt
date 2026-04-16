@@ -1,0 +1,370 @@
+// 🐦 PREMIUM FLAPPY BIRD - Şık Tasarım + Ses Efektleri
+// TürkçeKod v10 ile yazılmıştır
+
+Pencere pen;
+pen.baslik = "🐦 PREMIUM FLAPPY BIRD";
+pen.genislik = 450;
+pen.yukseklik = 600;
+pen.arkaplan = "#0d1117";
+
+// Ana oyun alanı
+Kanvas kv;
+kv.x = 20;
+kv.y = 50;
+kv.genislik = 280;
+kv.yukseklik = 400;
+kv.arkaplan = "#87CEEB";
+
+// Kuş
+Sayi kusX = 80;
+Sayi kusY = 200;
+Sayi kusR = 12;
+Ondalik kusVY = 0;
+Ondalik yercekimi = 0.4;
+Sayi ziplamaGucu = -6;
+
+// Borular
+Dizi boruX = [350, 500, 650];
+Dizi boruY = [150, 100, 200];
+Dizi boruBosluk = [120, 130, 110];
+Sayi boruGen = 45;
+Sayi boruHiz = 2;
+
+Sayi skor = 0;
+Sayi enYuksekSkor = 0;
+Mantiksal oyunAktif = Yanlis;
+Mantiksal oyunBitti = Yanlis;
+Mantiksal sesAcik = Dogru;
+Sayi gecenBoru = 0;
+
+Ses ses;
+Ses sesEfekt;
+
+// Sağ panel
+Kanvas panelKv;
+panelKv.x = 315;
+panelKv.y = 50;
+panelKv.genislik = 115;
+panelKv.yukseklik = 550;
+panelKv.arkaplan = "#161b22";
+
+// Butonlar
+Dugme btnZipla;
+btnZipla.yazi = "⬆️ ZIPLA";
+btnZipla.x = 20;
+btnZipla.y = 470;
+btnZipla.genislik = 130;
+btnZipla.yukseklik = 45;
+btnZipla.arkaplan = "#2ea043";
+btnZipla.renk = "#ffffff";
+btnZipla.stil = "font-size:16px;font-weight:bold;border-radius:8px;";
+
+Dugme btnBaslat;
+btnBaslat.yazi = "▶ BAŞLAT";
+btnBaslat.x = 160;
+btnBaslat.y = 470;
+btnBaslat.genislik = 130;
+btnBaslat.yukseklik = 45;
+btnBaslat.arkaplan = "#1f6feb";
+btnBaslat.renk = "#ffffff";
+btnBaslat.stil = "font-size:13px;font-weight:bold;border-radius:8px;";
+
+Dugme btnDurdur;
+btnDurdur.yazi = "⏸ DURDUR";
+btnDurdur.x = 20;
+btnDurdur.y = 525;
+btnDurdur.genislik = 130;
+btnDurdur.yukseklik = 40;
+btnDurdur.arkaplan = "#6e7681";
+btnDurdur.renk = "#ffffff";
+btnDurdur.stil = "font-size:11px;font-weight:bold;border-radius:8px;";
+
+Dugme btnSes;
+btnSes.yazi = "🔊";
+btnSes.x = 160;
+btnSes.y = 525;
+btnSes.genislik = 60;
+btnSes.yukseklik = 40;
+btnSes.arkaplan = "#f0a000";
+btnSes.renk = "#ffffff";
+btnSes.stil = "font-size:16px;font-weight:bold;border-radius:8px;";
+
+Dugme btnYeniden;
+btnYeniden.yazi = "🔄 YENİDEN";
+btnYeniden.x = 230;
+btnYeniden.y = 525;
+btnYeniden.genislik = 60;
+btnYeniden.yukseklik = 40;
+btnYeniden.arkaplan = "#da3633";
+btnYeniden.renk = "#ffffff";
+btnYeniden.stil = "font-size:11px;font-weight:bold;border-radius:8px;";
+btnYeniden.gorunum = Yanlis;
+
+Zamanlayici zm;
+zm.aralik = 20;
+
+// ========== PANEL ÇİZİM ==========
+Fonksiyon panelCiz()
+    KanvasArkaplan(panelKv, "#161b22");
+    
+    KanvasMetin(panelKv, "FLAPPY", 22, 25, "#f0f000", "bold 14px Segoe UI");
+    KanvasCizgi(panelKv, 5, 35, 110, 35, "#30363d", 1);
+    
+    KanvasMetin(panelKv, "SKOR", 10, 55, "#8b949e", "bold 9px Segoe UI");
+    KanvasMetin(panelKv, MetineKonvert(skor), 10, 70, "#f0f000", "bold 18px Segoe UI");
+    
+    KanvasMetin(panelKv, "EN YÜKSEK", 10, 105, "#8b949e", "bold 9px Segoe UI");
+    KanvasMetin(panelKv, MetineKonvert(enYuksekSkor), 10, 120, "#00f0f0", "bold 16px Segoe UI");
+    
+    KanvasCizgi(panelKv, 5, 145, 110, 145, "#30363d", 1);
+    
+    Eger oyunAktif == Yanlis Ise
+        Eger oyunBitti == Dogru Ise
+            KanvasMetin(panelKv, "OYUN BİTTİ!", 12, 170, "#f00000", "bold 10px Segoe UI");
+        Degilse
+            KanvasMetin(panelKv, "BAŞLAT", 25, 170, "#00f000", "bold 10px Segoe UI");
+        EgerBitti
+    Degilse
+        KanvasMetin(panelKv, "OYNANIYOR", 18, 170, "#00f000", "bold 10px Segoe UI");
+    EgerBitti
+FonksiyonBitti
+
+// ========== SES EFEKTLERİ ==========
+Fonksiyon sesCal(efekt)
+    Eger sesAcik == Dogru Ise
+        SesEfekti(ses, efekt);
+    EgerBitti
+FonksiyonBitti
+
+// ========== OYUNU SIFIRLA ==========
+Fonksiyon oyunuSifirla()
+    kusY = 200;
+    kusVY = 0;
+    boruX = [350, 500, 650];
+    boruY = [150, 100, 200];
+    skor = 0;
+    gecenBoru = 0;
+    oyunBitti = Yanlis;
+FonksiyonBitti
+
+// ========== ÇİZİM ==========
+Fonksiyon ciz()
+    KanvasTemizle(kv);
+    KanvasArkaplan(kv, "#87CEEB");
+    
+    // Bulutlar
+    KanvasDaire(kv, 50, 50, 20, "#ffffff");
+    KanvasDaire(kv, 70, 45, 18, "#ffffff");
+    KanvasDaire(kv, 35, 45, 15, "#ffffff");
+    
+    KanvasDaire(kv, 200, 80, 15, "#ffffff");
+    KanvasDaire(kv, 215, 75, 13, "#ffffff");
+    
+    // Borular
+    Sayi i = 0;
+    Tekrarla 3 Kez
+        // Üst boru
+        KanvasDikdortgen(kv, boruX[i], 0, boruGen, boruY[i], "#228B22");
+        KanvasDikdortgen(kv, boruX[i] - 3, boruY[i] - 20, boruGen + 6, 20, "#2ea043");
+        KanvasDikdortgen(kv, boruX[i] - 2, boruY[i] - 5, boruGen + 4, 8, "#1a6b1a");
+        
+        // Alt boru
+        Sayi altY = boruY[i] + boruBosluk[i];
+        KanvasDikdortgen(kv, boruX[i], altY, boruGen, 400 - altY, "#228B22");
+        KanvasDikdortgen(kv, boruX[i] - 3, altY, boruGen + 6, 20, "#2ea043");
+        KanvasDikdortgen(kv, boruX[i] - 2, altY - 3, boruGen + 4, 8, "#1a6b1a");
+        
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Zemin
+    KanvasDikdortgen(kv, 0, 390, 280, 10, "#8B4513");
+    KanvasDikdortgen(kv, 0, 385, 280, 5, "#228B22");
+    
+    // Kuş
+    KanvasDaire(kv, kusX, kusY, kusR, "#f0f000");
+    KanvasDaire(kv, kusX + 5, kusY - 5, 5, "#ff6600");
+    
+    // Göz
+    KanvasDaire(kv, kusX + 8, kusY - 6, 3, "#ffffff");
+    KanvasDaire(kv, kusX + 9, kusY - 7, 1.5, "#000000");
+    
+    // Kanat
+    Eger kusVY < 0 Ise
+        KanvasDaire(kv, kusX - 5, kusY - 2, 6, "#ffcc00");
+    Degilse
+        KanvasDaire(kv, kusX - 8, kusY + 2, 5, "#ffcc00");
+    EgerBitti
+    
+    panelCiz();
+FonksiyonBitti
+
+// ========== ÇARPIŞMA KONTROL ==========
+Fonksiyon carpismaKontrol()
+    // Zemin ve tavan
+    Eger kusY + kusR >= 390 Ise
+        oyunBitti = Dogru;
+        oyunAktif = Yanlis;
+        zm.Durdur();
+        sesCal("alarm");
+        btnYeniden.gorunum = Dogru;
+        btnBaslat.gorunum = Yanlis;
+        btnDurdur.gorunum = Yanlis;
+        Don;
+    EgerBitti
+    
+    Eger kusY - kusR <= 0 Ise
+        kusY = kusR;
+        kusVY = 0;
+    EgerBitti
+    
+    // Borular
+    Sayi i = 0;
+    Tekrarla 3 Kez
+        Sayi altY = boruY[i] + boruBosluk[i];
+        
+        // Kuş boru aralığında mı?
+        Eger kusX + kusR > boruX[i] Ve kusX - kusR < boruX[i] + boruGen Ise
+            // Üst boruya çarpma
+            Eger kusY - kusR < boruY[i] Ise
+                oyunBitti = Dogru;
+                oyunAktif = Yanlis;
+                zm.Durdur();
+                sesCal("alarm");
+                btnYeniden.gorunum = Dogru;
+                btnBaslat.gorunum = Yanlis;
+                btnDurdur.gorunum = Yanlis;
+            EgerBitti
+            
+            // Alt boruya çarpma
+            Eger kusY + kusR > altY Ise
+                oyunBitti = Dogru;
+                oyunAktif = Yanlis;
+                zm.Durdur();
+                sesCal("alarm");
+                btnYeniden.gorunum = Dogru;
+                btnBaslat.gorunum = Yanlis;
+                btnDurdur.gorunum = Yanlis;
+            EgerBitti
+        EgerBitti
+        
+        // Skor (boruyu geçme)
+        Eger boruX[i] + boruGen < kusX Ve boruX[i] + boruGen > kusX - 10 Ise
+            skor = skor + 1;
+            sesCal("ding");
+            Eger skor > enYuksekSkor Ise
+                enYuksekSkor = skor;
+            EgerBitti
+        EgerBitti
+        
+        i = i + 1;
+    TekrarlaBitti
+FonksiyonBitti
+
+// ========== BORULARI GÜNCELLE ==========
+Fonksiyon borulariGuncelle()
+    Sayi i = 0;
+    Tekrarla 3 Kez
+        boruX[i] = boruX[i] - boruHiz;
+        
+        Eger boruX[i] < -boruGen Ise
+            boruX[i] = 350;
+            boruY[i] = Rastgele(80, 200);
+            boruBosluk[i] = Rastgele(100, 140);
+        EgerBitti
+        
+        i = i + 1;
+    TekrarlaBitti
+FonksiyonBitti
+
+// ========== HAREKET ==========
+Fonksiyon hareket()
+    Eger oyunAktif == Yanlis Ise Don; EgerBitti
+    
+    // Kuş fiziği
+    kusVY = kusVY + yercekimi;
+    kusY = kusY + kusVY;
+    
+    borulariGuncelle();
+    carpismaKontrol();
+    
+    Eger oyunBitti == Dogru Ise
+        Eger skor > enYuksekSkor Ise
+            enYuksekSkor = skor;
+        EgerBitti
+    EgerBitti
+    
+    ciz();
+FonksiyonBitti
+
+// ========== ZIPLAMA ==========
+Fonksiyon zipla()
+    Eger oyunAktif == Dogru Ise
+        kusVY = ziplamaGucu;
+        sesCal("bip");
+    EgerBitti
+FonksiyonBitti
+
+// ========== OYUN KONTROL ==========
+Fonksiyon oyunuBaslat()
+    oyunuSifirla();
+    oyunAktif = Dogru;
+    btnYeniden.gorunum = Yanlis;
+    btnBaslat.gorunum = Yanlis;
+    btnDurdur.gorunum = Dogru;
+    
+    ciz();
+    zm.Baslat();
+FonksiyonBitti
+
+Fonksiyon oyunuDurdur()
+    oyunAktif = Yanlis;
+    zm.Durdur();
+    btnBaslat.gorunum = Dogru;
+    btnDurdur.gorunum = Yanlis;
+    panelCiz();
+FonksiyonBitti
+
+Fonksiyon yenidenBaslat()
+    oyunAktif = Yanlis;
+    zm.Durdur();
+    oyunuBaslat();
+FonksiyonBitti
+
+Fonksiyon sesToggle()
+    sesAcik = !sesAcik;
+    Eger sesAcik == Dogru Ise
+        btnSes.yazi = "🔊";
+    Degilse
+        btnSes.yazi = "🔇";
+    EgerBitti
+FonksiyonBitti
+
+// ========== BAĞLANTILAR ==========
+zm.her_tikta = Fonksiyon()
+    Eger oyunAktif == Dogru Ise
+        hareket();
+    EgerBitti
+FonksiyonBitti
+
+btnZipla.tiklaninca = zipla;
+btnBaslat.tiklaninca = oyunuBaslat;
+btnDurdur.tiklaninca = oyunuDurdur;
+btnYeniden.tiklaninca = yenidenBaslat;
+btnSes.tiklaninca = sesToggle;
+
+pen.Ekle(kv);
+pen.Ekle(panelKv);
+pen.Ekle(btnZipla);
+pen.Ekle(btnBaslat);
+pen.Ekle(btnDurdur);
+pen.Ekle(btnSes);
+pen.Ekle(btnYeniden);
+
+pen.Goster();
+
+ciz();
+
+Yaz("🐦 PREMIUM FLAPPY BIRD HAZIR!");
+Yaz("▶ BAŞLAT ile oyuna başla!");
+Yaz("⬆️ ZIPLA veya SPACE tuşu ile zıpla!");
