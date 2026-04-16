@@ -1,0 +1,517 @@
+// 🍄 PREMIUM MARIO - Platform Oyunu
+// TürkçeKod v10 ile yazılmıştır
+
+Pencere pen;
+pen.baslik = "🍄 PREMIUM MARIO";
+pen.genislik = 650;
+pen.yukseklik = 500;
+pen.arkaplan = "#0d1117";
+
+// Ana oyun alanı
+Kanvas kv;
+kv.x = 20;
+kv.y = 50;
+kv.genislik = 450;
+kv.yukseklik = 300;
+kv.arkaplan = "#87CEEB";
+
+// Mario
+Sayi marioX = 50;
+Sayi marioY = 240;
+Sayi marioGen = 25;
+Sayi marioYuk = 30;
+Ondalik marioVY = 0;
+Mantiksal marioYerde = Dogru;
+Sayi yon = 1;
+
+// Platformlar
+Dizi platX = [0, 120, 250, 350];
+Dizi platY = [270, 210, 160, 200];
+Dizi platGen = [450, 100, 120, 80];
+Dizi platYuk = [15, 12, 12, 12];
+
+// Düşmanlar (Goomba)
+Dizi dusmanX = [180, 320];
+Dizi dusmanY = [243, 143];
+Dizi dusmanYon = [1, -1];
+Dizi dusmanAktif = [1, 1];
+Sayi dusmanGen = 22;
+Sayi dusmanYuk = 22;
+
+// Mantarlar
+Dizi mantarX = [150, 280];
+Dizi mantarY = [243, 143];
+Dizi mantarAktif = [1, 1];
+Sayi mantarR = 12;
+
+Sayi skor = 0;
+Sayi can = 3;
+Sayi enYuksekSkor = 0;
+Mantiksal oyunAktif = Yanlis;
+Mantiksal oyunBitti = Yanlis;
+Mantiksal sesAcik = Dogru;
+
+Ses ses;
+Ses sesEfekt;
+
+// Kamera
+Sayi kameraX = 0;
+
+// Sağ panel
+Kanvas panelKv;
+panelKv.x = 485;
+panelKv.y = 50;
+panelKv.genislik = 145;
+panelKv.yukseklik = 450;
+panelKv.arkaplan = "#161b22";
+
+// Butonlar
+Dugme btnSol;
+btnSol.yazi = "◀";
+btnSol.x = 20;
+btnSol.y = 370;
+btnSol.genislik = 50;
+btnSol.yukseklik = 45;
+btnSol.arkaplan = "#1f6feb";
+btnSol.renk = "#ffffff";
+btnSol.stil = "font-size:20px;font-weight:bold;border-radius:8px;";
+
+Dugme btnSag;
+btnSag.yazi = "▶";
+btnSag.x = 80;
+btnSag.y = 370;
+btnSag.genislik = 50;
+btnSag.yukseklik = 45;
+btnSag.arkaplan = "#1f6feb";
+btnSag.renk = "#ffffff";
+btnSag.stil = "font-size:20px;font-weight:bold;border-radius:8px;";
+
+Dugme btnZipla;
+btnZipla.yazi = "⬆️ ZIPLA";
+btnZipla.x = 140;
+btnZipla.y = 370;
+btnZipla.genislik = 90;
+btnZipla.yukseklik = 45;
+btnZipla.arkaplan = "#2ea043";
+btnZipla.renk = "#ffffff";
+btnZipla.stil = "font-size:13px;font-weight:bold;border-radius:8px;";
+
+Dugme btnBaslat;
+btnBaslat.yazi = "▶ BAŞLAT";
+btnBaslat.x = 240;
+btnBaslat.y = 370;
+btnBaslat.genislik = 80;
+btnBaslat.yukseklik = 45;
+btnBaslat.arkaplan = "#2ea043";
+btnBaslat.renk = "#ffffff";
+btnBaslat.stil = "font-size:13px;font-weight:bold;border-radius:8px;";
+
+Dugme btnDurdur;
+btnDurdur.yazi = "⏸ DURDUR";
+btnDurdur.x = 330;
+btnDurdur.y = 370;
+btnDurdur.genislik = 70;
+btnDurdur.yukseklik = 45;
+btnDurdur.arkaplan = "#6e7681";
+btnDurdur.renk = "#ffffff";
+btnDurdur.stil = "font-size:11px;font-weight:bold;border-radius:8px;";
+
+Dugme btnSes;
+btnSes.yazi = "🔊";
+btnSes.x = 20;
+btnSes.y = 425;
+btnSes.genislik = 50;
+btnSes.yukseklik = 40;
+btnSes.arkaplan = "#f0a000";
+btnSes.renk = "#ffffff";
+btnSes.stil = "font-size:16px;font-weight:bold;border-radius:8px;";
+
+Dugme btnYeniden;
+btnYeniden.yazi = "🔄 YENİDEN";
+btnYeniden.x = 80;
+btnYeniden.y = 425;
+btnYeniden.genislik = 320;
+btnYeniden.yukseklik = 40;
+btnYeniden.arkaplan = "#da3633";
+btnYeniden.renk = "#ffffff";
+btnYeniden.stil = "font-size:12px;font-weight:bold;border-radius:8px;";
+btnYeniden.gorunum = Yanlis;
+
+Zamanlayici zm;
+zm.aralik = 20;
+
+// ========== PANEL ÇİZİM ==========
+Fonksiyon panelCiz()
+    KanvasArkaplan(panelKv, "#161b22");
+    
+    KanvasMetin(panelKv, "MARIO", 35, 25, "#e63946", "bold 16px Segoe UI");
+    KanvasCizgi(panelKv, 5, 35, 140, 35, "#30363d", 1);
+    
+    KanvasMetin(panelKv, "SKOR", 10, 55, "#8b949e", "bold 9px Segoe UI");
+    KanvasMetin(panelKv, MetineKonvert(skor), 10, 70, "#f0f000", "bold 18px Segoe UI");
+    
+    KanvasMetin(panelKv, "CAN", 10, 105, "#8b949e", "bold 9px Segoe UI");
+    Sayi i = 0;
+    Tekrarla can Kez
+        KanvasDikdortgen(panelKv, 10 + i * 22, 115, 16, 14, "#e63946");
+        i = i + 1;
+    TekrarlaBitti
+    
+    KanvasMetin(panelKv, "EN YÜKSEK", 10, 150, "#8b949e", "bold 9px Segoe UI");
+    KanvasMetin(panelKv, MetineKonvert(enYuksekSkor), 10, 165, "#00f0f0", "bold 16px Segoe UI");
+    
+    KanvasCizgi(panelKv, 5, 195, 140, 195, "#30363d", 1);
+    
+    Eger oyunAktif == Yanlis Ise
+        Eger oyunBitti == Dogru Ise
+            KanvasMetin(panelKv, "OYUN BİTTİ!", 18, 220, "#f00000", "bold 11px Segoe UI");
+        Degilse
+            KanvasMetin(panelKv, "BAŞLAT", 35, 220, "#00f000", "bold 11px Segoe UI");
+        EgerBitti
+    Degilse
+        KanvasMetin(panelKv, "OYNANIYOR", 25, 220, "#00f000", "bold 10px Segoe UI");
+    EgerBitti
+FonksiyonBitti
+
+// ========== SES EFEKTLERİ ==========
+Fonksiyon sesCal(efekt)
+    Eger sesAcik == Dogru Ise
+        SesEfekti(ses, efekt);
+    EgerBitti
+FonksiyonBitti
+
+// ========== OYUNU SIFIRLA ==========
+Fonksiyon oyunuSifirla()
+    marioX = 50;
+    marioY = 240;
+    marioVY = 0;
+    marioYerde = Dogru;
+    kameraX = 0;
+    
+    dusmanX = [180, 320];
+    dusmanY = [243, 143];
+    dusmanYon = [1, -1];
+    dusmanAktif = [1, 1];
+    
+    mantarAktif = [1, 1];
+    
+    skor = 0;
+    can = 3;
+    oyunBitti = Yanlis;
+FonksiyonBitti
+
+// ========== ÇİZİM ==========
+Fonksiyon ciz()
+    KanvasTemizle(kv);
+    KanvasArkaplan(kv, "#87CEEB");
+    
+    // Bulutlar
+    KanvasDaire(kv, 80 - kameraX * 0.3, 50, 25, "#ffffff");
+    KanvasDaire(kv, 110 - kameraX * 0.3, 45, 20, "#ffffff");
+    KanvasDaire(kv, 300 - kameraX * 0.3, 60, 22, "#ffffff");
+    KanvasDaire(kv, 330 - kameraX * 0.3, 55, 18, "#ffffff");
+    
+    // Platformlar
+    Sayi i = 0;
+    Tekrarla 4 Kez
+        Sayi px = platX[i] - kameraX;
+        KanvasDikdortgen(kv, px, platY[i], platGen[i], platYuk[i], "#8B4513");
+        KanvasDikdortgen(kv, px, platY[i], platGen[i], 4, "#228B22");
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Mantarlar
+    i = 0;
+    Tekrarla 2 Kez
+        Eger mantarAktif[i] == 1 Ise
+            Sayi mx = mantarX[i] - kameraX;
+            KanvasDaire(kv, mx, mantarY[i] + 5, mantarR, "#e63946");
+            KanvasDaire(kv, mx - 5, mantarY[i] - 2, 6, "#ffffff");
+            KanvasDaire(kv, mx + 5, mantarY[i] - 2, 6, "#ffffff");
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Düşmanlar (Goomba)
+    i = 0;
+    Tekrarla 2 Kez
+        Eger dusmanAktif[i] == 1 Ise
+            Sayi dx = dusmanX[i] - kameraX;
+            KanvasDikdortgen(kv, dx, dusmanY[i], dusmanGen, dusmanYuk, "#8B4513");
+            KanvasDikdortgen(kv, dx + 3, dusmanY[i] + 3, 16, 12, "#6B3410");
+            KanvasDaire(kv, dx + 6, dusmanY[i] - 3, 3, "#ffffff");
+            KanvasDaire(kv, dx + 16, dusmanY[i] - 3, 3, "#ffffff");
+            KanvasDaire(kv, dx + 6, dusmanY[i] - 3, 1.5, "#000000");
+            KanvasDaire(kv, dx + 16, dusmanY[i] - 3, 1.5, "#000000");
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Mario
+    Sayi mx = marioX - kameraX;
+    // Şapka
+    KanvasDikdortgen(kv, mx + 3, marioY - 8, 19, 10, "#e63946");
+    KanvasDikdortgen(kv, mx + 1, marioY - 4, 23, 4, "#e63946");
+    // Yüz
+    KanvasDikdortgen(kv, mx + 3, marioY, 19, 20, "#ffcc00");
+    // Göz
+    Eger yon == 1 Ise
+        KanvasDaire(kv, mx + 18, marioY + 8, 3, "#ffffff");
+        KanvasDaire(kv, mx + 19, marioY + 8, 1.5, "#000000");
+    Degilse
+        KanvasDaire(kv, mx + 7, marioY + 8, 3, "#ffffff");
+        KanvasDaire(kv, mx + 6, marioY + 8, 1.5, "#000000");
+    EgerBitti
+    // Bıyık
+    KanvasDikdortgen(kv, mx + 10, marioY + 15, 8, 3, "#8B4513");
+    // Tulum
+    KanvasDikdortgen(kv, mx + 3, marioY + 20, 19, 10, "#1f6feb");
+    
+    panelCiz();
+FonksiyonBitti
+
+// ========== FİZİK GÜNCELLEME ==========
+Fonksiyon fizikGuncelle()
+    marioVY = marioVY + 0.5;
+    marioY = marioY + marioVY;
+    
+    marioYerde = Yanlis;
+    
+    // Platform çarpışma
+    Sayi i = 0;
+    Tekrarla 4 Kez
+        Eger marioX + marioGen > platX[i] Ve marioX < platX[i] + platGen[i] Ise
+            Eger marioY + marioYuk >= platY[i] Ve marioY + marioYuk <= platY[i] + 15 Ise
+                Eger marioVY >= 0 Ise
+                    marioY = platY[i] - marioYuk;
+                    marioVY = 0;
+                    marioYerde = Dogru;
+                EgerBitti
+            EgerBitti
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Düşme kontrolü
+    Eger marioY > 350 Ise
+        can = can - 1;
+        sesCal("alarm");
+        Eger can <= 0 Ise
+            oyunBitti = Dogru;
+            oyunAktif = Yanlis;
+            zm.Durdur();
+            btnYeniden.gorunum = Dogru;
+            btnBaslat.gorunum = Yanlis;
+            btnDurdur.gorunum = Yanlis;
+        Degilse
+            marioX = 50;
+            marioY = 240;
+            marioVY = 0;
+            kameraX = 0;
+        EgerBitti
+    EgerBitti
+FonksiyonBitti
+
+// ========== DÜŞMAN GÜNCELLEME ==========
+Fonksiyon dusmanGuncelle()
+    Sayi i = 0;
+    Tekrarla 2 Kez
+        Eger dusmanAktif[i] == 1 Ise
+            dusmanX[i] = dusmanX[i] + dusmanYon[i];
+            
+            // Platform kenarı kontrolü
+            Mantiksal kenarda = Dogru;
+            Sayi j = 0;
+            Tekrarla 4 Kez
+                Eger dusmanX[i] + dusmanGen > platX[j] Ve dusmanX[i] < platX[j] + platGen[j] Ise
+                    Eger dusmanY[i] + dusmanYuk == platY[j] Ise
+                        kenarda = Yanlis;
+                    EgerBitti
+                EgerBitti
+                j = j + 1;
+            TekrarlaBitti
+            
+            Eger kenarda == Dogru Ise
+                dusmanYon[i] = dusmanYon[i] * -1;
+            EgerBitti
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+FonksiyonBitti
+
+// ========== ÇARPIŞMA KONTROL ==========
+Fonksiyon carpismaKontrol()
+    // Düşman çarpışması
+    Sayi i = 0;
+    Tekrarla 2 Kez
+        Eger dusmanAktif[i] == 1 Ise
+            Eger marioX + marioGen > dusmanX[i] Ve marioX < dusmanX[i] + dusmanGen Ise
+                Eger marioY + marioYuk > dusmanY[i] Ve marioY < dusmanY[i] + dusmanYuk Ise
+                    // Üstten basma
+                    Eger marioVY > 0 Ve marioY + marioYuk < dusmanY[i] + 15 Ise
+                        dusmanAktif[i] = 0;
+                        marioVY = -5;
+                        skor = skor + 100;
+                        sesCal("ding");
+                    Degilse
+                        // Yan veya alttan çarpma
+                        can = can - 1;
+                        sesCal("alarm");
+                        Eger can <= 0 Ise
+                            oyunBitti = Dogru;
+                            oyunAktif = Yanlis;
+                            zm.Durdur();
+                            btnYeniden.gorunum = Dogru;
+                            btnBaslat.gorunum = Yanlis;
+                            btnDurdur.gorunum = Yanlis;
+                        Degilse
+                            marioX = 50;
+                            marioY = 240;
+                            marioVY = 0;
+                            kameraX = 0;
+                        EgerBitti
+                    EgerBitti
+                EgerBitti
+            EgerBitti
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Mantar toplama
+    i = 0;
+    Tekrarla 2 Kez
+        Eger mantarAktif[i] == 1 Ise
+            Eger marioX + marioGen > mantarX[i] - mantarR Ve marioX < mantarX[i] + mantarR Ise
+                Eger marioY + marioYuk > mantarY[i] - mantarR Ve marioY < mantarY[i] + mantarR Ise
+                    mantarAktif[i] = 0;
+                    skor = skor + 50;
+                    sesCal("bip");
+                EgerBitti
+            EgerBitti
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    Eger skor > enYuksekSkor Ise
+        enYuksekSkor = skor;
+    EgerBitti
+FonksiyonBitti
+
+// ========== KAMERA GÜNCELLEME ==========
+Fonksiyon kameraGuncelle()
+    Eger marioX - kameraX > 200 Ise
+        kameraX = marioX - 200;
+    EgerBitti
+    Eger marioX - kameraX < 50 Ise
+        kameraX = marioX - 50;
+    EgerBitti
+    Eger kameraX < 0 Ise kameraX = 0; EgerBitti
+FonksiyonBitti
+
+// ========== HAREKET ==========
+Fonksiyon hareket()
+    Eger oyunAktif == Yanlis Ise Don; EgerBitti
+    
+    fizikGuncelle();
+    dusmanGuncelle();
+    carpismaKontrol();
+    kameraGuncelle();
+    
+    ciz();
+FonksiyonBitti
+
+// ========== MARIO HAREKET ==========
+Fonksiyon marioSol()
+    Eger oyunAktif == Dogru Ise
+        marioX = marioX - 5;
+        yon = -1;
+        Eger marioX < 0 Ise marioX = 0; EgerBitti
+        ciz();
+    EgerBitti
+FonksiyonBitti
+
+Fonksiyon marioSag()
+    Eger oyunAktif == Dogru Ise
+        marioX = marioX + 5;
+        yon = 1;
+        ciz();
+    EgerBitti
+FonksiyonBitti
+
+Fonksiyon marioZipla()
+    Eger oyunAktif == Dogru Ise
+        Eger marioYerde == Dogru Ise
+            marioVY = -9;
+            marioYerde = Yanlis;
+            sesCal("bip");
+        EgerBitti
+    EgerBitti
+FonksiyonBitti
+
+// ========== OYUN KONTROL ==========
+Fonksiyon oyunuBaslat()
+    oyunuSifirla();
+    oyunAktif = Dogru;
+    btnYeniden.gorunum = Yanlis;
+    btnBaslat.gorunum = Yanlis;
+    btnDurdur.gorunum = Dogru;
+    
+    ciz();
+    zm.Baslat();
+FonksiyonBitti
+
+Fonksiyon oyunuDurdur()
+    oyunAktif = Yanlis;
+    zm.Durdur();
+    btnBaslat.gorunum = Dogru;
+    btnDurdur.gorunum = Yanlis;
+    panelCiz();
+FonksiyonBitti
+
+Fonksiyon yenidenBaslat()
+    oyunAktif = Yanlis;
+    zm.Durdur();
+    oyunuBaslat();
+FonksiyonBitti
+
+Fonksiyon sesToggle()
+    sesAcik = !sesAcik;
+    Eger sesAcik == Dogru Ise
+        btnSes.yazi = "🔊";
+    Degilse
+        btnSes.yazi = "🔇";
+    EgerBitti
+FonksiyonBitti
+
+// ========== BAĞLANTILAR ==========
+zm.her_tikta = Fonksiyon()
+    Eger oyunAktif == Dogru Ise
+        hareket();
+    EgerBitti
+FonksiyonBitti
+
+btnSol.tiklaninca = marioSol;
+btnSag.tiklaninca = marioSag;
+btnZipla.tiklaninca = marioZipla;
+btnBaslat.tiklaninca = oyunuBaslat;
+btnDurdur.tiklaninca = oyunuDurdur;
+btnYeniden.tiklaninca = yenidenBaslat;
+btnSes.tiklaninca = sesToggle;
+
+pen.Ekle(kv);
+pen.Ekle(panelKv);
+pen.Ekle(btnSol);
+pen.Ekle(btnSag);
+pen.Ekle(btnZipla);
+pen.Ekle(btnBaslat);
+pen.Ekle(btnDurdur);
+pen.Ekle(btnSes);
+pen.Ekle(btnYeniden);
+
+pen.Goster();
+
+ciz();
+
+Yaz("🍄 PREMIUM MARIO HAZIR!");
+Yaz("▶ BAŞLAT ile oyuna başla!");
+Yaz("◀ ▶ hareket, ⬆️ ZIPLA ile zıpla!");
