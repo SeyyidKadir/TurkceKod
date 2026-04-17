@@ -12,6 +12,40 @@
 ### Nedir?
 TürkçeKod, Türkçe anahtar kelimelerle kod yazmanızı sağlayan, tek bir HTML dosyasından oluşan programlama dili ve geliştirme ortamıdır. Kurulum gerektirmez — tarayıcıda açın, yazmaya başlayın.
 
+
+##Proje hikayesi;
+TürkçeKod’un temeli aslında 2012 yılına dayanıyor. Endüstri Meslek Lisesi’nde bilgisayar bölümü öğrencisiyken, sınıftaki herkes Console.WriteLine("Merhaba Dünya");
+Yazarken ben “Acaba tamamen Türkçe komutlarla çalışan basit bir yorumlayıcı yapabilir miyim?” diye uğraşıyordum.
+Hocalarıma gösterince sordular:
+“Peki Kadir, bu dil ile neler yapılır?”
+“Basit işlemler, spesifik şeyler pek olmaz” dedim.
+“En azından bir ortalama hesaplasa?” diye sordular.
+“Bakarım” dedim…
+Ama 2013’te mezun olunca proje rafa kalktı.
+Yıllar sonra aklıma birden geldi.
+Eski kodları alıp Claude’a açtım, dilin geliştiğini görünce “Hadi canım” dedim ve hocama verdiğim “bakarız” sözü aklıma düştü.
+O noktada düşündüm:
+İngilizce bilmeyen çocuklar, lise öğrencileri ve programlamaya yeni başlayanlar için hâlâ bir ihtiyaç var. Scratch’ten sonra geçiş yapabilecekleri, tarayıcıda çalışan, Türkçe syntax’lı bir araç faydalı olabilir.
+Syntax yapısını kendi geçmişimden karıştırdım: 
+C/C++, Python, C#, Visual Basic 6 ve biraz Delphi/Pascal etkisiyle.
+İlk versiyonda AI (Claude) lexer ve parser konusunda önerilerde bulundu, ben de denedim.
+Daha sonra DeepSeek debug ve testlerde yardımcı oldu.
+Ben de bizzat saatlerce test ettim – özellikle oyunlar (Snake, Tetris) ve uygulamalar çalışınca “Tamam, bu oldu” dedim.
+Şu an v10’dayız.
+Lexer ve parser tarafı hâlâ geliştirme aşamasında, eksikleri olduğunu biliyorum ve gerekirse baştan kendim yazacağım.
+AI’yi sadece hızlandırıcı ve yardımcı araç olarak kullandım;
+Temel fikir, tasarım kararları ve testlerin büyük kısmı bana ait.
+Amacım profesyonel bir üretim dili yaratmak değil.
+Amacım: Eğitimde İngilizce bariyerini azaltmak, yeni başlayanlara programlama mantığını kendi dilinde tattırmak.
+Hataları, eksik syntax’leri veya önerilerinizi lütfen GitHub üzerinden bildirin.
+
+##2012 versiyonu için Original/Kod_Yorumla.cs bakmanız yeterlidir. 
+İlk kodum dur lisede iken yazmıştım 😊
+Samimi feedback’leriniz benim için çok değerli.
+Çünkü ileride bir hata olursa belki ben görmemişimdir diye sizden deneyip bilgi vermenizi istiyorum teşekkürler. 
+
+
+
 ### Kullanım
 Tarayıcınızda açın → [https://seyyidkadir.github.io/TurkceKod/](https://seyyidkadir.github.io/TurkceKod/)
 
