@@ -13,7 +13,7 @@
 TürkçeKod, Türkçe anahtar kelimelerle kod yazmanızı sağlayan, tek bir HTML dosyasından oluşan programlama dili ve geliştirme ortamıdır. Kurulum gerektirmez — tarayıcıda açın, yazmaya başlayın.
 
 
-##Proje hikayesi;
+## Proje hikayesi;
 TürkçeKod’un temeli aslında 2012 yılına dayanıyor. Endüstri Meslek Lisesi’nde bilgisayar bölümü öğrencisiyken, sınıftaki herkes Console.WriteLine("Merhaba Dünya");
 Yazarken ben “Acaba tamamen Türkçe komutlarla çalışan basit bir yorumlayıcı yapabilir miyim?” diye uğraşıyordum.
 Hocalarıma gösterince sordular:
@@ -39,7 +39,7 @@ Amacım profesyonel bir üretim dili yaratmak değil.
 Amacım: Eğitimde İngilizce bariyerini azaltmak, yeni başlayanlara programlama mantığını kendi dilinde tattırmak.
 Hataları, eksik syntax’leri veya önerilerinizi lütfen GitHub üzerinden bildirin.
 
-##2012 versiyonu için Original/Kod_Yorumla.cs bakmanız yeterlidir. 
+## 2012 versiyonu için Original/Kod_Yorumla.cs bakmanız yeterlidir. 
 İlk kodum dur lisede iken yazmıştım 😊
 Samimi feedback’leriniz benim için çok değerli.
 Çünkü ileride bir hata olursa belki ben görmemişimdir diye sizden deneyip bilgi vermenizi istiyorum teşekkürler. 
