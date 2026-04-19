@@ -1,0 +1,345 @@
+// Gelişmiş Hesap Makinesi (Bilimsel Özellikli)
+// Hafıza, Üs, Karekök ve Yüzde Desteği ile
+
+Pencere hesapPenceresi;
+hesapPenceresi.baslik = "🧮 Gelişmiş Hesap Makinesi";
+hesapPenceresi.genislik = 360;
+hesapPenceresi.yukseklik = 520;
+hesapPenceresi.arkaplan = "koyu_gri";
+
+// ---------- Değişkenler ----------
+Metin mevcutGiris = "0";      // Gösterilen değer
+Metin oncekiGiris = "";       // İşlemden önceki değer
+Metin bekleyenIslem = "";     // +, -, *, /, ^
+Mantiksal yeniSayi = Dogru;   // Yeni sayı girişi başlasın mı?
+Ondalik hafiza = 0;           // Hafıza değeri
+
+// ---------- Ekran (Giriş Satırı) ----------
+GirisSatiri ekran;
+ekran.x = 10; ekran.y = 10;
+ekran.genislik = 335; ekran.yukseklik = 55;
+ekran.deger = mevcutGiris;
+ekran.stil = "font-size:28px; font-weight:bold; font-family: 'Courier New', monospace; text-align: right; padding-right: 15px; background: #0b1219; color: #4ade80; border: 1px solid #2d3a4a; border-radius: 8px;";
+ekran.ipucu = "0";
+
+// Etiket (Hafıza Göstergesi)
+Etiket hafizaEtiketi;
+hafizaEtiketi.x = 15; hafizaEtiketi.y = 75;
+hafizaEtiketi.yazi = "";
+hafizaEtiketi.renk = "turkuaz";
+hafizaEtiketi.stil = "font-size:11px; font-weight: bold;";
+
+// Etiket (İşlem Göstergesi)
+Etiket islemEtiketi;
+islemEtiketi.x = 180; islemEtiketi.y = 75;
+islemEtiketi.yazi = "";
+islemEtiketi.renk = "gri";
+islemEtiketi.stil = "font-size:11px; text-align: right; width: 150px;";
+
+// ---------- Yardımcı Fonksiyonlar ----------
+Fonksiyon ekraniGuncelle(deger)
+    Eger deger == "" Ise
+        ekran.deger = "0";
+        mevcutGiris = "0";
+    Degilse
+        ekran.deger = deger;
+        mevcutGiris = deger;
+    EgerBitti
+FonksiyonBitti
+
+Fonksiyon hafizaGostergesiniGuncelle()
+    Eger hafiza != 0 Ise
+        hafizaEtiketi.yazi = "M: " + hafiza;
+    Degilse
+        hafizaEtiketi.yazi = "";
+    EgerBitti
+FonksiyonBitti
+
+Fonksiyon islemGostergesiniGuncelle()
+    Eger bekleyenIslem == "+" Ise
+        islemEtiketi.yazi = oncekiGiris + " +";
+    EgerBitti
+    Eger bekleyenIslem == "-" Ise
+        islemEtiketi.yazi = oncekiGiris + " -";
+    EgerBitti
+    Eger bekleyenIslem == "*" Ise
+        islemEtiketi.yazi = oncekiGiris + " ×";
+    EgerBitti
+    Eger bekleyenIslem == "/" Ise
+        islemEtiketi.yazi = oncekiGiris + " ÷";
+    EgerBitti
+    Eger bekleyenIslem == "^" Ise
+        islemEtiketi.yazi = oncekiGiris + " ^";
+    EgerBitti
+    
+    Eger bekleyenIslem == "" Ise
+        islemEtiketi.yazi = "";
+    EgerBitti
+FonksiyonBitti
+
+Fonksiyon hesaplaVeGoster()
+    Eger bekleyenIslem == "" Veya oncekiGiris == "" Ise
+        Don;
+    EgerBitti
+
+    Ondalik sayi1 = SayiyaKonvert(oncekiGiris);
+    Ondalik sayi2 = SayiyaKonvert(mevcutGiris);
+    Ondalik sonuc = 0;
+
+    Eger bekleyenIslem == "+" Ise
+        sonuc = sayi1 + sayi2;
+    EgerBitti
+    Eger bekleyenIslem == "-" Ise
+        sonuc = sayi1 - sayi2;
+    EgerBitti
+    Eger bekleyenIslem == "*" Ise
+        sonuc = sayi1 * sayi2;
+    EgerBitti
+    Eger bekleyenIslem == "/" Ise 
+        Eger sayi2 != 0 Ise
+            sonuc = sayi1 / sayi2;
+        Degilse
+            sonuc = 0;
+        EgerBitti
+    EgerBitti
+    Eger bekleyenIslem == "^" Ise
+        sonuc = UsKuvvet(sayi1, sayi2);
+    EgerBitti
+
+    // Sonucu göster ve durumu sıfırla
+    Metin sonucMetin = MetineKonvert(Yuvarla(sonuc, 8));
+    ekraniGuncelle(sonucMetin);
+    oncekiGiris = "";
+    bekleyenIslem = "";
+    yeniSayi = Dogru;
+    islemGostergesiniGuncelle();
+FonksiyonBitti
+
+// ---------- Buton Fonksiyonları ----------
+Fonksiyon rakamBasildi(rakam)
+    Eger yeniSayi Ise
+        ekraniGuncelle(rakam);
+        yeniSayi = Yanlis;
+    Degilse
+        Eger mevcutGiris == "0" Ise
+            ekraniGuncelle(rakam);
+        Degilse
+            ekraniGuncelle(mevcutGiris + rakam);
+        EgerBitti
+    EgerBitti
+FonksiyonBitti
+
+Fonksiyon ondalikBasildi()
+    Eger yeniSayi Ise
+        ekraniGuncelle("0.");
+        yeniSayi = Yanlis;
+    Degilse
+        Eger !MetinIceriyorMu(mevcutGiris, ".") Ise
+            ekraniGuncelle(mevcutGiris + ".");
+        EgerBitti
+    EgerBitti
+FonksiyonBitti
+
+Fonksiyon islemBasildi(op)
+    Eger !yeniSayi Ise
+        Eger bekleyenIslem != "" Ise
+            hesaplaVeGoster();
+        EgerBitti
+        oncekiGiris = mevcutGiris;
+    Degilse
+        oncekiGiris = mevcutGiris;
+    EgerBitti
+    
+    bekleyenIslem = op;
+    yeniSayi = Dogru;
+    islemGostergesiniGuncelle();
+FonksiyonBitti
+
+Fonksiyon esittirBasildi()
+    hesaplaVeGoster();
+FonksiyonBitti
+
+Fonksiyon temizleBasildi()
+    ekraniGuncelle("0");
+    oncekiGiris = "";
+    bekleyenIslem = "";
+    yeniSayi = Dogru;
+    islemGostergesiniGuncelle();
+FonksiyonBitti
+
+Fonksiyon silBasildi()
+    Eger !yeniSayi Ise
+        Eger Uzunluk(mevcutGiris) > 1 Ise
+            ekraniGuncelle(MetinKes(mevcutGiris, 0, Uzunluk(mevcutGiris) - 1));
+        Degilse
+            ekraniGuncelle("0");
+            yeniSayi = Dogru;
+        EgerBitti
+    EgerBitti
+FonksiyonBitti
+
+Fonksiyon isaretDegistir()
+    Eger mevcutGiris != "0" Ise
+        Eger MetinBaslangici(mevcutGiris, "-") Ise
+            ekraniGuncelle(MetinKes(mevcutGiris, 1, Uzunluk(mevcutGiris)));
+        Degilse
+            ekraniGuncelle("-" + mevcutGiris);
+        EgerBitti
+    EgerBitti
+FonksiyonBitti
+
+Fonksiyon karekokBasildi()
+    Ondalik deger = SayiyaKonvert(mevcutGiris);
+    Eger deger >= 0 Ise
+        deger = KareKok(deger);
+    Degilse
+        deger = 0;
+    EgerBitti
+    ekraniGuncelle(MetineKonvert(Yuvarla(deger, 8)));
+    yeniSayi = Dogru;
+    islemGostergesiniGuncelle();
+FonksiyonBitti
+
+Fonksiyon yuzdeBasildi()
+    Eger oncekiGiris != "" Ise
+        Ondalik yuzdeDeger = SayiyaKonvert(mevcutGiris);
+        Ondalik anaDeger = SayiyaKonvert(oncekiGiris);
+        Ondalik sonuc = (anaDeger * yuzdeDeger) / 100;
+        ekraniGuncelle(MetineKonvert(Yuvarla(sonuc, 8)));
+        yeniSayi = Dogru;
+        islemGostergesiniGuncelle();
+    EgerBitti
+FonksiyonBitti
+
+// ---------- Hafıza Fonksiyonları ----------
+Fonksiyon hafizaTemizle()
+    hafiza = 0;
+    hafizaGostergesiniGuncelle();
+FonksiyonBitti
+
+Fonksiyon hafizaOku()
+    ekraniGuncelle(MetineKonvert(hafiza));
+    yeniSayi = Dogru;
+FonksiyonBitti
+
+Fonksiyon hafizaEkle()
+    hafiza = hafiza + SayiyaKonvert(mevcutGiris);
+    hafizaGostergesiniGuncelle();
+    yeniSayi = Dogru;
+FonksiyonBitti
+
+Fonksiyon hafizaCikar()
+    hafiza = hafiza - SayiyaKonvert(mevcutGiris);
+    hafizaGostergesiniGuncelle();
+    yeniSayi = Dogru;
+FonksiyonBitti
+
+// ---------- Buton Yaratma ----------
+
+// ----- 1. Satır (Hafıza İşlemleri) -----
+Dugme btnMC; btnMC.yazi = "MC"; btnMC.x = 10; btnMC.y = 105; btnMC.genislik = 55; btnMC.arkaplan = "#2c3e50"; btnMC.renk = "#ecf0f1";
+btnMC.tiklaninca = Fonksiyon() hafizaTemizle(); FonksiyonBitti
+
+Dugme btnMR; btnMR.yazi = "MR"; btnMR.x = 70; btnMR.y = 105; btnMR.genislik = 55; btnMR.arkaplan = "#2c3e50"; btnMR.renk = "#ecf0f1";
+btnMR.tiklaninca = Fonksiyon() hafizaOku(); FonksiyonBitti
+
+Dugme btnMPlus; btnMPlus.yazi = "M+"; btnMPlus.x = 130; btnMPlus.y = 105; btnMPlus.genislik = 55; btnMPlus.arkaplan = "#2c3e50"; btnMPlus.renk = "#ecf0f1";
+btnMPlus.tiklaninca = Fonksiyon() hafizaEkle(); FonksiyonBitti
+
+Dugme btnMMinus; btnMMinus.yazi = "M-"; btnMMinus.x = 190; btnMMinus.y = 105; btnMMinus.genislik = 55; btnMMinus.arkaplan = "#2c3e50"; btnMMinus.renk = "#ecf0f1";
+btnMMinus.tiklaninca = Fonksiyon() hafizaCikar(); FonksiyonBitti
+
+// ----- 2. Satır (Temizlik) -----
+Dugme btnC; btnC.yazi = "C"; btnC.x = 250; btnC.y = 105; btnC.genislik = 55; btnC.arkaplan = "#e67e22"; btnC.renk = "beyaz";
+btnC.tiklaninca = Fonksiyon() temizleBasildi(); FonksiyonBitti
+
+Dugme btnCE; btnCE.yazi = "⌫"; btnCE.x = 310; btnCE.y = 105; btnCE.genislik = 35; btnCE.arkaplan = "#e67e22"; btnCE.renk = "beyaz";
+btnCE.tiklaninca = Fonksiyon() silBasildi(); FonksiyonBitti
+
+// ----- 3. Satır -----
+Dugme btn7; btn7.yazi = "7"; btn7.x = 10; btn7.y = 165; btn7.genislik = 75; btn7.arkaplan = "#34495e"; btn7.renk = "beyaz";
+btn7.tiklaninca = Fonksiyon() rakamBasildi("7"); FonksiyonBitti
+
+Dugme btn8; btn8.yazi = "8"; btn8.x = 90; btn8.y = 165; btn8.genislik = 75; btn8.arkaplan = "#34495e"; btn8.renk = "beyaz";
+btn8.tiklaninca = Fonksiyon() rakamBasildi("8"); FonksiyonBitti
+
+Dugme btn9; btn9.yazi = "9"; btn9.x = 170; btn9.y = 165; btn9.genislik = 75; btn9.arkaplan = "#34495e"; btn9.renk = "beyaz";
+btn9.tiklaninca = Fonksiyon() rakamBasildi("9"); FonksiyonBitti
+
+Dugme btnBol; btnBol.yazi = "÷"; btnBol.x = 250; btnBol.y = 165; btnBol.genislik = 95; btnBol.arkaplan = "#f39c12"; btnBol.renk = "beyaz";
+btnBol.tiklaninca = Fonksiyon() islemBasildi("/"); FonksiyonBitti
+
+// ----- 4. Satır -----
+Dugme btn4; btn4.yazi = "4"; btn4.x = 10; btn4.y = 225; btn4.genislik = 75; btn4.arkaplan = "#34495e"; btn4.renk = "beyaz";
+btn4.tiklaninca = Fonksiyon() rakamBasildi("4"); FonksiyonBitti
+
+Dugme btn5; btn5.yazi = "5"; btn5.x = 90; btn5.y = 225; btn5.genislik = 75; btn5.arkaplan = "#34495e"; btn5.renk = "beyaz";
+btn5.tiklaninca = Fonksiyon() rakamBasildi("5"); FonksiyonBitti
+
+Dugme btn6; btn6.yazi = "6"; btn6.x = 170; btn6.y = 225; btn6.genislik = 75; btn6.arkaplan = "#34495e"; btn6.renk = "beyaz";
+btn6.tiklaninca = Fonksiyon() rakamBasildi("6"); FonksiyonBitti
+
+Dugme btnCarp; btnCarp.yazi = "×"; btnCarp.x = 250; btnCarp.y = 225; btnCarp.genislik = 95; btnCarp.arkaplan = "#f39c12"; btnCarp.renk = "beyaz";
+btnCarp.tiklaninca = Fonksiyon() islemBasildi("*"); FonksiyonBitti
+
+// ----- 5. Satır -----
+Dugme btn1; btn1.yazi = "1"; btn1.x = 10; btn1.y = 285; btn1.genislik = 75; btn1.arkaplan = "#34495e"; btn1.renk = "beyaz";
+btn1.tiklaninca = Fonksiyon() rakamBasildi("1"); FonksiyonBitti
+
+Dugme btn2; btn2.yazi = "2"; btn2.x = 90; btn2.y = 285; btn2.genislik = 75; btn2.arkaplan = "#34495e"; btn2.renk = "beyaz";
+btn2.tiklaninca = Fonksiyon() rakamBasildi("2"); FonksiyonBitti
+
+Dugme btn3; btn3.yazi = "3"; btn3.x = 170; btn3.y = 285; btn3.genislik = 75; btn3.arkaplan = "#34495e"; btn3.renk = "beyaz";
+btn3.tiklaninca = Fonksiyon() rakamBasildi("3"); FonksiyonBitti
+
+Dugme btnEksi; btnEksi.yazi = "−"; btnEksi.x = 250; btnEksi.y = 285; btnEksi.genislik = 95; btnEksi.arkaplan = "#f39c12"; btnEksi.renk = "beyaz";
+btnEksi.tiklaninca = Fonksiyon() islemBasildi("-"); FonksiyonBitti
+
+// ----- 6. Satır -----
+Dugme btn0; btn0.yazi = "0"; btn0.x = 10; btn0.y = 345; btn0.genislik = 75; btn0.arkaplan = "#34495e"; btn0.renk = "beyaz";
+btn0.tiklaninca = Fonksiyon() rakamBasildi("0"); FonksiyonBitti
+
+Dugme btnNokta; btnNokta.yazi = "."; btnNokta.x = 90; btnNokta.y = 345; btnNokta.genislik = 75; btnNokta.arkaplan = "#34495e"; btnNokta.renk = "beyaz";
+btnNokta.tiklaninca = Fonksiyon() ondalikBasildi(); FonksiyonBitti
+
+Dugme btnArtıEksi; btnArtıEksi.yazi = "±"; btnArtıEksi.x = 170; btnArtıEksi.y = 345; btnArtıEksi.genislik = 75; btnArtıEksi.arkaplan = "#34495e"; btnArtıEksi.renk = "beyaz";
+btnArtıEksi.tiklaninca = Fonksiyon() isaretDegistir(); FonksiyonBitti
+
+Dugme btnArti; btnArti.yazi = "+"; btnArti.x = 250; btnArti.y = 345; btnArti.genislik = 95; btnArti.arkaplan = "#f39c12"; btnArti.renk = "beyaz";
+btnArti.tiklaninca = Fonksiyon() islemBasildi("+"); FonksiyonBitti
+
+// ----- 7. Satır (Bilimsel) -----
+Dugme btnKarekok; btnKarekok.yazi = "√x"; btnKarekok.x = 10; btnKarekok.y = 405; btnKarekok.genislik = 75; btnKarekok.arkaplan = "#1abc9c"; btnKarekok.renk = "beyaz";
+btnKarekok.tiklaninca = Fonksiyon() karekokBasildi(); FonksiyonBitti
+
+Dugme btnUs; btnUs.yazi = "x^y"; btnUs.x = 90; btnUs.y = 405; btnUs.genislik = 75; btnUs.arkaplan = "#1abc9c"; btnUs.renk = "beyaz";
+btnUs.tiklaninca = Fonksiyon() islemBasildi("^"); FonksiyonBitti
+
+Dugme btnYuzde; btnYuzde.yazi = "%"; btnYuzde.x = 170; btnYuzde.y = 405; btnYuzde.genislik = 75; btnYuzde.arkaplan = "#1abc9c"; btnYuzde.renk = "beyaz";
+btnYuzde.tiklaninca = Fonksiyon() yuzdeBasildi(); FonksiyonBitti
+
+Dugme btnEsittir; btnEsittir.yazi = "="; btnEsittir.x = 250; btnEsittir.y = 405; btnEsittir.genislik = 95; btnEsittir.yukseklik = 55; btnEsittir.arkaplan = "#e74c3c"; btnEsittir.renk = "beyaz";
+btnEsittir.stil = "font-size: 22px;";
+btnEsittir.tiklaninca = Fonksiyon() esittirBasildi(); FonksiyonBitti
+
+// ---------- Bileşenleri Pencereye Ekle ----------
+hesapPenceresi.Ekle(ekran);
+hesapPenceresi.Ekle(hafizaEtiketi);
+hesapPenceresi.Ekle(islemEtiketi);
+
+// Satır 1
+hesapPenceresi.Ekle(btnMC); hesapPenceresi.Ekle(btnMR); hesapPenceresi.Ekle(btnMPlus); hesapPenceresi.Ekle(btnMMinus); hesapPenceresi.Ekle(btnC); hesapPenceresi.Ekle(btnCE);
+// Satır 2
+hesapPenceresi.Ekle(btn7); hesapPenceresi.Ekle(btn8); hesapPenceresi.Ekle(btn9); hesapPenceresi.Ekle(btnBol);
+// Satır 3
+hesapPenceresi.Ekle(btn4); hesapPenceresi.Ekle(btn5); hesapPenceresi.Ekle(btn6); hesapPenceresi.Ekle(btnCarp);
+// Satır 4
+hesapPenceresi.Ekle(btn1); hesapPenceresi.Ekle(btn2); hesapPenceresi.Ekle(btn3); hesapPenceresi.Ekle(btnEksi);
+// Satır 5
+hesapPenceresi.Ekle(btn0); hesapPenceresi.Ekle(btnNokta); hesapPenceresi.Ekle(btnArtıEksi); hesapPenceresi.Ekle(btnArti);
+// Satır 6
+hesapPenceresi.Ekle(btnKarekok); hesapPenceresi.Ekle(btnUs); hesapPenceresi.Ekle(btnYuzde); hesapPenceresi.Ekle(btnEsittir);
+
+// ---------- Pencereyi Göster ----------
+hesapPenceresi.Goster();
+Yaz("🧮 Gelişmiş Hesap Makinesi başlatıldı!");
