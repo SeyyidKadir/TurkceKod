@@ -1,0 +1,356 @@
+// 🚀 3D UZAY KÜPÜ 🚀
+// TürkçeKod ile Sıfırdan Yazılmış 3D Motor (Wireframe + Gölgelendirme)
+// Matematik: Sinüs, Kosinüs, Perspektif Projeksiyonu
+
+Pencere pen;
+pen.baslik = "🚀 3D UZAY KÜPÜ - TürkçeKod";
+pen.genislik = 600;
+pen.yukseklik = 500;
+pen.arkaplan = "#050510"; // Derin uzay
+
+// Ana Çizim Alanı
+Kanvas kv;
+kv.x = 0;
+kv.y = 0;
+kv.genislik = 600;
+kv.yukseklik = 500;
+kv.arkaplan = "#050510";
+
+// Kontrol Paneli (Sağ Alt Köşe)
+Etiket lblFps;
+lblFps.x = 480; lblFps.y = 10;
+lblFps.yazi = "FPS: --"; lblFps.renk = "#00ff88";
+lblFps.stil = "font-size: 12px; font-family: 'Courier New', monospace; background: #00000088; padding: 5px; border-radius: 5px;";
+
+Etiket lblDonus;
+lblDonus.x = 10; lblDonus.y = 10;
+lblDonus.yazi = "DÖNÜŞ: X 0° Y 0° Z 0°"; lblDonus.renk = "#88aaff";
+lblDonus.stil = "font-size: 12px; font-family: 'Courier New', monospace; background: #00000088; padding: 5px; border-radius: 5px;";
+
+Dugme btnSifirla;
+btnSifirla.yazi = "🔄 SIFIRLA";
+btnSifirla.x = 450; btnSifirla.y = 450;
+btnSifirla.genislik = 130; btnSifirla.yukseklik = 35;
+btnSifirla.arkaplan = "#1f6feb"; btnSifirla.renk = "#ffffff";
+btnSifirla.stil = "font-size: 12px; font-weight: bold; border-radius: 20px; border: none; box-shadow: 0 4px 0 #0a2a5e;";
+
+Dugme btnTelKafes;
+btnTelKafes.yazi = "🔲 TEL KAFES";
+btnTelKafes.x = 450; btnTelKafes.y = 410;
+btnTelKafes.genislik = 130; btnTelKafes.yukseklik = 30;
+btnTelKafes.arkaplan = "#6e7681"; btnTelKafes.renk = "#ffffff";
+btnTelKafes.stil = "font-size: 11px; font-weight: bold; border-radius: 20px; border: none;";
+
+// Ses (Uzay efekti için)
+Ses uzaySesi;
+
+// ==================== 3D MOTOR DEĞİŞKENLERİ ====================
+// Küpün 8 Köşesi (x, y, z)
+Dizi noktalarX = [-1,  1,  1, -1, -1,  1,  1, -1];
+Dizi noktalarY = [-1, -1,  1,  1, -1, -1,  1,  1];
+Dizi noktalarZ = [-1, -1, -1, -1,  1,  1,  1,  1];
+
+// 12 Kenar (Başlangıç, Bitiş indeksleri)
+Dizi kenarBas = [0, 1, 2, 3, 0, 1, 2, 3, 4, 5, 6, 7];
+Dizi kenarBit = [1, 2, 3, 0, 4, 5, 6, 7, 5, 6, 7, 4];
+
+// 6 Yüzey (Her biri 4 köşe indeksi)
+Dizi yuzeyler = [[0,1,2,3], [1,5,6,2], [5,4,7,6], [4,0,3,7], [3,2,6,7], [4,5,1,0]];
+
+// Dönüş Açıları (Radyan)
+Ondalik aciX = 0.5;
+Ondalik aciY = 0.8;
+Ondalik aciZ = 0.1;
+
+Ondalik dondurX = 0.01;
+Ondalik dondurY = 0.015;
+Ondalik dondurZ = 0.005;
+
+Sayi olcek = 120;          // Küpün büyüklüğü
+Sayi merkezX = 300;        // Ekran merkezi X
+Sayi merkezY = 250;        // Ekran merkezi Y
+Sayi derinlik = 5;         // Perspektif katsayısı
+
+Mantiksal telKafesMod = Yanlis; // Tel kafes / Dolu yüzey
+
+Sayi kareSayac = 0;
+Sayi fps = 0;
+Sayi sonZaman = 0;
+
+Zamanlayici zm;
+zm.aralik = 30; // ~33 FPS
+
+// ==================== 3D MATEMATİK FONKSİYONLARI ====================
+Fonksiyon dondurNokta(x, y, z, ax, ay, az)
+    // X ekseni etrafında döndür
+    Ondalik cosX = Cos(ax);
+    Ondalik sinX = Sin(ax);
+    Ondalik y1 = y * cosX - z * sinX;
+    Ondalik z1 = y * sinX + z * cosX;
+    
+    // Y ekseni etrafında döndür
+    Ondalik cosY = Cos(ay);
+    Ondalik sinY = Sin(ay);
+    Ondalik x1 = x * cosY + z1 * sinY;
+    Ondalik z2 = -x * sinY + z1 * cosY;
+    
+    // Z ekseni etrafında döndür
+    Ondalik cosZ = Cos(az);
+    Ondalik sinZ = Sin(az);
+    Ondalik x2 = x1 * cosZ - y1 * sinZ;
+    Ondalik y2 = x1 * sinZ + y1 * cosZ;
+    
+    Dizi sonuc = [x2, y2, z2];
+    Don sonuc;
+FonksiyonBitti
+
+Fonksiyon projekteEt(x, y, z)
+    // Perspektif projeksiyonu
+    Ondalik faktor = 1 / (1 + z / derinlik);
+    Sayi px = merkezX + Taban(x * olcek * faktor);
+    Sayi py = merkezY - Taban(y * olcek * faktor);
+    
+    Dizi sonuc = [px, py, faktor];
+    Don sonuc;
+FonksiyonBitti
+
+// ==================== 3D ÇİZİM ====================
+Fonksiyon ciz()
+    KanvasTemizle(kv);
+    KanvasArkaplan(kv, "#050510");
+    
+    // Yıldız Efekti (Arka Plan)
+    Sayi y = 0;
+    Tekrarla 50 Kez
+        Sayi yX = Rastgele(0, 600);
+        Sayi yY = Rastgele(0, 500);
+        Sayi parlaklik = Rastgele(100, 255);
+        Metin renk = "rgb(" + parlaklik + "," + parlaklik + "," + parlaklik + ")";
+        KanvasDaire(kv, yX, yY, 1, renk);
+    TekrarlaBitti
+    
+    // --- 3D Küp Hesaplamaları ---
+    Dizi ekranX = [];
+    Dizi ekranY = [];
+    Dizi derinlikFaktor = [];
+    Dizi donmusNoktalarX = [];
+    Dizi donmusNoktalarY = [];
+    Dizi donmusNoktalarZ = [];
+    
+    // 1. Tüm noktaları döndür ve projekte et
+    Sayi i = 0;
+    Tekrarla 8 Kez
+        Dizi d = dondurNokta(noktalarX[i], noktalarY[i], noktalarZ[i], aciX, aciY, aciZ);
+        DiziEkle(donmusNoktalarX, d[0]);
+        DiziEkle(donmusNoktalarY, d[1]);
+        DiziEkle(donmusNoktalarZ, d[2]);
+        
+        Dizi p = projekteEt(d[0], d[1], d[2]);
+        DiziEkle(ekranX, p[0]);
+        DiziEkle(ekranY, p[1]);
+        DiziEkle(derinlikFaktor, p[2]);
+        
+        i = i + 1;
+    TekrarlaBitti
+    
+    // 2. Yüzeyleri Derinliğe Göre Sırala (Painter's Algorithm)
+    Dizi yuzeyDerinlik = [];
+    Dizi yuzeySira = [];
+    
+    i = 0;
+    Tekrarla 6 Kez
+        // Yüzeyin ortalama Z derinliğini hesapla
+        Ondalik ortZ = 0;
+        Sayi j = 0;
+        Tekrarla 4 Kez
+            Sayi idx = yuzeyler[i][j];
+            ortZ = ortZ + donmusNoktalarZ[idx];
+            j = j + 1;
+        TekrarlaBitti
+        ortZ = ortZ / 4;
+        
+        DiziEkle(yuzeyDerinlik, ortZ);
+        DiziEkle(yuzeySira, i);
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Basit Bubble Sort (Uzaktan Yakına)
+    i = 0;
+    Tekrarla 6 Kez
+        Sayi j = i + 1;
+        Tekrarla 6 - i - 1 Kez
+            Eger yuzeyDerinlik[i] < yuzeyDerinlik[j] Ise
+                // Swap Derinlik
+                Ondalik tmpD = yuzeyDerinlik[i];
+                yuzeyDerinlik[i] = yuzeyDerinlik[j];
+                yuzeyDerinlik[j] = tmpD;
+                
+                // Swap Sıra
+                Sayi tmpS = yuzeySira[i];
+                yuzeySira[i] = yuzeySira[j];
+                yuzeySira[j] = tmpS;
+            EgerBitti
+            j = j + 1;
+        TekrarlaBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    // 3. Çizim (Tel Kafes veya Dolu)
+    Eger telKafesMod Ise
+        // Tel Kafes Modu: Sadece Kenarları Çiz
+        i = 0;
+        Tekrarla 12 Kez
+            Sayi b = kenarBas[i];
+            Sayi bt = kenarBit[i];
+            KanvasCizgi(kv, ekranX[b], ekranY[b], ekranX[bt], ekranY[bt], "#00ff88", 2);
+            i = i + 1;
+        TekrarlaBitti
+    Degilse
+        // Dolu Yüzey Modu (Arka yüzeyleri sil, ön yüzeyleri göster)
+        i = 0;
+        Tekrarla 6 Kez
+            Sayi yuzeyIdx = yuzeySira[i];
+            Dizi yuzey = yuzeyler[yuzeyIdx];
+            
+            // Yüzeyin parlaklığını hesapla (Basit ışıklandırma)
+            Sayi p1x = donmusNoktalarX[yuzey[0]];
+            Sayi p1y = donmusNoktalarY[yuzey[0]];
+            Sayi p1z = donmusNoktalarZ[yuzey[0]];
+            
+            Sayi p2x = donmusNoktalarX[yuzey[1]];
+            Sayi p2y = donmusNoktalarY[yuzey[1]];
+            Sayi p2z = donmusNoktalarZ[yuzey[1]];
+            
+            Sayi p3x = donmusNoktalarX[yuzey[2]];
+            Sayi p3y = donmusNoktalarY[yuzey[2]];
+            Sayi p3z = donmusNoktalarZ[yuzey[2]];
+            
+            // Normal vektörü hesapla (Cross Product)
+            Ondalik ux = p2x - p1x;
+            Ondalik uy = p2y - p1y;
+            Ondalik uz = p2z - p1z;
+            
+            Ondalik vx = p3x - p1x;
+            Ondalik vy = p3y - p1y;
+            Ondalik vz = p3z - p1z;
+            
+            Ondalik nx = uy * vz - uz * vy;
+            Ondalik ny = uz * vx - ux * vz;
+            Ondalik nz = ux * vy - uy * vx;
+            
+            // Işık kaynağı (Sol üstten geliyor)
+            Ondalik isikX = -1;
+            Ondalik isikY = -1;
+            Ondalik isikZ = -1;
+            
+            // Dot product ile ışık şiddeti
+            Ondalik parlaklik = (nx * isikX + ny * isikY + nz * isikZ) / 
+                               (KareKok(nx*nx + ny*ny + nz*nz) * KareKok(3));
+            
+            // Arka yüzeyleri atla (Backface Culling)
+            Eger parlaklik > 0 Ise
+                // Parlaklığı 0.3 - 1.0 arasına sıkıştır
+                parlaklik = 0.3 + parlaklik * 0.7;
+                Eger parlaklik > 1.0 Ise parlaklik = 1.0; EgerBitti
+                
+                // Yüzey rengini ayarla
+                Sayi r = Taban(50 * parlaklik);
+                Sayi g = Taban(150 * parlaklik);
+                Sayi b = Taban(255 * parlaklik);
+                Metin renk = "rgb(" + r + "," + g + "," + b + ")";
+                
+                // Yüzeyi dörtgen olarak çiz (İki üçgene böl)
+                Dizi noktalar = [];
+                DiziEkle(noktalar, [ekranX[yuzey[0]], ekranY[yuzey[0]]]);
+                DiziEkle(noktalar, [ekranX[yuzey[1]], ekranY[yuzey[1]]]);
+                DiziEkle(noktalar, [ekranX[yuzey[2]], ekranY[yuzey[2]]]);
+                DiziEkle(noktalar, [ekranX[yuzey[3]], ekranY[yuzey[3]]]);
+                
+                // Dörtgeni doldur (Canvas API'si olmadığı için üçgenlere bölüp çizgi çekiyoruz)
+                // Not: TürkçeKod'da dolu poligon yok, o yüzden kalın çizgilerle doldurma efekti veriyoruz
+                KanvasCizgi(kv, noktalar[0][0], noktalar[0][1], noktalar[1][0], noktalar[1][1], renk, 4);
+                KanvasCizgi(kv, noktalar[1][0], noktalar[1][1], noktalar[2][0], noktalar[2][1], renk, 4);
+                KanvasCizgi(kv, noktalar[2][0], noktalar[2][1], noktalar[3][0], noktalar[3][1], renk, 4);
+                KanvasCizgi(kv, noktalar[3][0], noktalar[3][1], noktalar[0][0], noktalar[0][1], renk, 4);
+                
+                // Kenarları beyaz yap
+                KanvasCizgi(kv, noktalar[0][0], noktalar[0][1], noktalar[1][0], noktalar[1][1], "#ffffff", 2);
+                KanvasCizgi(kv, noktalar[1][0], noktalar[1][1], noktalar[2][0], noktalar[2][1], "#ffffff", 2);
+                KanvasCizgi(kv, noktalar[2][0], noktalar[2][1], noktalar[3][0], noktalar[3][1], "#ffffff", 2);
+                KanvasCizgi(kv, noktalar[3][0], noktalar[3][1], noktalar[0][0], noktalar[0][1], "#ffffff", 2);
+            EgerBitti
+            i = i + 1;
+        TekrarlaBitti
+    EgerBitti
+    
+    // Köşelere parlak noktalar koy
+    i = 0;
+    Tekrarla 8 Kez
+        KanvasDaire(kv, ekranX[i] - 2, ekranY[i] - 2, 4, "#ffaa00");
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Açıları güncelle
+    aciX = aciX + dondurX;
+    aciY = aciY + dondurY;
+    aciZ = aciZ + dondurZ;
+    
+    lblDonus.yazi = "DÖNÜŞ: X " + Yuvarla(aciX * 57.3, 0) + "° Y " + Yuvarla(aciY * 57.3, 0) + "° Z " + Yuvarla(aciZ * 57.3, 0) + "°";
+    
+    // FPS Hesapla
+    kareSayac = kareSayac + 1;
+    Sayi simdi = ZamanDamgasi();
+    Eger simdi - sonZaman >= 1000 Ise
+        fps = kareSayac;
+        kareSayac = 0;
+        sonZaman = simdi;
+        lblFps.yazi = "FPS: " + fps;
+    EgerBitti
+FonksiyonBitti
+
+// ==================== KONTROLLER ====================
+btnSifirla.tiklaninca = Fonksiyon()
+    aciX = 0; aciY = 0; aciZ = 0;
+    SesEfekti(uzaySesi, "bip");
+FonksiyonBitti
+
+btnTelKafes.tiklaninca = Fonksiyon()
+    telKafesMod = !telKafesMod;
+    Eger telKafesMod Ise
+        btnTelKafes.yazi = "🎨 DOLU YÜZEY";
+        btnTelKafes.arkaplan = "#2ea043";
+    Degilse
+        btnTelKafes.yazi = "🔲 TEL KAFES";
+        btnTelKafes.arkaplan = "#6e7681";
+    EgerBitti
+    SesEfekti(uzaySesi, "ding");
+FonksiyonBitti
+
+zm.her_tikta = ciz;
+
+// Pencere kapanınca zamanlayıcıyı durdur
+pen.kapatilinca = Fonksiyon()
+    zm.Durdur();
+FonksiyonBitti
+
+// ==================== BAŞLAT ====================
+pen.Ekle(kv);
+pen.Ekle(lblFps);
+pen.Ekle(lblDonus);
+pen.Ekle(btnSifirla);
+pen.Ekle(btnTelKafes);
+
+pen.Goster();
+
+sonZaman = ZamanDamgasi();
+zm.Baslat();
+
+// Uzay ambiyansı
+SesNotaCal(uzaySesi, 130.81, 0.05, 1.0);
+
+Yaz("🚀 3D UZAY KÜPÜ BAŞLATILDI!");
+Yaz("🎮 KONTROLLER:");
+Yaz("   - Otomatik dönüş aktif");
+Yaz("   - SIFIRLA: Açıları sıfırlar");
+Yaz("   - TEL KAFES/DOLU: Görünüm değiştirir");
+Yaz("💡 Gerçek 3D Matematik + Backface Culling + Işıklandırma!");
