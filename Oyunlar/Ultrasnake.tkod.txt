@@ -1,0 +1,480 @@
+// ✨ ULTRA SNAKE v2.0 ✨
+// Görsel Şölen + Ses Efektleri + Arka Plan Müziği
+// TürkçeKod'un Sınırlarını Zorlayan Premium Deneyim
+
+Pencere pen;
+pen.baslik = "✨ ULTRA SNAKE v2.0 ✨";
+pen.genislik = 550;
+pen.yukseklik = 660;
+pen.arkaplan = "#0a0a0f"; // Derin koyu arkaplan
+
+// Ana oyun alanı (Neon Çerçeveli)
+Kanvas kv;
+kv.x = 20;
+kv.y = 60;
+kv.genislik = 340;
+kv.yukseklik = 340;
+kv.arkaplan = "#0d1117";
+kv.stil = "border: 2px solid #2ea043; box-shadow: 0 0 20px #2ea04355; border-radius: 12px;";
+
+// Sağ panel (Cam Efektli)
+Kanvas panelKv;
+panelKv.x = 375;
+panelKv.y = 60;
+panelKv.genislik = 155;
+panelKv.yukseklik = 340;
+panelKv.arkaplan = "#161b22";
+panelKv.stil = "border-radius: 16px; background: rgba(22, 27, 34, 0.8); backdrop-filter: blur(4px); border: 1px solid #30363d; box-shadow: 0 8px 32px #00000055;";
+
+// Oyun Değişkenleri
+Sayi hucre = 20;
+Sayi sutun = 17; // Oyun alanını biraz büyüttük
+Sayi satir = 17;
+
+Dizi yilanX = [8, 7, 6, 5];
+Dizi yilanY = [8, 8, 8, 8];
+Sayi yonX = 1;
+Sayi yonY = 0;
+Sayi sonrakiX = 1;
+Sayi sonrakiY = 0;
+
+Sayi yemekX = 10;
+Sayi yemekY = 10;
+Sayi altinX = -1;
+Sayi altinY = -1;
+Sayi altinSayac = 0;
+
+Sayi skor = 0;
+Sayi enYuksekSkor = 0;
+Sayi seviye = 1;
+Mantiksal oyunAktif = Yanlis;
+Mantiksal oyunBitti = Yanlis;
+Mantiksal sesAcik = Dogru;
+Mantiksal altinAktif = Yanlis;
+
+Ses ses;
+Ses muzik; // Arka plan müziği için ikinci ses nesnesi
+
+// --- Özel Buton Stilleri (CSS ile zenginleştirilmiş) ---
+Dugme btnYukari;
+btnYukari.yazi = "⬆️";
+btnYukari.x = 385; btnYukari.y = 150;
+btnYukari.genislik = 55; btnYukari.yukseklik = 55;
+btnYukari.arkaplan = "linear-gradient(135deg, #2ea043, #238636)";
+btnYukari.renk = "#ffffff";
+btnYukari.stil = "font-size:24px; font-weight:bold; border-radius: 16px; border: none; box-shadow: 0 4px 0 #0d2b15, 0 8px 16px #00000066; cursor: pointer; transition: 0.1s;";
+
+Dugme btnAsagi;
+btnAsagi.yazi = "⬇️";
+btnAsagi.x = 385; btnAsagi.y = 255;
+btnAsagi.genislik = 55; btnAsagi.yukseklik = 55;
+btnAsagi.arkaplan = "linear-gradient(135deg, #2ea043, #238636)";
+btnAsagi.renk = "#ffffff";
+btnAsagi.stil = "font-size:24px; font-weight:bold; border-radius: 16px; border: none; box-shadow: 0 4px 0 #0d2b15, 0 8px 16px #00000066;";
+
+Dugme btnSol;
+btnSol.yazi = "⬅️";
+btnSol.x = 320; btnSol.y = 202;
+btnSol.genislik = 55; btnSol.yukseklik = 55;
+btnSol.arkaplan = "linear-gradient(135deg, #2ea043, #238636)";
+btnSol.renk = "#ffffff";
+btnSol.stil = "font-size:24px; font-weight:bold; border-radius: 16px; border: none; box-shadow: 0 4px 0 #0d2b15, 0 8px 16px #00000066;";
+
+Dugme btnSag;
+btnSag.yazi = "➡️";
+btnSag.x = 450; btnSag.y = 202;
+btnSag.genislik = 55; btnSag.yukseklik = 55;
+btnSag.arkaplan = "linear-gradient(135deg, #2ea043, #238636)";
+btnSag.renk = "#ffffff";
+btnSag.stil = "font-size:24px; font-weight:bold; border-radius: 16px; border: none; box-shadow: 0 4px 0 #0d2b15, 0 8px 16px #00000066;";
+
+Dugme btnBaslat;
+btnBaslat.yazi = "▶ BAŞLAT";
+btnBaslat.x = 360; btnBaslat.y = 330;
+btnBaslat.genislik = 105; btnBaslat.yukseklik = 45;
+btnBaslat.arkaplan = "linear-gradient(135deg, #1f6feb, #1158c7)";
+btnBaslat.renk = "#ffffff";
+btnBaslat.stil = "font-size:14px; font-weight:bold; border-radius: 30px; border: none; box-shadow: 0 4px 0 #0a2a5e, 0 8px 16px #00000066; letter-spacing: 1px;";
+
+Dugme btnDurdur;
+btnDurdur.yazi = "⏸ DURDUR";
+btnDurdur.x = 360; btnDurdur.y = 385;
+btnDurdur.genislik = 105; btnDurdur.yukseklik = 35;
+btnDurdur.arkaplan = "linear-gradient(135deg, #6e7681, #4d535c)";
+btnDurdur.renk = "#ffffff";
+btnDurdur.stil = "font-size:12px; font-weight:bold; border-radius: 30px; border: none; box-shadow: 0 3px 0 #2d3238, 0 8px 16px #00000066;";
+
+Dugme btnSes;
+btnSes.yazi = "🔊 SES AÇIK";
+btnSes.x = 360; btnSes.y = 430;
+btnSes.genislik = 105; btnSes.yukseklik = 35;
+btnSes.arkaplan = "linear-gradient(135deg, #7c3aed, #5b21b6)";
+btnSes.renk = "#ffffff";
+btnSes.stil = "font-size:12px; font-weight:bold; border-radius: 30px; border: none; box-shadow: 0 3px 0 #3b1d70, 0 8px 16px #00000066;";
+
+Dugme btnYeniden;
+btnYeniden.yazi = "🔄 YENİDEN";
+btnYeniden.x = 360; btnYeniden.y = 475;
+btnYeniden.genislik = 105; btnYeniden.yukseklik = 45;
+btnYeniden.arkaplan = "linear-gradient(135deg, #da3633, #b62320)";
+btnYeniden.renk = "#ffffff";
+btnYeniden.stil = "font-size:13px; font-weight:bold; border-radius: 30px; border: none; box-shadow: 0 4px 0 #7a1a18, 0 8px 16px #00000066;";
+btnYeniden.gorunum = Yanlis;
+
+Zamanlayici zm;
+zm.aralik = 180;
+
+// ========== PANEL ÇİZİM (Glassmorphism) ==========
+Fonksiyon panelCiz()
+    KanvasArkaplan(panelKv, "transparent");
+    
+    // Neon Başlık
+    KanvasMetin(panelKv, "ULTRA", 45, 25, "#2ea043", "bold 14px 'Segoe UI'");
+    KanvasMetin(panelKv, "SNAKE", 40, 42, "#00ff88", "bold 16px 'Segoe UI'");
+    KanvasCizgi(panelKv, 15, 55, 140, 55, "#2ea043", 2);
+    
+    // Skor Kartı
+    KanvasDikdortgen(panelKv, 15, 70, 125, 50, "#1e242c");
+    KanvasMetin(panelKv, "SKOR", 25, 85, "#8b949e", "bold 9px 'Segoe UI'");
+    KanvasMetin(panelKv, MetineKonvert(skor), 25, 108, "#f0f000", "bold 24px 'Courier New'");
+    
+    // En Yüksek Skor Kartı
+    KanvasDikdortgen(panelKv, 15, 135, 125, 40, "#1e242c");
+    KanvasMetin(panelKv, "EN YÜKSEK", 25, 150, "#8b949e", "bold 8px 'Segoe UI'");
+    KanvasMetin(panelKv, MetineKonvert(enYuksekSkor), 25, 168, "#00f0f0", "bold 18px 'Courier New'");
+    
+    // Seviye Kartı
+    KanvasDikdortgen(panelKv, 15, 190, 125, 40, "#1e242c");
+    KanvasMetin(panelKv, "SEVIYE", 25, 205, "#8b949e", "bold 8px 'Segoe UI'");
+    KanvasMetin(panelKv, MetineKonvert(seviye), 25, 223, "#a000f0", "bold 18px 'Courier New'");
+    
+    // Durum Göstergesi
+    Eger oyunAktif == Yanlis Ise
+        Eger oyunBitti == Dogru Ise
+            KanvasDikdortgen(panelKv, 15, 250, 125, 30, "#3d1a1a");
+            KanvasMetin(panelKv, "OYUN BİTTİ", 35, 270, "#ff5555", "bold 10px 'Segoe UI'");
+        Degilse
+            KanvasDikdortgen(panelKv, 15, 250, 125, 30, "#1a3d2b");
+            KanvasMetin(panelKv, "HAZIR", 50, 270, "#55ff55", "bold 10px 'Segoe UI'");
+        EgerBitti
+    Degilse
+        KanvasDikdortgen(panelKv, 15, 250, 125, 30, "#1a3d2b");
+        KanvasMetin(panelKv, "▶ OYNANIYOR", 30, 270, "#55ff55", "bold 10px 'Segoe UI'");
+    EgerBitti
+FonksiyonBitti
+
+// ========== SES EFEKTLERİ (Gelişmiş) ==========
+Fonksiyon sesCal(efekt)
+    Eger sesAcik == Dogru Ise
+        SesEfekti(ses, efekt);
+    EgerBitti
+FonksiyonBitti
+
+Fonksiyon arkaplanMuzikBaslat()
+    Eger sesAcik == Dogru Ise
+        // Arka plan müziği için 130.81 Hz (C3) notasını düşük sesle uzun çalalım
+        SesNotaCal(muzik, 130.81, 0.1, 60.0);
+    EgerBitti
+FonksiyonBitti
+
+// ========== YENİ YEMEK ==========
+Fonksiyon yeniYemek()
+    yemekX = Rastgele(0, sutun - 1);
+    yemekY = Rastgele(0, satir - 1);
+    
+    Mantiksal gecerli = Yanlis;
+    Suresince gecerli == Yanlis Ise
+        gecerli = Dogru;
+        Sayi i = 0;
+        Tekrarla DiziUzunluk(yilanX) Kez
+            Eger yilanX[i] == yemekX Ve yilanY[i] == yemekY Ise
+                gecerli = Yanlis;
+                yemekX = Rastgele(0, sutun - 1);
+                yemekY = Rastgele(0, satir - 1);
+            EgerBitti
+            i = i + 1;
+        TekrarlaBitti
+    SuresinceBitti
+FonksiyonBitti
+
+// ========== ALTIN YEMEK ==========
+Fonksiyon altinOlustur()
+    Eger altinAktif == Yanlis Ise
+        altinX = Rastgele(0, sutun - 1);
+        altinY = Rastgele(0, satir - 1);
+        altinAktif = Dogru;
+        altinSayac = 40;
+    EgerBitti
+FonksiyonBitti
+
+// ========== ÇİZİM (Ultra Detaylı) ==========
+Fonksiyon ciz()
+    KanvasTemizle(kv);
+    KanvasArkaplan(kv, "#0a0a0f");
+    
+    // Neon Grid Çizgileri
+    Sayi i = 0;
+    Tekrarla satir Kez
+        Sayi j = 0;
+        Tekrarla sutun Kez
+            KanvasCizgi(kv, j * hucre, i * hucre, (j+1) * hucre, i * hucre, "#1a2332", 1);
+            KanvasCizgi(kv, j * hucre, i * hucre, j * hucre, (i+1) * hucre, "#1a2332", 1);
+            j = j + 1;
+        TekrarlaBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Yılan (Gölgeli ve Parlak)
+    i = 0;
+    Tekrarla DiziUzunluk(yilanX) Kez
+        Sayi gX = yilanX[i] * hucre;
+        Sayi gY = yilanY[i] * hucre;
+        
+        Eger i == 0 Ise
+            // Yılan Başı Gölgesi
+            KanvasDikdortgen(kv, gX + 1, gY + 1, hucre - 2, hucre - 2, "#2ea04388");
+            // Yılan Başı
+            KanvasDikdortgen(kv, gX + 2, gY + 2, hucre - 4, hucre - 4, "#3fb950");
+            
+            // Parlayan Gözler
+            Eger yonX == 1 Ise
+                KanvasDaire(kv, gX + 15, gY + 7, 3, "#ffffff");
+                KanvasDaire(kv, gX + 15, gY + 15, 3, "#ffffff");
+                KanvasDaire(kv, gX + 16, gY + 8, 1, "#000000");
+                KanvasDaire(kv, gX + 16, gY + 16, 1, "#000000");
+            EgerBitti
+            Eger yonX == -1 Ise
+                KanvasDaire(kv, gX + 5, gY + 7, 3, "#ffffff");
+                KanvasDaire(kv, gX + 5, gY + 15, 3, "#ffffff");
+                KanvasDaire(kv, gX + 4, gY + 8, 1, "#000000");
+                KanvasDaire(kv, gX + 4, gY + 16, 1, "#000000");
+            EgerBitti
+            Eger yonY == 1 Ise
+                KanvasDaire(kv, gX + 7, gY + 15, 3, "#ffffff");
+                KanvasDaire(kv, gX + 15, gY + 15, 3, "#ffffff");
+                KanvasDaire(kv, gX + 8, gY + 16, 1, "#000000");
+                KanvasDaire(kv, gX + 16, gY + 16, 1, "#000000");
+            EgerBitti
+            Eger yonY == -1 Ise
+                KanvasDaire(kv, gX + 7, gY + 5, 3, "#ffffff");
+                KanvasDaire(kv, gX + 15, gY + 5, 3, "#ffffff");
+                KanvasDaire(kv, gX + 8, gY + 4, 1, "#000000");
+                KanvasDaire(kv, gX + 16, gY + 4, 1, "#000000");
+            EgerBitti
+        Degilse
+            // Yılan Gövdesi (Gradient benzeri renk geçişi)
+            Eger i % 2 == 0 Ise
+                KanvasDikdortgen(kv, gX + 3, gY + 3, hucre - 6, hucre - 6, "#238636");
+            Degilse
+                KanvasDikdortgen(kv, gX + 3, gY + 3, hucre - 6, hucre - 6, "#2ea043");
+            EgerBitti
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Parlayan Yemek
+    Sayi pYemX = yemekX * hucre + hucre/2;
+    Sayi pYemY = yemekY * hucre + hucre/2;
+    KanvasDaire(kv, pYemX, pYemY, 9, "#ff4444");
+    KanvasDaire(kv, pYemX, pYemY, 6, "#ff8888");
+    KanvasDaire(kv, pYemX - 2, pYemY - 2, 2, "#ffffff");
+    
+    // Pırıltı Efekti (Etrafında dönen halka simülasyonu)
+    Sayi aci = ZamanDamgasi() % 360;
+    KanvasCizgi(kv, pYemX - 12, pYemY, pYemX + 12, pYemY, "#ffff00", 1);
+    KanvasCizgi(kv, pYemX, pYemY - 12, pYemX, pYemY + 12, "#ffff00", 1);
+    
+    // Altın Yemek (Parlak)
+    Eger altinAktif == Dogru Ise
+        Sayi pAltX = altinX * hucre + hucre/2;
+        Sayi pAltY = altinY * hucre + hucre/2;
+        KanvasDaire(kv, pAltX, pAltY, 11, "#ffd700");
+        KanvasDaire(kv, pAltX, pAltY, 7, "#ffed4e");
+        KanvasDaire(kv, pAltX - 2, pAltY - 2, 3, "#ffffff");
+        KanvasMetin(kv, "★", pAltX - 6, pAltY + 5, "#000000", "bold 14px 'Segoe UI'");
+        // Altın Pırıltısı
+        KanvasCizgi(kv, pAltX - 15, pAltY, pAltX + 15, pAltY, "#ffd700", 2);
+    EgerBitti
+    
+    panelCiz();
+FonksiyonBitti
+
+// ========== HAREKET ==========
+Fonksiyon hareket()
+    Eger oyunAktif == Yanlis Ise Don; EgerBitti
+    
+    yonX = sonrakiX;
+    yonY = sonrakiY;
+    
+    Sayi yeniX = yilanX[0] + yonX;
+    Sayi yeniY = yilanY[0] + yonY;
+    
+    // Duvara çarpma
+    Eger yeniX < 0 Veya yeniX >= sutun Veya yeniY < 0 Veya yeniY >= satir Ise
+        oyunBitti = Dogru;
+        oyunAktif = Yanlis;
+        zm.Durdur();
+        sesCal("alarm");
+        btnYeniden.gorunum = Dogru;
+        btnBaslat.gorunum = Yanlis;
+        btnDurdur.gorunum = Yanlis;
+        ciz();
+        Don;
+    EgerBitti
+    
+    // Yemek kontrolü
+    Mantiksal yedi = Yanlis;
+    Mantiksal altinYedi = Yanlis;
+    Eger yeniX == yemekX Ve yeniY == yemekY Ise
+        yedi = Dogru;
+    EgerBitti
+    
+    Eger altinAktif == Dogru Ise
+        Eger yeniX == altinX Ve yeniY == altinY Ise
+            altinYedi = Dogru;
+            altinAktif = Yanlis;
+        EgerBitti
+    EgerBitti
+    
+    // Yılanı güncelle
+    DiziBasaEkle(yilanX, yeniX);
+    DiziBasaEkle(yilanY, yeniY);
+    
+    Eger yedi == Yanlis Ve altinYedi == Yanlis Ise
+        DiziCikar(yilanX, DiziUzunluk(yilanX) - 1);
+        DiziCikar(yilanY, DiziUzunluk(yilanY) - 1);
+    EgerBitti
+    
+    // Kendine çarpma
+    Sayi i = 1;
+    Tekrarla DiziUzunluk(yilanX) - 1 Kez
+        Eger yilanX[0] == yilanX[i] Ve yilanY[0] == yilanY[i] Ise
+            oyunBitti = Dogru;
+            oyunAktif = Yanlis;
+            zm.Durdur();
+            sesCal("alarm");
+            btnYeniden.gorunum = Dogru;
+            btnBaslat.gorunum = Yanlis;
+            btnDurdur.gorunum = Yanlis;
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Skor güncelle
+    Eger yedi == Dogru Ise
+        skor = skor + 10 * seviye;
+        sesCal("ding");
+        yeniYemek();
+        
+        Sayi sans = Rastgele(1, 4);
+        Eger sans == 1 Ise altinOlustur(); EgerBitti
+    EgerBitti
+    
+    Eger altinYedi == Dogru Ise
+        skor = skor + 50 * seviye;
+        sesCal("zil");
+    EgerBitti
+    
+    // Altın sayacı
+    Eger altinAktif == Dogru Ise
+        altinSayac = altinSayac - 1;
+        Eger altinSayac <= 0 Ise altinAktif = Yanlis; EgerBitti
+    EgerBitti
+    
+    // Seviye kontrolü
+    Sayi yeniSeviye = Taban(skor / 150) + 1;
+    Eger yeniSeviye > seviye Ise
+        seviye = yeniSeviye;
+        zm.aralik = 180 / seviye;
+        sesCal("bip");
+    EgerBitti
+    
+    Eger skor > enYuksekSkor Ise enYuksekSkor = skor; EgerBitti
+    
+    ciz();
+FonksiyonBitti
+
+// ========== YÖN KONTROL ==========
+Fonksiyon yonDegistir(x, y)
+    Eger oyunAktif == Yanlis Ise Don; EgerBitti
+    Eger (yonX == -x Ve yonY == -y) Ise Don; EgerBitti
+    
+    sonrakiX = x;
+    sonrakiY = y;
+    sesCal("bip"); // Yön değiştirme sesi
+FonksiyonBitti
+
+// ========== OYUN KONTROL ==========
+Fonksiyon oyunuBaslat()
+    yilanX = [8, 7, 6, 5];
+    yilanY = [8, 8, 8, 8];
+    yonX = 1; yonY = 0; sonrakiX = 1; sonrakiY = 0;
+    skor = 0; seviye = 1; zm.aralik = 180;
+    altinAktif = Yanlis; oyunBitti = Yanlis; oyunAktif = Dogru;
+    btnYeniden.gorunum = Yanlis;
+    btnBaslat.gorunum = Yanlis;
+    btnDurdur.gorunum = Dogru;
+    
+    arkaplanMuzikBaslat();
+    yeniYemek();
+    ciz();
+    zm.Baslat();
+FonksiyonBitti
+
+Fonksiyon oyunuDurdur()
+    oyunAktif = Yanlis;
+    zm.Durdur();
+    btnBaslat.gorunum = Dogru;
+    btnDurdur.gorunum = Yanlis;
+    panelCiz();
+FonksiyonBitti
+
+Fonksiyon yenidenBaslat()
+    oyunAktif = Yanlis;
+    zm.Durdur();
+    oyunuBaslat();
+FonksiyonBitti
+
+Fonksiyon sesToggle()
+    sesAcik = !sesAcik;
+    Eger sesAcik == Dogru Ise
+        btnSes.yazi = "🔊 SES AÇIK";
+        Eger oyunAktif Ise arkaplanMuzikBaslat(); EgerBitti
+    Degilse
+        btnSes.yazi = "🔇 SES KAPALI";
+    EgerBitti
+FonksiyonBitti
+
+// ========== BAĞLANTILAR ==========
+zm.her_tikta = hareket;
+
+btnYukari.tiklaninca = Fonksiyon() yonDegistir(0, -1); FonksiyonBitti
+btnAsagi.tiklaninca = Fonksiyon() yonDegistir(0, 1); FonksiyonBitti
+btnSol.tiklaninca = Fonksiyon() yonDegistir(-1, 0); FonksiyonBitti
+btnSag.tiklaninca = Fonksiyon() yonDegistir(1, 0); FonksiyonBitti
+btnBaslat.tiklaninca = oyunuBaslat;
+btnDurdur.tiklaninca = oyunuDurdur;
+btnYeniden.tiklaninca = yenidenBaslat;
+btnSes.tiklaninca = sesToggle;
+
+// Klavye Kontrolü (Pencere Olayları)
+pen.kapatilinca = Fonksiyon() zm.Durdur(); FonksiyonBitti
+
+pen.Ekle(kv);
+pen.Ekle(panelKv);
+pen.Ekle(btnYukari);
+pen.Ekle(btnAsagi);
+pen.Ekle(btnSol);
+pen.Ekle(btnSag);
+pen.Ekle(btnBaslat);
+pen.Ekle(btnDurdur);
+pen.Ekle(btnSes);
+pen.Ekle(btnYeniden);
+
+pen.Goster();
+
+yeniYemek();
+ciz();
+
+Yaz("✨ ULTRA SNAKE v2.0 ✨");
+Yaz("🐍 Görsel ve işitsel şölen başlasın!");
