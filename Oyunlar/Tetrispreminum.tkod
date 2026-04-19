@@ -1,4 +1,4 @@
-// 🟦 TETRIS PREMIUM - BAŞTAN YAZILMIŞ (STRING PARAMETRELİ)
+// 🟦 TETRIS PREMIUM - SATIR SİLME TAMAMEN DÜZELTİLDİ
 // TürkçeKod v10 ile uyumlu
 
 Pencere pen;
@@ -37,7 +37,7 @@ Ses sesEfekt;
 // Renk paleti
 Dizi renkler = ["#00f0f0", "#f0f000", "#a000f0", "#f0a000", "#0000f0", "#00f000", "#f00000"];
 
-// 7 parça - HER BİRİ AYRI DİZİ OLARAK
+// 7 parça
 Dizi parcalar = [];
 Dizi pI = [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]];
 DiziEkle(parcalar, pI);
@@ -172,16 +172,10 @@ Fonksiyon panelCiz()
     KanvasMetin(panelKv, "SONRAKI", 15, 220, "#8b949e", "bold 10px Segoe UI");
 FonksiyonBitti
 
-// ========== SES EFEKTLERİ (STRING PARAMETRE İLE!) ==========
+// ========== SES ==========
 Fonksiyon sesCal(efekt)
     Eger sesAcik == Dogru Ise
         SesEfekti(ses, efekt);
-    EgerBitti
-FonksiyonBitti
-
-Fonksiyon notaCal(frekans)
-    Eger sesAcik == Dogru Ise
-        SesNotaCal(sesEfekt, frekans, 0.1, 0.08);
     EgerBitti
 FonksiyonBitti
 
@@ -247,8 +241,9 @@ Fonksiyon yeniParca()
     panelCiz();
 FonksiyonBitti
 
-// ========== PARÇAYI SABİTLE ==========
+// ========== PARÇAYI SABİTLE (TAMAMEN DÜZELTİLDİ) ==========
 Fonksiyon parcayiSabitle()
+    // 1. Aktif parçayı tahtaya işle
     Sayi i = 0;
     Tekrarla 4 Kez
         Sayi j = 0;
@@ -256,7 +251,7 @@ Fonksiyon parcayiSabitle()
             Eger aktifParca[i][j] > 0 Ise
                 Sayi tx = aktifX + j;
                 Sayi ty = aktifY + i;
-                Eger ty >= 0 Ise
+                Eger ty >= 0 Ve ty < satir Ve tx >= 0 Ve tx < sutun Ise
                     tahta[ty][tx] = aktifRenk + 1;
                 EgerBitti
             EgerBitti
@@ -267,9 +262,10 @@ Fonksiyon parcayiSabitle()
     
     sesCal("bip");
     
-    Sayi silinen = 0;
-    i = satir - 1;
-    Suresince i >= 0 Ise
+    // 2. Dolu satırları tespit et
+    Dizi doluSatirlar = [];
+    i = 0;
+    Tekrarla satir Kez
         Sayi doluSay = 0;
         Sayi j = 0;
         Tekrarla sutun Kez
@@ -280,25 +276,64 @@ Fonksiyon parcayiSabitle()
         TekrarlaBitti
         
         Eger doluSay == sutun Ise
-            Sayi k = i;
-            Suresince k > 0 Ise
-                tahta[k] = tahta[k - 1];
-                k = k - 1;
-            SuresinceBitti
-            tahta[0] = [];
-            j = 0;
+            DiziEkle(doluSatirlar, i);
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    Sayi silinen = DiziUzunluk(doluSatirlar);
+    
+    // 3. Eğer silinen satır varsa, YENİ bir tahta oluştur
+    Eger silinen > 0 Ise
+        Dizi yeniTahta = [];
+        
+        // En üste silinen kadar boş satır ekle
+        i = 0;
+        Tekrarla silinen Kez
+            Dizi bosSatir = [];
+            Sayi j = 0;
             Tekrarla sutun Kez
-                DiziEkle(tahta[0], 0);
+                DiziEkle(bosSatir, 0);
                 j = j + 1;
             TekrarlaBitti
-            silinen = silinen + 1;
+            DiziEkle(yeniTahta, bosSatir);
             i = i + 1;
+        TekrarlaBitti
+        
+        // Eski tahtadan DOLU OLMAYAN satırları yeni tahtaya ekle
+        i = 0;
+        Tekrarla satir Kez
+            Mantiksal doluMu = Yanlis;
+            Sayi k = 0;
+            Tekrarla silinen Kez
+                Eger doluSatirlar[k] == i Ise
+                    doluMu = Dogru;
+                EgerBitti
+                k = k + 1;
+            TekrarlaBitti
+            
+            Eger doluMu == Yanlis Ise
+                Dizi satirKopya = [];
+                Sayi j = 0;
+                Tekrarla sutun Kez
+                    DiziEkle(satirKopya, tahta[i][j]);
+                    j = j + 1;
+                TekrarlaBitti
+                DiziEkle(yeniTahta, satirKopya);
+            EgerBitti
+            i = i + 1;
+        TekrarlaBitti
+        
+        tahta = yeniTahta;
+        
+        // Ses efekti
+        Sayi s = 0;
+        Tekrarla silinen Kez
             sesCal("ding");
-        EgerBitti
-        i = i - 1;
-    SuresinceBitti
-    
-    Eger silinen > 0 Ise
+            s = s + 1;
+        TekrarlaBitti
+        
+        // Skor güncelle
         skor = skor + silinen * 100 * seviye;
         satirSayisi = satirSayisi + silinen;
         
@@ -312,7 +347,7 @@ Fonksiyon parcayiSabitle()
     yeniParca();
 FonksiyonBitti
 
-// ========== AŞAĞI HAREKET ==========
+// ========== HAREKET FONKSİYONLARI ==========
 Fonksiyon asagiHareket()
     Eger oyunAktif == Yanlis Ise Don; EgerBitti
     
@@ -326,7 +361,6 @@ Fonksiyon asagiHareket()
     panelCiz();
 FonksiyonBitti
 
-// ========== HAREKET FONKSİYONLARI ==========
 Fonksiyon solHareket()
     Eger oyunAktif == Yanlis Ise Don; EgerBitti
     Eger carpismaVarMi(aktifX - 1, aktifY, aktifParca) == Yanlis Ise
@@ -511,5 +545,5 @@ sonrakiTip = Rastgele(0, 6);
 ciz();
 
 Yaz("🟦 TETRIS PREMIUM HAZIR!");
-Yaz("String parametreler çalışıyor!");
+Yaz("✅ Satır silme TAMAMEN düzeltildi!");
 Yaz("▶ BAŞLAT ile oyuna başla!");
