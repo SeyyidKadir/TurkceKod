@@ -1,0 +1,202 @@
+// 🐤 3D FLAPPY BIRD v4 - Minik Kanatli
+Pencere p;
+p.baslik = "3D Flappy Bird v4";
+p.genislik = 600; p.yukseklik = 520;
+
+Kanvas3D kv;
+kv.x = 5; kv.y = 5;
+kv.genislik = 450; kv.yukseklik = 420;
+kv.arkaplan = "#87CEEB";
+
+Ses ses;
+
+Ondalik kusY = 0;
+Ondalik hiz = 0;
+Ondalik cekim = 0.012;
+
+Dizi borular = [];
+Sayi skor = 0;
+Mantiksal oynuyor = Dogru;
+Mantiksal basladi = Yanlis;
+
+Ondalik dX = 0;
+Ondalik dY = 0;
+Mantiksal dVar = Yanlis;
+Mantiksal hazir = Yanlis;
+
+Fonksiyon yeniBoru()
+  DiziEkle(borular, [10, Rastgele(-1, 3)]);
+FonksiyonBitti
+
+Dongu i = 0 To 2 Adim 1
+  DiziEkle(borular, [6 + i*6, Rastgele(-1, 3)]);
+DonguBitti
+
+Etiket skorEt;
+skorEt.x = 470; skorEt.y = 20;
+skorEt.yazi = "⭐ 0";
+skorEt.renk = "#ffd700";
+skorEt.stil = "font-size:22px;font-weight:bold;";
+
+Etiket bilgiEt;
+bilgiEt.x = 470; bilgiEt.y = 60;
+bilgiEt.yazi = "DOKUN = ZIPLA";
+bilgiEt.renk = "#aaa";
+
+Fonksiyon sahneCiz()
+  Kanvas3DTemizle(kv);
+  
+  // Zemin
+  Dongu zx = -12 To 30 Adim 1
+    Kanvas3DKup(kv, zx, -7, -3, "#228B22", 0.35);
+  DonguBitti
+  
+  // GENIS BORULAR
+  Dongu i = 0 To DiziUzunluk(borular)-1 Adim 1
+    Dizi b = borular[i];
+    
+    Dongu ux = -1 To 1 Adim 1
+      Dongu uy = 0 To 4 Adim 1
+        Kanvas3DKup(kv, b[0]+ux*0.4, b[1]+2.5+uy*1.1, -3, "#27ae60", 0.35);
+      DonguBitti
+    DonguBitti
+    
+    Dongu ax = -1 To 1 Adim 1
+      Dongu ay = 0 To 4 Adim 1
+        Kanvas3DKup(kv, b[0]+ax*0.4, b[1]-2.5-ay*1.1, -3, "#27ae60", 0.35);
+      DonguBitti
+    DonguBitti
+  DonguBitti
+  
+  // KUS
+  Eger oynuyor Ise
+    // Govde
+    Kanvas3DKure(kv, 0, kusY, 0, "#f1c40f", 0.3);
+    
+    // Goz
+    Kanvas3DKure(kv, 0.18, kusY+0.18, 0.15, "#ffffff", 0.08);
+    Kanvas3DKure(kv, 0.2, kusY+0.2, 0.1, "#000000", 0.05);
+    
+    // Gaga
+    Kanvas3DKoni(kv, 0.32, kusY, 0, "#e74c3c", 0.06);
+    
+    // MINIK KANATLAR
+    Eger hiz > -0.1 Ise
+      Kanvas3DKup(kv, -0.05, kusY+0.15, 0.1, "#f39c12", 0.2);
+      Kanvas3DKup(kv, -0.05, kusY+0.15, -0.1, "#f39c12", 0.2);
+    Degilse
+      Kanvas3DKup(kv, -0.05, kusY-0.15, 0.1, "#f39c12", 0.2);
+      Kanvas3DKup(kv, -0.05, kusY-0.15, -0.1, "#f39c12", 0.2);
+    EgerBitti
+  EgerBitti
+  
+  Kanvas3DKamera(kv, 0, 0.5, 6, 0, kusY, -5);
+  Kanvas3DIsik(kv, 4, 8, 4, 0.5);
+  
+  Kanvas3DRender(kv);
+FonksiyonBitti
+
+Fonksiyon carpismaVar()
+  Eger kusY > 6 Veya kusY < -6 Ise Don Dogru; EgerBitti
+  
+  Dongu i = 0 To DiziUzunluk(borular)-1 Adim 1
+    Dizi b = borular[i];
+    Eger b[0] > -0.9 Ve b[0] < 0.9 Ise
+      Eger kusY > b[1]+1.6 Veya kusY < b[1]-1.6 Ise
+        Don Dogru;
+      EgerBitti
+    EgerBitti
+  DonguBitti
+  
+  Don Yanlis;
+FonksiyonBitti
+
+Zamanlayici zm;
+zm.aralik = 30;
+Sayi frame = 0;
+
+zm.her_tikta = Fonksiyon()
+  frame = frame + 1;
+  
+  Eger frame == 1 Ise
+    JSCalis("
+      var el = _tkEnv.get('kv')._el;
+      if(el){
+        function setP(e){
+          var r = el.getBoundingClientRect();
+          _tkEnv.set('dX', e.clientX - r.left);
+          _tkEnv.set('dY', e.clientY - r.top);
+          _tkEnv.set('dVar', true);
+        }
+        function upP(e){ _tkEnv.set('dVar', false); }
+        el.addEventListener('touchstart', function(e){e.preventDefault();setP(e.touches[0]);},{passive:false});
+        el.addEventListener('mousedown', function(e){setP(e);});
+        el.addEventListener('mouseup', function(e){upP();});
+        el.addEventListener('touchend', function(e){upP();});
+        _tkEnv.set('hazir', true);
+      }
+      'ok';
+    ");
+  EgerBitti
+  
+  Eger hazir Ise
+    Eger dVar Ise
+      Eger !basladi Ise basladi = Dogru; EgerBitti
+      
+      Eger !oynuyor Ise
+        kusY = 0; hiz = 0; skor = 0;
+        skorEt.yazi = "⭐ 0";
+        borular = [];
+        Dongu i = 0 To 2 Adim 1
+          DiziEkle(borular, [6 + i*6, Rastgele(-1, 3)]);
+        DonguBitti
+        oynuyor = Dogru;
+        SesEfekti(ses, "zil");
+      Degilse
+        hiz = 0.22;
+        SesNotaCal(ses, 800, 0.1, 0.08);
+      EgerBitti
+    EgerBitti
+    
+    Eger oynuyor Ve basladi Ise
+      hiz = hiz - cekim;
+      kusY = kusY + hiz;
+      
+      Dongu i = 0 To DiziUzunluk(borular)-1 Adim 1
+        borular[i][0] = borular[i][0] - 0.06;
+      DonguBitti
+      
+      Eger DiziUzunluk(borular) > 0 Ise
+        Eger borular[0][0] < -12 Ise
+          DiziCikar(borular, 0);
+          yeniBoru();
+        EgerBitti
+      EgerBitti
+      
+      Eger carpismaVar() Ise
+        oynuyor = Yanlis;
+        SesEfekti(ses, "patlama");
+        Yaz("💀 Carpti! Skor: " + skor);
+      EgerBitti
+      
+      Dongu i = 0 To DiziUzunluk(borular)-1 Adim 1
+        Eger borular[i][0] > -0.6 Ve borular[i][0] < -0.5 Ise
+          skor = skor + 1; skorEt.yazi = "⭐ " + skor;
+          SesEfekti(ses, "ding");
+        EgerBitti
+      DonguBitti
+    EgerBitti
+    
+    sahneCiz();
+  EgerBitti
+FonksiyonBitti
+
+p.Ekle(kv);
+p.Ekle(skorEt);
+p.Ekle(bilgiEt);
+p.Goster();
+sahneCiz();
+zm.Baslat();
+
+Yaz("🐤 3D FLAPPY BIRD v4!");
+Yaz("Minik kanatli kus!");

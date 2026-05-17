@@ -1,0 +1,272 @@
+// 🟡 3D PAC-MAN v2 - Daha net, daha yavaş
+
+Sayi HAR_GEN = 10;
+Sayi HAR_YUK = 10;
+Dizi harita = [
+  [1,1,1,1,1,1,1,1,1,1],
+  [1,2,2,2,2,2,2,2,2,1],
+  [1,2,1,1,2,1,1,2,2,1],
+  [1,2,2,2,2,2,2,2,2,1],
+  [1,2,1,2,1,1,2,1,2,1],
+  [1,2,1,2,2,2,2,1,2,1],
+  [1,2,2,2,1,2,2,2,2,1],
+  [1,2,1,2,2,2,1,2,2,1],
+  [1,2,2,2,2,2,2,2,2,1],
+  [1,1,1,1,1,1,1,1,1,1]
+];
+
+Sayi pacX = 1; Sayi pacY = 1;
+Sayi pacYon = 1; // 0:yukarı 1:sağ 2:aşağı 3:sol
+Sayi skor = 0;
+Sayi tickSay = 0; // Hayaletleri yavaşlatmak için
+Mantiksal oyunAktif = Yanlis;
+
+Dizi hayaletler = [[8,8],[8,1],[1,8],[4,4]];
+Dizi hayYon = [0,1,2,3];
+Dizi hayRenk = ["#ff0000","#ffb8ff","#00ffff","#ffb852"];
+Dizi hayIsim = ["Kırmızı","Pembe","Camgöbeği","Turuncu"];
+
+Pencere pen;
+pen.baslik = "🟡 3D PAC-MAN v2";
+pen.genislik = 560;
+pen.yukseklik = 520;
+pen.arkaplan = "#0a0c10";
+
+Kanvas3D kv;
+kv.x = 5;
+kv.y = 5;
+kv.genislik = 380;
+kv.yukseklik = 380;
+
+Etiket lblSkor;
+lblSkor.x = 400;
+lblSkor.y = 15;
+lblSkor.yazi = "SKOR: 0";
+lblSkor.renk = "#ffd700";
+lblSkor.stil = "font-size:18px;font-weight:bold;";
+
+Etiket lblDurum;
+lblDurum.x = 400;
+lblDurum.y = 42;
+lblDurum.yazi = "▶ BAŞLAT'a bas";
+lblDurum.renk = "#5af";
+lblDurum.stil = "font-size:10px;";
+
+// Yön butonları
+Dugme btnY; btnY.yazi="▲"; btnY.x=415; btnY.y=70; btnY.genislik=50; btnY.yukseklik=50; btnY.arkaplan="#333"; btnY.renk="#fff"; btnY.stil="font-size:22px;border-radius:10px;";
+Dugme btnA; btnA.yazi="▼"; btnA.x=415; btnA.y=170; btnA.genislik=50; btnA.yukseklik=50; btnA.arkaplan="#333"; btnA.renk="#fff"; btnA.stil="font-size:22px;border-radius:10px;";
+Dugme btnS; btnS.yazi="◀"; btnS.x=370; btnS.y=120; btnS.genislik=50; btnS.yukseklik=50; btnS.arkaplan="#333"; btnS.renk="#fff"; btnS.stil="font-size:22px;border-radius:10px;";
+Dugme btnD; btnD.yazi="▶"; btnD.x=460; btnD.y=120; btnD.genislik=50; btnD.yukseklik=50; btnD.arkaplan="#333"; btnD.renk="#fff"; btnD.stil="font-size:22px;border-radius:10px;";
+
+Dugme btnBaslat;
+btnBaslat.yazi = "▶ BAŞLAT";
+btnBaslat.x = 395;
+btnBaslat.y = 250;
+btnBaslat.genislik = 140;
+btnBaslat.yukseklik = 40;
+btnBaslat.arkaplan = "#2ea043";
+btnBaslat.renk = "#fff";
+btnBaslat.stil = "font-size:13px;font-weight:bold;border-radius:10px;";
+
+Dugme btnDurdur;
+btnDurdur.yazi = "⏸ DURDUR";
+btnDurdur.x = 395;
+btnDurdur.y = 300;
+btnDurdur.genislik = 140;
+btnDurdur.yukseklik = 35;
+btnDurdur.arkaplan = "#6e7681";
+btnDurdur.renk = "#fff";
+btnDurdur.stil = "font-size:11px;border-radius:10px;";
+
+Dugme btnYeniden;
+btnYeniden.yazi = "🔄 YENİDEN";
+btnYeniden.x = 395;
+btnYeniden.y = 345;
+btnYeniden.genislik = 140;
+btnYeniden.yukseklik = 35;
+btnYeniden.arkaplan = "#d33";
+btnYeniden.renk = "#fff";
+btnYeniden.stil = "font-size:11px;border-radius:10px;";
+
+Ses ses;
+Zamanlayici zm;
+zm.aralik = 280; // Biraz yavaş
+
+// ===== SAHNE ÇİZ =====
+Fonksiyon SahneCiz()
+  Kanvas3DTemizle(kv);
+  
+  // Duvarlar - parlak mavi
+  Sayi x = 0;
+  Tekrarla HAR_GEN Kez
+    Sayi y = 0;
+    Tekrarla HAR_YUK Kez
+      Eger harita[y][x] == 1 Ise
+        Kanvas3DKup(kv, x, 0.5, y, "#3355cc", 0.5);
+      EgerBitti
+      // Noktalar - beyaz parlak
+      Eger harita[y][x] == 2 Ise
+        Kanvas3DKure(kv, x, 0.2, y, "#ffffff", 0.07);
+      EgerBitti
+      y = y + 1;
+    TekrarlaBitti
+    x = x + 1;
+  TekrarlaBitti
+  
+  // Pac-Man - BÜYÜK SARI (BURADA!)
+  Eger oyunAktif Ise
+    Kanvas3DKure(kv, pacX, 0.45, pacY, "#ffdd00", 0.45);
+  EgerBitti
+  
+  // Hayaletler - küçük
+  Sayi h = 0;
+  Tekrarla 4 Kez
+    Eger oyunAktif Ise
+      Kanvas3DKure(kv, hayaletler[h][0], 0.4, hayaletler[h][1], hayRenk[h], 0.25);
+    EgerBitti
+    h = h + 1;
+  TekrarlaBitti
+  
+  Kanvas3DKamera(kv, 4.5, 10, 14, 4.5, 0, 6);
+  Kanvas3DIsik(kv, 5, 12, 8, 0.5);
+  Kanvas3DRender(kv);
+FonksiyonBitti
+
+// ===== HAYALET AI =====
+Fonksiyon HayaletHareket()
+  Eger tickSay % 5 != 0 Ise Don; EgerBitti // 5 tickte bir hareket = yavaş!
+  
+  Sayi h = 0;
+  Tekrarla 4 Kez
+    Sayi hx = hayaletler[h][0];
+    Sayi hy = hayaletler[h][1];
+    Sayi yon = hayYon[h];
+    
+    Sayi rast = Rastgele(0, 8);
+    Eger rast < 3 Ise
+      yon = Rastgele(0, 3);
+    EgerBitti
+    
+    Sayi nx = hx; Sayi ny = hy;
+    Eger yon == 0 Ise ny = hy - 1; EgerBitti
+    Eger yon == 1 Ise nx = hx + 1; EgerBitti
+    Eger yon == 2 Ise ny = hy + 1; EgerBitti
+    Eger yon == 3 Ise nx = hx - 1; EgerBitti
+    
+    Eger nx >= 0 Ve nx < HAR_GEN Ve ny >= 0 Ve ny < HAR_YUK Ise
+      Eger harita[ny][nx] != 1 Ise
+        hayaletler[h][0] = nx;
+        hayaletler[h][1] = ny;
+        hayYon[h] = yon;
+      Degilse
+        hayYon[h] = Rastgele(0, 3);
+      EgerBitti
+    EgerBitti
+    
+    // Pac-Man yakalandı mı?
+    Eger hayaletler[h][0] == pacX Ve hayaletler[h][1] == pacY Ise
+      oyunAktif = Yanlis;
+      zm.Durdur();
+      SesEfekti(ses, "alarm");
+      lblDurum.yazi = hayIsim[h] + " hayalet yakaladı!";
+      Mesaj("💀 " + hayIsim[h] + " hayalet yakaladı!\nSkor: " + MetineKonvert(skor));
+    EgerBitti
+    
+    h = h + 1;
+  TekrarlaBitti
+FonksiyonBitti
+
+// ===== OYUN TICK =====
+Fonksiyon OyunTick()
+  Eger oyunAktif == Yanlis Ise Don; EgerBitti
+  
+  tickSay = tickSay + 1;
+  
+  // Pac-Man hareket
+  Sayi nx = pacX; Sayi ny = pacY;
+  Eger pacYon == 0 Ise ny = pacY - 1; EgerBitti
+  Eger pacYon == 1 Ise nx = pacX + 1; EgerBitti
+  Eger pacYon == 2 Ise ny = pacY + 1; EgerBitti
+  Eger pacYon == 3 Ise nx = pacX - 1; EgerBitti
+  
+  Eger nx >= 0 Ve nx < HAR_GEN Ve ny >= 0 Ve ny < HAR_YUK Ise
+    Eger harita[ny][nx] != 1 Ise
+      pacX = nx;
+      pacY = ny;
+      Eger harita[pacY][pacX] == 2 Ise
+        harita[pacY][pacX] = 0;
+        skor = skor + 10;
+        lblSkor.yazi = "SKOR: " + MetineKonvert(skor);
+        SesEfekti(ses, "bip");
+      EgerBitti
+    EgerBitti
+  EgerBitti
+  
+  HayaletHareket();
+  SahneCiz();
+FonksiyonBitti
+
+// ===== OYUN KONTROL =====
+Fonksiyon OyunuBaslat()
+  // Haritayı sıfırla (noktaları geri getir)
+  harita = [
+    [1,1,1,1,1,1,1,1,1,1],
+    [1,2,2,2,2,2,2,2,2,1],
+    [1,2,1,1,2,1,1,2,2,1],
+    [1,2,2,2,2,2,2,2,2,1],
+    [1,2,1,2,1,1,2,1,2,1],
+    [1,2,1,2,2,2,2,1,2,1],
+    [1,2,2,2,1,2,2,2,2,1],
+    [1,2,1,2,2,2,1,2,2,1],
+    [1,2,2,2,2,2,2,2,2,1],
+    [1,1,1,1,1,1,1,1,1,1]
+  ];
+  skor = 0; tickSay = 0;
+  lblSkor.yazi = "SKOR: 0";
+  lblDurum.yazi = "🟡 Pac-Man (büyük sarı) | Hayaletlerden kaç!";
+  pacX = 1; pacY = 1; pacYon = 1;
+  hayaletler = [[8,8],[8,1],[1,8],[4,4]];
+  hayYon = [0,1,2,3];
+  oyunAktif = Dogru;
+  SahneCiz();
+  zm.Baslat();
+  SesEfekti(ses, "zil");
+FonksiyonBitti
+
+zm.her_tikta = OyunTick;
+
+btnBaslat.tiklaninca = Fonksiyon()
+  Eger oyunAktif == Yanlis Ise OyunuBaslat(); EgerBitti
+FonksiyonBitti
+
+btnDurdur.tiklaninca = Fonksiyon()
+  oyunAktif = Yanlis;
+  zm.Durdur();
+  lblDurum.yazi = "⏸ Durduruldu";
+FonksiyonBitti
+
+btnYeniden.tiklaninca = Fonksiyon()
+  zm.Durdur();
+  OyunuBaslat();
+FonksiyonBitti
+
+btnY.tiklaninca = Fonksiyon() Eger oyunAktif Ise pacYon = 0; EgerBitti FonksiyonBitti
+btnA.tiklaninca = Fonksiyon() Eger oyunAktif Ise pacYon = 2; EgerBitti FonksiyonBitti
+btnS.tiklaninca = Fonksiyon() Eger oyunAktif Ise pacYon = 3; EgerBitti FonksiyonBitti
+btnD.tiklaninca = Fonksiyon() Eger oyunAktif Ise pacYon = 1; EgerBitti FonksiyonBitti
+
+pen.kapatilinca = Fonksiyon()
+  zm.Durdur();
+FonksiyonBitti
+
+// ===== BAŞLAT =====
+pen.Ekle(kv);
+pen.Ekle(lblSkor);
+pen.Ekle(lblDurum);
+pen.Ekle(btnY); pen.Ekle(btnA); pen.Ekle(btnS); pen.Ekle(btnD);
+pen.Ekle(btnBaslat); pen.Ekle(btnDurdur); pen.Ekle(btnYeniden);
+pen.Goster();
+SahneCiz();
+Yaz("🟡 3D PAC-MAN v2 hazır!");
+Yaz("Büyük SARI küre = Pac-Man (SEN)");
+Yaz("Küçük renkli küreler = Hayaletler (KAÇ!)");

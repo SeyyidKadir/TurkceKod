@@ -1,0 +1,167 @@
+// 🚗 2D ARABA SURME OYUNU v2
+Pencere p;
+p.baslik = "🚗 Araba Surme v2";
+p.genislik = 500;
+p.yukseklik = 500;
+
+Kanvas kv;
+kv.x = 10; kv.y = 10;
+kv.genislik = 470; kv.yukseklik = 400;
+kv.arkaplan = "#1a1a2e";
+
+Ses ses;
+
+Sayi arabaX = 220;
+Sayi arabaGen = 40;
+Sayi arabaYuk = 60;
+Sayi yolY = 0;
+
+Dizi engelX = [60, 180, 300, 400];
+Dizi engelY = [-80, -200, -350, -500];
+Sayi engelGen = 45;
+Sayi engelYuk = 45;
+
+Sayi skor = 0;
+Sayi hiz = 3;
+Mantiksal oyunAktif = Dogru;
+Metin solBas = "0";
+Metin sagBas = "0";
+
+// Klavye event
+JSKod("
+  document.addEventListener('keydown', function(e) {
+    if(e.key === 'ArrowLeft') { e.preventDefault(); _tkEnv.set('sol', '1'); }
+    if(e.key === 'ArrowRight') { e.preventDefault(); _tkEnv.set('sag', '1'); }
+  });
+  document.addEventListener('keyup', function(e) {
+    if(e.key === 'ArrowLeft') { _tkEnv.set('sol', '0'); }
+    if(e.key === 'ArrowRight') { _tkEnv.set('sag', '0'); }
+  });
+  _tkEnv.set('sol', '0');
+  _tkEnv.set('sag', '0');
+  'ok';
+");
+
+Fonksiyon arabaCiz()
+  KanvasDikdortgen(kv, arabaX, 330, arabaGen, arabaYuk, "#e63946");
+  KanvasDikdortgen(kv, arabaX+5, 320, arabaGen-10, 15, "#ff6b6b");
+  KanvasDikdortgen(kv, arabaX+8, 335, 8, 15, "#87CEEB");
+  KanvasDikdortgen(kv, arabaX+24, 335, 8, 15, "#87CEEB");
+  KanvasDikdortgen(kv, arabaX-5, 325, 10, 20, "#111");
+  KanvasDikdortgen(kv, arabaX-5, 365, 10, 20, "#111");
+  KanvasDikdortgen(kv, arabaX+35, 325, 10, 20, "#111");
+  KanvasDikdortgen(kv, arabaX+35, 365, 10, 20, "#111");
+FonksiyonBitti
+
+Fonksiyon yolCiz()
+  KanvasDikdortgen(kv, 20, 0, 430, 410, "#333");
+  Sayi cy = yolY % 60;
+  Suresince cy < 410 Ise
+    KanvasDikdortgen(kv, 235, cy, 8, 30, "#ffd700");
+    cy = cy + 60;
+  SuresinceBitti
+  KanvasDikdortgen(kv, 25, 0, 3, 410, "#fff");
+  KanvasDikdortgen(kv, 445, 0, 3, 410, "#fff");
+FonksiyonBitti
+
+Fonksiyon engelCiz(i)
+  KanvasDikdortgen(kv, engelX[i], engelY[i], engelGen, engelYuk, "#f4a261");
+  KanvasDikdortgen(kv, engelX[i]+3, engelY[i]+3, engelGen-6, engelYuk-6, "#ff8c00");
+FonksiyonBitti
+
+Fonksiyon carpismaVar()
+  Dongu i = 0 To 3 Adim 1
+    Eger engelY[i] + engelYuk > 330 Ve engelY[i] < 390 Ise
+      Eger arabaX < engelX[i] + engelGen Ve arabaX + arabaGen > engelX[i] Ise
+        Don Dogru;
+      EgerBitti
+    EgerBitti
+  DonguBitti
+  Don Yanlis;
+FonksiyonBitti
+
+Fonksiyon ciz()
+  KanvasTemizle(kv);
+  KanvasArkaplan(kv, "#1a1a2e");
+  yolCiz();
+  Dongu i = 0 To 3 Adim 1
+    Eger engelY[i] > -60 Ve engelY[i] < 420 Ise engelCiz(i); EgerBitti
+  DonguBitti
+  arabaCiz();
+  KanvasMetin(kv, "SKOR: " + skor, 20, 30, "#ffd700", "bold 14px Arial");
+  KanvasMetin(kv, "HIZ: " + hiz, 380, 30, "#4ade80", "bold 14px Arial");
+FonksiyonBitti
+
+// Butonlar
+Dugme btnSol; btnSol.yazi="◀"; btnSol.x=20; btnSol.y=440; btnSol.genislik=60; btnSol.yukseklik=40; btnSol.arkaplan="#1f6feb"; btnSol.renk="#fff"; btnSol.stil="font-size:20px;border-radius:8px;";
+Dugme btnSag; btnSag.yazi="▶"; btnSag.x=90; btnSag.y=440; btnSag.genislik=60; btnSag.yukseklik=40; btnSag.arkaplan="#1f6feb"; btnSag.renk="#fff"; btnSag.stil="font-size:20px;border-radius:8px;";
+Dugme btnBaslat; btnBaslat.yazi="▶ BASLAT"; btnBaslat.x=170; btnBaslat.y=440; btnBaslat.genislik=130; btnBaslat.yukseklik=40; btnBaslat.arkaplan="#2ea043"; btnBaslat.renk="#fff"; btnBaslat.stil="font-size:13px;font-weight:bold;border-radius:8px;";
+Dugme btnHiz; btnHiz.yazi="⚡"; btnHiz.x=310; btnHiz.y=440; btnHiz.genislik=50; btnHiz.yukseklik=40; btnHiz.arkaplan="#f4a261"; btnHiz.renk="#000"; btnHiz.stil="font-size:18px;border-radius:8px;";
+Dugme btnYavas; btnYavas.yazi="🐢"; btnYavas.x=370; btnYavas.y=440; btnYavas.genislik=50; btnYavas.yukseklik=40; btnYavas.arkaplan="#2ec4b6"; btnYavas.renk="#000"; btnYavas.stil="font-size:18px;border-radius:8px;";
+
+btnSol.tiklaninca = Fonksiyon()
+  arabaX = arabaX - 25;
+  Eger arabaX < 30 Ise arabaX = 30; EgerBitti
+FonksiyonBitti
+
+btnSag.tiklaninca = Fonksiyon()
+  arabaX = arabaX + 25;
+  Eger arabaX > 400 Ise arabaX = 400; EgerBitti
+FonksiyonBitti
+
+btnBaslat.tiklaninca = Fonksiyon()
+  oyunAktif = Dogru; skor = 0; hiz = 3; arabaX = 220;
+  Dongu i = 0 To 3 Adim 1
+    engelY[i] = -80 - i*120;
+    engelX[i] = Rastgele(0,4) * 100 + 40;
+  DonguBitti
+FonksiyonBitti
+
+btnHiz.tiklaninca = Fonksiyon() hiz = hiz + 1; Eger hiz > 10 Ise hiz = 10; EgerBitti FonksiyonBitti
+btnYavas.tiklaninca = Fonksiyon() hiz = hiz - 1; Eger hiz < 1 Ise hiz = 1; EgerBitti FonksiyonBitti
+
+// Ana dongu
+Zamanlayici zm;
+zm.aralik = 30;
+
+zm.her_tikta = Fonksiyon()
+  // Klavye
+  solBas = JSKod("return _tkEnv.get('sol') || '0';");
+  sagBas = JSKod("return _tkEnv.get('sag') || '0';");
+  
+  Eger solBas == "1" Ise arabaX = arabaX - 6; Eger arabaX < 30 Ise arabaX = 30; EgerBitti EgerBitti
+  Eger sagBas == "1" Ise arabaX = arabaX + 6; Eger arabaX > 400 Ise arabaX = 400; EgerBitti EgerBitti
+  
+  Eger oyunAktif Ise
+    yolY = yolY + hiz;
+    Dongu i = 0 To 3 Adim 1
+      engelY[i] = engelY[i] + hiz;
+      Eger engelY[i] > 430 Ise
+        engelY[i] = -60;
+        engelX[i] = Rastgele(0,4) * 100 + 40;
+        skor = skor + 10;
+        SesEfekti(ses, "ding");
+      EgerBitti
+    DonguBitti
+    
+    Eger carpismaVar() Ise
+      oyunAktif = Yanlis;
+      SesEfekti(ses, "alarm");
+      KanvasMetin(kv, "💥 CRASH!", 150, 180, "#e63946", "bold 30px Arial");
+      KanvasMetin(kv, "Skor: " + skor, 170, 220, "#ffd700", "bold 18px Arial");
+    EgerBitti
+    
+    ciz();
+  EgerBitti
+FonksiyonBitti
+
+p.Ekle(kv);
+p.Ekle(btnSol); p.Ekle(btnSag); p.Ekle(btnBaslat); p.Ekle(btnHiz); p.Ekle(btnYavas);
+p.Goster();
+
+ciz();
+zm.Baslat();
+
+Yaz("🚗 2D ARABA SURME v2 HAZIR!");
+Yaz("◀ ▶ veya OK TUSLARI ile sur!");
+Yaz("⚡ Hizlan, 🐢 Yavasla, engellerden kac!");

@@ -1,0 +1,441 @@
+// 🎮 3D TETRIS (ZİNCİRLEME DİZİ İLE) - TürkçeKod v13
+// Mobil uyumlu + buton event'leri düzeltildi
+
+Sayi IZGARA_X = 4;
+Sayi IZGARA_Y = 6;
+Sayi IZGARA_Z = 4;
+
+// Tetris parçaları
+Dizi PARCALAR = [
+  [[0,0,0],[1,0,0],[2,0,0]],           // I parçası
+  [[0,0,0],[1,0,0],[1,1,0]],           // L parçası
+  [[0,0,0],[1,0,0],[2,0,0],[1,1,0]],   // T parçası
+  [[0,0,0],[1,0,0],[0,1,0],[1,1,0]]    // Kare
+];
+
+Dizi RENKLER = ["#00f0f0","#f0a000","#a000f0","#f0f000"];
+
+// Oyun değişkenleri - 3D zincirleme dizi
+Dizi tahta = [];
+Sayi aktifTip = 0;
+Dizi aktifParca = [];
+Sayi aktifX = 1;
+Sayi aktifY = 4;
+Sayi aktifZ = 1;
+Sayi skor = 0;
+Mantiksal oyunAktif = Yanlis;
+
+// UI
+Pencere pen;
+pen.baslik = "🎮 3D TETRIS v13";
+pen.genislik = 560;
+pen.yukseklik = 580;
+pen.arkaplan = "#0a0c10";
+
+Kanvas3D kv;
+kv.x = 5;
+kv.y = 5;
+kv.genislik = 360;
+kv.yukseklik = 440;
+kv.arkaplan = "#0d1117";
+
+Etiket lblSkor;
+lblSkor.x = 380;
+lblSkor.y = 15;
+lblSkor.yazi = "SKOR: 0";
+lblSkor.renk = "#ffd700";
+lblSkor.stil = "font-size:20px;font-weight:bold;";
+
+Etiket lblBilgi;
+lblBilgi.x = 380;
+lblBilgi.y = 50;
+lblBilgi.yazi = "X:1 Z:1";
+lblBilgi.renk = "#5af";
+lblBilgi.stil = "font-size:12px;";
+
+// Kontrol butonları - mobil için büyük
+Dugme btnSol;
+btnSol.yazi = "◀";
+btnSol.x = 380;
+btnSol.y = 90;
+btnSol.genislik = 50;
+btnSol.yukseklik = 50;
+btnSol.arkaplan = "#333";
+btnSol.renk = "#fff";
+btnSol.stil = "font-size:20px;border-radius:10px;";
+
+Dugme btnSag;
+btnSag.yazi = "▶";
+btnSag.x = 490;
+btnSag.y = 90;
+btnSag.genislik = 50;
+btnSag.yukseklik = 50;
+btnSag.arkaplan = "#333";
+btnSag.renk = "#fff";
+btnSag.stil = "font-size:20px;border-radius:10px;";
+
+Dugme btnIleri;
+btnIleri.yazi = "▲";
+btnIleri.x = 435;
+btnIleri.y = 150;
+btnIleri.genislik = 50;
+btnIleri.yukseklik = 50;
+btnIleri.arkaplan = "#333";
+btnIleri.renk = "#fff";
+btnIleri.stil = "font-size:20px;border-radius:10px;";
+
+Dugme btnGeri;
+btnGeri.yazi = "▼";
+btnGeri.x = 435;
+btnGeri.y = 210;
+btnGeri.genislik = 50;
+btnGeri.yukseklik = 50;
+btnGeri.arkaplan = "#333";
+btnGeri.renk = "#fff";
+btnGeri.stil = "font-size:20px;border-radius:10px;";
+
+Dugme btnDondur;
+btnDondur.yazi = "↻ DÖNDÜR";
+btnDondur.x = 380;
+btnDondur.y = 280;
+btnDondur.genislik = 160;
+btnDondur.yukseklik = 45;
+btnDondur.arkaplan = "#1f6feb";
+btnDondur.renk = "#fff";
+btnDondur.stil = "font-size:13px;font-weight:bold;border-radius:10px;";
+
+Dugme btnHizli;
+btnHizli.yazi = "▼▼ HIZLI İNDİR";
+btnHizli.x = 380;
+btnHizli.y = 335;
+btnHizli.genislik = 160;
+btnHizli.yukseklik = 45;
+btnHizli.arkaplan = "#d33";
+btnHizli.renk = "#fff";
+btnHizli.stil = "font-size:13px;font-weight:bold;border-radius:10px;";
+
+Dugme btnBaslat;
+btnBaslat.yazi = "▶ BAŞLAT";
+btnBaslat.x = 380;
+btnBaslat.y = 395;
+btnBaslat.genislik = 160;
+btnBaslat.yukseklik = 45;
+btnBaslat.arkaplan = "#2ea043";
+btnBaslat.renk = "#fff";
+btnBaslat.stil = "font-size:13px;font-weight:bold;border-radius:10px;";
+
+Dugme btnDurdur;
+btnDurdur.yazi = "⏸ DURDUR";
+btnDurdur.x = 380;
+btnDurdur.y = 450;
+btnDurdur.genislik = 75;
+btnDurdur.yukseklik = 40;
+btnDurdur.arkaplan = "#6e7681";
+btnDurdur.renk = "#fff";
+btnDurdur.stil = "font-size:11px;border-radius:10px;";
+
+Dugme btnYeniden;
+btnYeniden.yazi = "🔄";
+btnYeniden.x = 465;
+btnYeniden.y = 450;
+btnYeniden.genislik = 75;
+btnYeniden.yukseklik = 40;
+btnYeniden.arkaplan = "#d33";
+btnYeniden.renk = "#fff";
+btnYeniden.stil = "font-size:18px;border-radius:10px;";
+
+Ses ses;
+Zamanlayici zm;
+zm.aralik = 600;
+
+// ===== TAHTA =====
+Fonksiyon TahtaOlustur()
+  tahta = [];
+  Sayi x = 0;
+  Tekrarla IZGARA_X Kez
+    Dizi satir = [];
+    Sayi y = 0;
+    Tekrarla IZGARA_Y Kez
+      Dizi sutun = [];
+      Sayi z = 0;
+      Tekrarla IZGARA_Z Kez
+        DiziEkle(sutun, 0);
+        z = z + 1;
+      TekrarlaBitti
+      DiziEkle(satir, sutun);
+      y = y + 1;
+    TekrarlaBitti
+    DiziEkle(tahta, satir);
+    x = x + 1;
+  TekrarlaBitti
+FonksiyonBitti
+
+// ===== ÇARPIŞMA =====
+Fonksiyon CarpismaVarMi(cx, cy, cz, parca)
+  Sayi i = 0;
+  Tekrarla DiziUzunluk(parca) Kez
+    Sayi dx = cx + parca[i][0];
+    Sayi dy = cy + parca[i][1];
+    Sayi dz = cz + parca[i][2];
+    Eger dx < 0 Veya dx >= IZGARA_X Ise Don Dogru; EgerBitti
+    Eger dy < 0 Veya dy >= IZGARA_Y Ise Don Dogru; EgerBitti
+    Eger dz < 0 Veya dz >= IZGARA_Z Ise Don Dogru; EgerBitti
+    Eger dy >= 0 Ve dy < IZGARA_Y Ise
+      Eger tahta[dx][dy][dz] > 0 Ise Don Dogru; EgerBitti
+    EgerBitti
+    i = i + 1;
+  TekrarlaBitti
+  Don Yanlis;
+FonksiyonBitti
+
+// ===== YENİ PARÇA =====
+Fonksiyon YeniParca()
+  aktifTip = Rastgele(0, DiziUzunluk(PARCALAR) - 1);
+  aktifParca = PARCALAR[aktifTip];
+  aktifX = 1;
+  aktifY = IZGARA_Y - 2;
+  aktifZ = 1;
+  Eger CarpismaVarMi(aktifX, aktifY, aktifZ, aktifParca) Ise
+    oyunAktif = Yanlis;
+    zm.Durdur();
+    SesEfekti(ses, "alarm");
+    Mesaj("Oyun Bitti! Skor: " + MetineKonvert(skor));
+  EgerBitti
+  lblBilgi.yazi = "X:" + aktifX + " Z:" + aktifZ;
+FonksiyonBitti
+
+// ===== SABİTLE =====
+Fonksiyon ParcayiSabitle()
+  Sayi i = 0;
+  Tekrarla DiziUzunluk(aktifParca) Kez
+    Sayi dx = aktifX + aktifParca[i][0];
+    Sayi dy = aktifY + aktifParca[i][1];
+    Sayi dz = aktifZ + aktifParca[i][2];
+    tahta[dx][dy][dz] = aktifTip + 1;
+    i = i + 1;
+  TekrarlaBitti
+  SesEfekti(ses, "bip");
+  
+  // Satır temizleme
+  Sayi y = 0;
+  Tekrarla IZGARA_Y Kez
+    Mantiksal dolu = Dogru;
+    Sayi x = 0;
+    Tekrarla IZGARA_X Kez
+      Sayi z = 0;
+      Tekrarla IZGARA_Z Kez
+        Eger tahta[x][y][z] == 0 Ise dolu = Yanlis; EgerBitti
+        z = z + 1;
+      TekrarlaBitti
+      x = x + 1;
+    TekrarlaBitti
+    Eger dolu Ise
+      Sayi yy = y;
+      Suresince yy < IZGARA_Y - 1 Ise
+        Sayi xx = 0;
+        Tekrarla IZGARA_X Kez
+          Sayi zz = 0;
+          Tekrarla IZGARA_Z Kez
+            tahta[xx][yy][zz] = tahta[xx][yy+1][zz];
+            zz = zz + 1;
+          TekrarlaBitti
+          xx = xx + 1;
+        TekrarlaBitti
+        yy = yy + 1;
+      SuresinceBitti
+      Sayi xx = 0;
+      Tekrarla IZGARA_X Kez
+        Sayi zz = 0;
+        Tekrarla IZGARA_Z Kez
+          tahta[xx][IZGARA_Y-1][zz] = 0;
+          zz = zz + 1;
+        TekrarlaBitti
+        xx = xx + 1;
+      TekrarlaBitti
+      skor = skor + 100;
+      lblSkor.yazi = "SKOR: " + MetineKonvert(skor);
+      SesEfekti(ses, "ding");
+      y = y - 1;
+    EgerBitti
+    y = y + 1;
+  TekrarlaBitti
+  YeniParca();
+  SahneCiz();
+FonksiyonBitti
+
+// ===== DÖNDÜR =====
+Fonksiyon Dondur()
+  Eger oyunAktif == Yanlis Ise Don; EgerBitti
+  Dizi yeni = [];
+  Sayi i = 0;
+  Tekrarla DiziUzunluk(aktifParca) Kez
+    DiziEkle(yeni, [-aktifParca[i][2], aktifParca[i][1], aktifParca[i][0]]);
+    i = i + 1;
+  TekrarlaBitti
+  Eger CarpismaVarMi(aktifX, aktifY, aktifZ, yeni) == Yanlis Ise
+    aktifParca = yeni;
+    SahneCiz();
+  EgerBitti
+FonksiyonBitti
+
+// ===== HAREKET =====
+Fonksiyon AsagiHareket()
+  Eger oyunAktif == Yanlis Ise Don; EgerBitti
+  Eger CarpismaVarMi(aktifX, aktifY - 1, aktifZ, aktifParca) Ise
+    ParcayiSabitle();
+  Degilse
+    aktifY = aktifY - 1;
+    SahneCiz();
+  EgerBitti
+FonksiyonBitti
+
+Fonksiyon HizliDus()
+  Eger oyunAktif == Yanlis Ise Don; EgerBitti
+  Suresince CarpismaVarMi(aktifX, aktifY - 1, aktifZ, aktifParca) == Yanlis Ise
+    aktifY = aktifY - 1;
+  SuresinceBitti
+  ParcayiSabitle();
+  SahneCiz();
+FonksiyonBitti
+
+// ===== SAHNE ÇİZ =====
+Fonksiyon SahneCiz()
+  Kanvas3DTemizle(kv);
+  // Sabit bloklar
+  Sayi x = 0;
+  Tekrarla IZGARA_X Kez
+    Sayi y = 0;
+    Tekrarla IZGARA_Y Kez
+      Sayi z = 0;
+      Tekrarla IZGARA_Z Kez
+        Sayi dg = tahta[x][y][z];
+        Eger dg > 0 Ise
+          Kanvas3DKup(kv, x, y, z, RENKLER[dg - 1], 0.45);
+        EgerBitti
+        z = z + 1;
+      TekrarlaBitti
+      y = y + 1;
+    TekrarlaBitti
+    x = x + 1;
+  TekrarlaBitti
+  // Aktif parça
+  Eger oyunAktif Ise
+    Sayi i = 0;
+    Tekrarla DiziUzunluk(aktifParca) Kez
+      Sayi dx = aktifX + aktifParca[i][0];
+      Sayi dy = aktifY + aktifParca[i][1];
+      Sayi dz = aktifZ + aktifParca[i][2];
+      Kanvas3DKup(kv, dx, dy, dz, RENKLER[aktifTip], 0.45);
+      i = i + 1;
+    TekrarlaBitti
+  EgerBitti
+  // Çerçeve
+  Sayi cx = 0;
+  Tekrarla IZGARA_X + 1 Kez
+    Sayi cz = 0;
+    Tekrarla IZGARA_Z + 1 Kez
+      Kanvas3DCizgi(kv, cx, 0, cz, cx, IZGARA_Y, cz, "#222");
+      cz = cz + 1;
+    TekrarlaBitti
+    cx = cx + 1;
+  TekrarlaBitti
+  Kanvas3DKamera(kv, 5, 6, 8, 1.5, 3, 1.5);
+  Kanvas3DIsik(kv, 6, 10, 6, 0.4);
+  Kanvas3DRender(kv);
+FonksiyonBitti
+
+// ===== OYUN KONTROL =====
+Fonksiyon OyunuBaslat()
+  TahtaOlustur();
+  skor = 0;
+  lblSkor.yazi = "SKOR: 0";
+  oyunAktif = Dogru;
+  YeniParca();
+  SahneCiz();
+  zm.Baslat();
+  SesEfekti(ses, "zil");
+FonksiyonBitti
+
+Fonksiyon OyunuDurdur()
+  oyunAktif = Yanlis;
+  zm.Durdur();
+FonksiyonBitti
+
+// ===== OLAY BAĞLANTILARI (basilinca + birakilinca = mobil uyumlu) =====
+zm.her_tikta = AsagiHareket;
+
+btnBaslat.tiklaninca = Fonksiyon()
+  Eger oyunAktif == Yanlis Ise OyunuBaslat(); EgerBitti
+FonksiyonBitti
+
+btnDurdur.tiklaninca = OyunuDurdur;
+
+btnYeniden.tiklaninca = Fonksiyon()
+  OyunuDurdur();
+  OyunuBaslat();
+FonksiyonBitti
+
+btnDondur.tiklaninca = Dondur;
+btnHizli.tiklaninca = HizliDus;
+
+btnSol.tiklaninca = Fonksiyon()
+  Eger oyunAktif Ise
+    Eger CarpismaVarMi(aktifX - 1, aktifY, aktifZ, aktifParca) == Yanlis Ise
+      aktifX = aktifX - 1;
+      lblBilgi.yazi = "X:" + aktifX + " Z:" + aktifZ;
+      SahneCiz();
+    EgerBitti
+  EgerBitti
+FonksiyonBitti
+
+btnSag.tiklaninca = Fonksiyon()
+  Eger oyunAktif Ise
+    Eger CarpismaVarMi(aktifX + 1, aktifY, aktifZ, aktifParca) == Yanlis Ise
+      aktifX = aktifX + 1;
+      lblBilgi.yazi = "X:" + aktifX + " Z:" + aktifZ;
+      SahneCiz();
+    EgerBitti
+  EgerBitti
+FonksiyonBitti
+
+btnIleri.tiklaninca = Fonksiyon()
+  Eger oyunAktif Ise
+    Eger CarpismaVarMi(aktifX, aktifY, aktifZ - 1, aktifParca) == Yanlis Ise
+      aktifZ = aktifZ - 1;
+      lblBilgi.yazi = "X:" + aktifX + " Z:" + aktifZ;
+      SahneCiz();
+    EgerBitti
+  EgerBitti
+FonksiyonBitti
+
+btnGeri.tiklaninca = Fonksiyon()
+  Eger oyunAktif Ise
+    Eger CarpismaVarMi(aktifX, aktifY, aktifZ + 1, aktifParca) == Yanlis Ise
+      aktifZ = aktifZ + 1;
+      lblBilgi.yazi = "X:" + aktifX + " Z:" + aktifZ;
+      SahneCiz();
+    EgerBitti
+  EgerBitti
+FonksiyonBitti
+
+pen.kapatilinca = Fonksiyon()
+  zm.Durdur();
+FonksiyonBitti
+
+// ===== BAŞLAT =====
+pen.Ekle(kv);
+pen.Ekle(lblSkor);
+pen.Ekle(lblBilgi);
+pen.Ekle(btnSol);
+pen.Ekle(btnSag);
+pen.Ekle(btnIleri);
+pen.Ekle(btnGeri);
+pen.Ekle(btnDondur);
+pen.Ekle(btnHizli);
+pen.Ekle(btnBaslat);
+pen.Ekle(btnDurdur);
+pen.Ekle(btnYeniden);
+pen.Goster();
+TahtaOlustur();
+SahneCiz();
+Yaz("🎮 3D TETRIS v13 - Zincirleme dizi + Mobil!");

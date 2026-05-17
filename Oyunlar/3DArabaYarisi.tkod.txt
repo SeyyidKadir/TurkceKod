@@ -1,0 +1,225 @@
+// 🏎️ 3D ARABA YARISI - BASİT VE EĞLENCELİ
+Pencere p;
+p.baslik = "🏎️ 3D Araba Yarışı";
+p.genislik = 550;
+p.yukseklik = 480;
+
+Kanvas3D kv;
+kv.x = 5; kv.y = 5;
+kv.genislik = 530; kv.yukseklik = 380;
+kv.arkaplan = "#87CEEB";
+
+Ses ses;
+
+// Araba pozisyonu
+Ondalik arabaX = 0;
+Sayi skor = 0;
+Sayi hiz = 3;
+Mantiksal oyunAktif = Dogru;
+
+// Engeller
+Dizi engelX = [-2, 1, -1, 2, 0];
+Dizi engelZ = [-8, -16, -24, -32, -40];
+Sayi engelSayi = 5;
+
+// Yol
+Fonksiyon yolCiz()
+  // Asfalt
+  Dongu z = -20 To 5 Adim 1
+    Dongu x = -4 To 4 Adim 1
+      Eger x >= -3 Ve x <= 3 Ise
+        Kanvas3DKup(kv, x, -0.5, z, "#333", 0.8);
+      EgerBitti
+    DonguBitti
+  DonguBitti
+  
+  // Yol cizgileri
+  Dongu z = -20 To 5 Adim 1
+    Kanvas3DKup(kv, 0, -0.45, z, "#ffd700", 0.05);
+  DonguBitti
+  
+  // Kenarlar
+  Dongu z = -20 To 5 Adim 1
+    Kanvas3DKup(kv, -3.5, -0.3, z, "#ff0000", 0.2);
+    Kanvas3DKup(kv, 3.5, -0.3, z, "#ff0000", 0.2);
+  DonguBitti
+  
+  // Yesil alan
+  Dongu z = -20 To 5 Adim 1
+    Dongu x = -10 To 10 Adim 1
+      Eger x < -3.5 Veya x > 3.5 Ise
+        Kanvas3DKup(kv, x*0.5, -0.6, z, "#228B22", 0.3);
+      EgerBitti
+    DonguBitti
+  DonguBitti
+FonksiyonBitti
+
+// Araba
+Fonksiyon arabaCiz()
+  // Govde
+  Kanvas3DKup(kv, arabaX, 0.2, 0, "#e63946", 0.8);
+  Kanvas3DKup(kv, arabaX, 0.4, 0, "#ff4444", 0.6);
+  // Cam
+  Kanvas3DKup(kv, arabaX, 0.6, -0.1, "#87CEEB", 0.3);
+  // Tekerler
+  Kanvas3DKup(kv, arabaX-0.5, -0.2, 0.3, "#111", 0.2);
+  Kanvas3DKup(kv, arabaX+0.5, -0.2, 0.3, "#111", 0.2);
+  Kanvas3DKup(kv, arabaX-0.5, -0.2, -0.3, "#111", 0.2);
+  Kanvas3DKup(kv, arabaX+0.5, -0.2, -0.3, "#111", 0.2);
+FonksiyonBitti
+
+// Engeller
+Fonksiyon engelCiz(i)
+  Kanvas3DKup(kv, engelX[i], 0.2, engelZ[i], "#f4a261", 0.7);
+  Kanvas3DKup(kv, engelX[i], 0.4, engelZ[i], "#ff8c00", 0.5);
+FonksiyonBitti
+
+// Carpisma
+Fonksiyon carpismaVar()
+  Dongu i = 0 To engelSayi - 1 Adim 1
+    Eger engelZ[i] > -0.5 Ve engelZ[i] < 0.5 Ise
+      Eger MutlakDeger(arabaX - engelX[i]) < 1.2 Ise
+        Don Dogru;
+      EgerBitti
+    EgerBitti
+  DonguBitti
+  Don Yanlis;
+FonksiyonBitti
+
+// Sahne
+Fonksiyon sahneCiz()
+  Kanvas3DTemizle(kv);
+  yolCiz();
+  
+  Dongu i = 0 To engelSayi - 1 Adim 1
+    Eger engelZ[i] > -20 Ve engelZ[i] < 5 Ise
+      engelCiz(i);
+    EgerBitti
+  DonguBitti
+  
+  arabaCiz();
+  
+  Kanvas3DKamera(kv, 0, 2.5, 5, 0, 1, -10);
+  Kanvas3DIsik(kv, 5, 5, 5, 0.6);
+  Kanvas3DRender(kv);
+FonksiyonBitti
+
+// UI
+Etiket lblSkor; lblSkor.x=10; lblSkor.y=395; lblSkor.yazi="SKOR: 0"; lblSkor.renk="#ffd700"; lblSkor.stil="font-size:18px;font-weight:bold;";
+Etiket lblHiz; lblHiz.x=400; lblHiz.y=395; lblHiz.yazi="HIZ: 3"; lblHiz.renk="#4ade80"; lblHiz.stil="font-size:18px;font-weight:bold;";
+
+Dugme btnSol; btnSol.yazi="◀"; btnSol.x=10; btnSol.y=430; btnSol.genislik=80; btnSol.yukseklik=40; btnSol.arkaplan="#1f6feb"; btnSol.renk="#fff"; btnSol.stil="font-size:22px;font-weight:bold;border-radius:10px;";
+Dugme btnSag; btnSag.yazi="▶"; btnSag.x=100; btnSag.y=430; btnSag.genislik=80; btnSag.yukseklik=40; btnSag.arkaplan="#1f6feb"; btnSag.renk="#fff"; btnSag.stil="font-size:22px;font-weight:bold;border-radius:10px;";
+Dugme btnHiz; btnHiz.yazi="⚡ HIZ"; btnHiz.x=200; btnHiz.y=430; btnHiz.genislik=70; btnHiz.yukseklik=40; btnHiz.arkaplan="#f4a261"; btnHiz.renk="#000"; btnHiz.stil="font-size:12px;font-weight:bold;border-radius:10px;";
+Dugme btnYavas; btnYavas.yazi="🐢 YAVAS"; btnYavas.x=280; btnYavas.y=430; btnYavas.genislik=80; btnYavas.yukseklik=40; btnYavas.arkaplan="#2ec4b6"; btnYavas.renk="#000"; btnYavas.stil="font-size:12px;font-weight:bold;border-radius:10px;";
+Dugme btnBaslat; btnBaslat.yazi="▶ BASLAT"; btnBaslat.x=380; btnBaslat.y=430; btnBaslat.genislik=130; btnBaslat.yukseklik=40; btnBaslat.arkaplan="#2ea043"; btnBaslat.renk="#fff"; btnBaslat.stil="font-size:13px;font-weight:bold;border-radius:10px;";
+
+btnSol.tiklaninca = Fonksiyon()
+  arabaX = arabaX - 0.5;
+  Eger arabaX < -2.5 Ise arabaX = -2.5; EgerBitti
+FonksiyonBitti
+
+btnSag.tiklaninca = Fonksiyon()
+  arabaX = arabaX + 0.5;
+  Eger arabaX > 2.5 Ise arabaX = 2.5; EgerBitti
+FonksiyonBitti
+
+btnHiz.tiklaninca = Fonksiyon()
+  hiz = hiz + 1;
+  Eger hiz > 10 Ise hiz = 10; EgerBitti
+  lblHiz.yazi = "HIZ: " + hiz;
+FonksiyonBitti
+
+btnYavas.tiklaninca = Fonksiyon()
+  hiz = hiz - 1;
+  Eger hiz < 1 Ise hiz = 1; EgerBitti
+  lblHiz.yazi = "HIZ: " + hiz;
+FonksiyonBitti
+
+btnBaslat.tiklaninca = Fonksiyon()
+  oyunAktif = Dogru;
+  skor = 0; hiz = 3;
+  arabaX = 0;
+  lblSkor.yazi = "SKOR: 0";
+  lblHiz.yazi = "HIZ: 3";
+  Dongu i = 0 To engelSayi - 1 Adim 1
+    engelX[i] = Rastgele(-2, 2);
+    engelZ[i] = -8 - i * 8;
+  DonguBitti
+FonksiyonBitti
+
+// Ana dongu
+Zamanlayici zm;
+zm.aralik = 30;
+
+zm.her_tikta = Fonksiyon()
+  Eger oyunAktif Ise
+    // Engelleri hareket ettir
+    Dongu i = 0 To engelSayi - 1 Adim 1
+      engelZ[i] = engelZ[i] + (hiz * 0.15);
+      Eger engelZ[i] > 5 Ise
+        engelZ[i] = -20;
+        engelX[i] = Rastgele(-2, 2);
+        skor = skor + 10;
+        lblSkor.yazi = "SKOR: " + skor;
+        SesEfekti(ses, "ding");
+      EgerBitti
+    DonguBitti
+    
+    Eger carpismaVar() Ise
+      oyunAktif = Yanlis;
+      SesEfekti(ses, "alarm");
+      Eger skor > 0 Ise SesEfekti(ses, "patlama"); EgerBitti
+    EgerBitti
+    
+    sahneCiz();
+  EgerBitti
+FonksiyonBitti
+
+// Klavye
+JSKod("
+  document.addEventListener('keydown', function(e) {
+    if(e.key === 'ArrowLeft') { e.preventDefault(); _tkEnv.set('sol', '1'); }
+    if(e.key === 'ArrowRight') { e.preventDefault(); _tkEnv.set('sag', '1'); }
+  });
+  document.addEventListener('keyup', function(e) {
+    if(e.key === 'ArrowLeft') { _tkEnv.set('sol', '0'); }
+    if(e.key === 'ArrowRight') { _tkEnv.set('sag', '0'); }
+  });
+  _tkEnv.set('sol', '0');
+  _tkEnv.set('sag', '0');
+  'ok';
+");
+
+Metin solBas = "0";
+Metin sagBas = "0";
+
+Zamanlayici zmKlavye;
+zmKlavye.aralik = 20;
+zmKlavye.her_tikta = Fonksiyon()
+  solBas = JSKod("return _tkEnv.get('sol') || '0';");
+  sagBas = JSKod("return _tkEnv.get('sag') || '0';");
+  
+  Eger solBas == "1" Ise
+    arabaX = arabaX - 0.2;
+    Eger arabaX < -2.5 Ise arabaX = -2.5; EgerBitti
+  EgerBitti
+  
+  Eger sagBas == "1" Ise
+    arabaX = arabaX + 0.2;
+    Eger arabaX > 2.5 Ise arabaX = 2.5; EgerBitti
+  EgerBitti
+FonksiyonBitti
+
+p.Ekle(kv);
+p.Ekle(lblSkor); p.Ekle(lblHiz);
+p.Ekle(btnSol); p.Ekle(btnSag); p.Ekle(btnHiz); p.Ekle(btnYavas); p.Ekle(btnBaslat);
+p.Goster();
+
+sahneCiz();
+zm.Baslat();
+zmKlavye.Baslat();
+
+Yaz("🏎️ 3D ARABA YARISI HAZIR!");
+Yaz("◀ ▶ veya OK TUSLARI ile sur!");
+Yaz("Engellerden kac, skor yap!");
