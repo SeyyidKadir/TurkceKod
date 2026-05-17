@@ -1,0 +1,214 @@
+JSLib("https://unpkg.com/jsnes@2/dist/jsnes.min.js");
+BekleVeYap(2000);
+
+Pencere pen;
+pen.baslik = "🎮 NES Emülatör";
+pen.genislik = 540;
+pen.yukseklik = 680;
+
+Etiket lbl;
+lbl.x = 10;
+lbl.y = 510;
+lbl.yazi = "ROM yükleyin (.nes)";
+lbl.renk = "#aaa";
+lbl.stil = "font-size: 10px;";
+
+Dugme btnROM;
+btnROM.yazi = "📂 ROM YÜKLE";
+btnROM.x = 10;
+btnROM.y = 535;
+btnROM.genislik = 180;
+btnROM.yukseklik = 30;
+btnROM.arkaplan = "#e63946";
+btnROM.renk = "#fff";
+
+Dugme btnUp;
+btnUp.yazi = "▲";
+btnUp.x = 230;
+btnUp.y = 545;
+btnUp.genislik = 55;
+btnUp.yukseklik = 45;
+btnUp.arkaplan = "#333";
+btnUp.renk = "#fff";
+btnUp.stil = "font-size: 16px; font-weight: bold; border-radius: 8px;";
+
+Dugme btnDown;
+btnDown.yazi = "▼";
+btnDown.x = 230;
+btnDown.y = 610;
+btnDown.genislik = 55;
+btnDown.yukseklik = 45;
+btnDown.arkaplan = "#333";
+btnDown.renk = "#fff";
+btnDown.stil = "font-size: 16px; font-weight: bold; border-radius: 8px;";
+
+Dugme btnLeft;
+btnLeft.yazi = "◀";
+btnLeft.x = 170;
+btnLeft.y = 578;
+btnLeft.genislik = 55;
+btnLeft.yukseklik = 45;
+btnLeft.arkaplan = "#333";
+btnLeft.renk = "#fff";
+btnLeft.stil = "font-size: 16px; font-weight: bold; border-radius: 8px;";
+
+Dugme btnRight;
+btnRight.yazi = "▶";
+btnRight.x = 290;
+btnRight.y = 578;
+btnRight.genislik = 55;
+btnRight.yukseklik = 45;
+btnRight.arkaplan = "#333";
+btnRight.renk = "#fff";
+btnRight.stil = "font-size: 16px; font-weight: bold; border-radius: 8px;";
+
+Dugme btnA;
+btnA.yazi = "A";
+btnA.x = 430;
+btnA.y = 560;
+btnA.genislik = 65;
+btnA.yukseklik = 65;
+btnA.arkaplan = "#e63946";
+btnA.renk = "#fff";
+btnA.stil = "font-size: 22px; font-weight: bold; border-radius: 50%;";
+
+Dugme btnB;
+btnB.yazi = "B";
+btnB.x = 360;
+btnB.y = 600;
+btnB.genislik = 65;
+btnB.yukseklik = 65;
+btnB.arkaplan = "#f4a261";
+btnB.renk = "#fff";
+btnB.stil = "font-size: 22px; font-weight: bold; border-radius: 50%;";
+
+Dugme btnStart;
+btnStart.yazi = "START";
+btnStart.x = 10;
+btnStart.y = 580;
+btnStart.genislik = 80;
+btnStart.yukseklik = 35;
+btnStart.arkaplan = "#444";
+btnStart.renk = "#fff";
+btnStart.stil = "font-size: 11px; border-radius: 8px;";
+
+Dugme btnSelect;
+btnSelect.yazi = "SELECT";
+btnSelect.x = 10;
+btnSelect.y = 620;
+btnSelect.genislik = 80;
+btnSelect.yukseklik = 35;
+btnSelect.arkaplan = "#444";
+btnSelect.renk = "#fff";
+btnSelect.stil = "font-size: 11px; border-radius: 8px;";
+
+pen.Ekle(lbl);
+pen.Ekle(btnROM);
+pen.Ekle(btnUp);
+pen.Ekle(btnDown);
+pen.Ekle(btnLeft);
+pen.Ekle(btnRight);
+pen.Ekle(btnA);
+pen.Ekle(btnB);
+pen.Ekle(btnStart);
+pen.Ekle(btnSelect);
+pen.Goster();
+
+// ========== JS: Emülatör + Text ile buton bulma ==========
+JSKod("
+  var container = document.createElement('div');
+  container.style.cssText = 'position:absolute;left:10px;top:30px;width:512px;height:480px;';
+  document.getElementById('pov').querySelector('.sw').appendChild(container);
+  
+  var browser = new jsnes.Browser({container: container});
+  window.__nesBrowser = browser;
+  window.__romLoaded = false;
+  
+  // Tuş eşlemesi - TEXT içeriğine göre
+  var textToKey = {
+    '▲': {key:'ArrowUp', code:'ArrowUp', keyCode:38, which:38},
+    '▼': {key:'ArrowDown', code:'ArrowDown', keyCode:40, which:40},
+    '◀': {key:'ArrowLeft', code:'ArrowLeft', keyCode:37, which:37},
+    '▶': {key:'ArrowRight', code:'ArrowRight', keyCode:39, which:39},
+    'A': {key:'x', code:'KeyX', keyCode:88, which:88},
+    'B': {key:'z', code:'KeyZ', keyCode:90, which:90},
+    'START': {key:'Enter', code:'Enter', keyCode:13, which:13},
+    'SELECT': {key:'Shift', code:'ShiftRight', keyCode:16, which:16}
+  };
+  
+  var activeKeys = {};
+  
+  function sendKey(text, down) {
+    if(!window.__romLoaded) return;
+    var k = textToKey[text];
+    if(!k) return;
+    
+    var ev = new KeyboardEvent(down ? 'keydown' : 'keyup', {
+      key: k.key, code: k.code, keyCode: k.keyCode,
+      which: k.which, bubbles: true, cancelable: true
+    });
+    window.dispatchEvent(ev);
+    document.dispatchEvent(ev);
+    document.body.dispatchEvent(ev);
+  }
+  
+  setTimeout(function() {
+    var pov = document.getElementById('pov');
+    var butonlar = pov.querySelectorAll('button.sbtn');
+    
+    butonlar.forEach(function(btn) {
+      var text = btn.textContent.trim();
+      if(!textToKey[text]) return;
+      
+      btn.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        sendKey(text, true);
+        activeKeys[text] = true;
+      });
+      btn.addEventListener('mouseup', function(e) {
+        e.preventDefault();
+        if(activeKeys[text]) { sendKey(text, false); activeKeys[text] = false; }
+      });
+      btn.addEventListener('mouseleave', function(e) {
+        if(activeKeys[text]) { sendKey(text, false); activeKeys[text] = false; }
+      });
+      btn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        sendKey(text, true);
+        activeKeys[text] = true;
+      });
+      btn.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        if(activeKeys[text]) { sendKey(text, false); activeKeys[text] = false; }
+      });
+      btn.addEventListener('touchcancel', function(e) {
+        if(activeKeys[text]) { sendKey(text, false); activeKeys[text] = false; }
+      });
+    });
+  }, 1000);
+");
+
+btnROM.tiklaninca = Fonksiyon()
+  Varyant dosya = DosyaAkimi(".nes");
+  Eger dosya Ise
+    Dizi j = dosya.baytlar;
+    lbl.yazi = "Yükleniyor...";
+    Metin json = JSONMetineDonustur(j);
+    Varyant r = JSKod("
+      var arr = JSON.parse('" + json + "');
+      var rom = new Uint8Array(arr.length);
+      for(var i=0; i<arr.length; i++) rom[i] = arr[i];
+      try { window.__nesBrowser.loadROM(rom); window.__romLoaded = true; return 'OK'; }
+      catch(e) { return 'HATA:'+e.message; }
+    ");
+    Eger r == "OK" Ise
+      lbl.yazi = "✅ " + dosya.ad;
+      lbl.renk = "#4ade80";
+    Degilse
+      lbl.yazi = "❌ " + r;
+      lbl.renk = "#e63946";
+    EgerBitti
+  EgerBitti
+FonksiyonBitti
+
+Yaz("🎮 Butonlar TEXT ile bulundu!");
