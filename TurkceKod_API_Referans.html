@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TürkçeKod v14 — API Referansı</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0f;
+  --panel:#111118;
+  --border:#1e1e2e;
+  --accent:#5b8af0;
+  --accent2:#a78bfa;
+  --green:#34d399;
+  --orange:#fb923c;
+  --red:#f87171;
+  --yellow:#fbbf24;
+  --text:#e2e8f0;
+  --muted:#64748b;
+  --code-bg:#0d1117;
+  --sidebar-w:280px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  min-height:100vh;
+  font-size:14px;
+  line-height:1.6;
+}
+
+/* ── SIDEBAR ─────────────────────────────── */
+#sidebar{
+  width:var(--sidebar-w);
+  min-height:100vh;
+  background:var(--panel);
+  border-right:1px solid var(--border);
+  position:fixed;
+  top:0;left:0;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  z-index:100;
+}
+.sb-logo{
+  padding:20px 20px 16px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.sb-logo-title{
+  font-family:'Syne',sans-serif;
+  font-size:20px;font-weight:800;
+  color:#fff;letter-spacing:-0.5px;
+}
+.sb-logo-title em{color:var(--accent);font-style:normal;}
+.sb-logo-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.sb-search-wrap{padding:12px 14px;flex-shrink:0;border-bottom:1px solid var(--border);}
+#sbSearch{
+  width:100%;background:var(--bg);
+  color:var(--text);border:1px solid var(--border);
+  border-radius:7px;padding:8px 12px 8px 32px;
+  font-size:12px;outline:none;font-family:'Inter',sans-serif;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:10px center;
+}
+#sbSearch::placeholder{color:var(--muted);}
+#sbSearch:focus{border-color:var(--accent);}
+.sb-nav{flex:1;overflow-y:auto;padding:8px 0 20px;}
+.sb-nav::-webkit-scrollbar{width:4px;}
+.sb-nav::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.sb-section{margin-bottom:4px;}
+.sb-section-title{
+  padding:8px 20px 4px;
+  font-size:10px;font-weight:600;
+  color:var(--muted);letter-spacing:1px;text-transform:uppercase;
+}
+.sb-item{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 20px;font-size:13px;color:#94a3b8;
+  cursor:pointer;border-left:2px solid transparent;
+  transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.sb-item:hover{color:var(--text);background:rgba(91,138,240,.07);border-left-color:var(--accent);}
+.sb-item.aktif{color:var(--accent);background:rgba(91,138,240,.1);border-left-color:var(--accent);}
+.sb-item .sb-badge{
+  margin-left:auto;font-size:9px;padding:1px 5px;
+  border-radius:8px;background:rgba(91,138,240,.15);color:var(--accent);
+  flex-shrink:0;
+}
+.sb-item .sb-badge.yeni{background:rgba(52,211,153,.15);color:var(--green);}
+
+/* ── ANA İÇERİK ──────────────────────────── */
+#main{
+  margin-left:var(--sidebar-w);
+  flex:1;min-width:0;
+}
+
+/* ── ÜST BAR ─────────────────────────────── */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(10,10,15,.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:12px 40px;
+  display:flex;align-items:center;gap:12px;
+}
+.topbar-path{font-size:12px;color:var(--muted);}
+.topbar-path span{color:var(--text);}
+.topbar-badges{margin-left:auto;display:flex;gap:8px;}
+.badge{
+  font-size:10px;padding:3px 8px;border-radius:20px;font-weight:600;
+  border:1px solid;
+}
+.badge-v{background:rgba(91,138,240,.1);border-color:rgba(91,138,240,.3);color:var(--accent);}
+.badge-tr{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3);color:var(--yellow);}
+
+/* ── SAYFA İÇERİĞİ ───────────────────────── */
+.page{display:none;padding:40px;max-width:960px;}
+.page.aktif{display:block;}
+
+.hero{margin-bottom:48px;}
+.hero h1{
+  font-family:'Syne',sans-serif;
+  font-size:42px;font-weight:800;
+  color:#fff;line-height:1.1;letter-spacing:-1px;
+  margin-bottom:12px;
+}
+.hero h1 em{
+  color:transparent;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;background-clip:text;
+  font-style:normal;
+}
+.hero-sub{font-size:16px;color:var(--muted);max-width:580px;line-height:1.7;}
+.hero-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:32px;
+}
+.hero-card{
+  padding:20px;background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;transition:border-color .2s;cursor:pointer;
+}
+.hero-card:hover{border-color:var(--accent);}
+.hero-card-icon{font-size:28px;margin-bottom:10px;}
+.hero-card-title{font-weight:600;color:#fff;margin-bottom:4px;font-size:14px;}
+.hero-card-desc{font-size:12px;color:var(--muted);}
+
+/* ── BÖLÜM BAŞLIĞI ───────────────────────── */
+.section-header{margin-bottom:32px;}
+.section-header h2{
+  font-family:'Syne',sans-serif;font-size:28px;font-weight:800;
+  color:#fff;margin-bottom:8px;
+}
+.section-header p{color:var(--muted);font-size:14px;}
+
+/* ── FONKSİYON KARTI ─────────────────────── */
+.fn-group{margin-bottom:40px;}
+.fn-group-title{
+  font-size:11px;font-weight:600;color:var(--muted);
+  letter-spacing:1px;text-transform:uppercase;
+  padding-bottom:8px;border-bottom:1px solid var(--border);
+  margin-bottom:16px;
+}
+.fn-card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:10px;margin-bottom:12px;overflow:hidden;
+  transition:border-color .2s;
+}
+.fn-card:hover{border-color:rgba(91,138,240,.4);}
+.fn-card-head{
+  padding:14px 18px;display:flex;align-items:flex-start;gap:12px;
+  cursor:pointer;
+}
+.fn-name{
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;font-weight:600;color:var(--accent);
+}
+.fn-sig{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;color:var(--muted);
+}
+.fn-desc{font-size:13px;color:#94a3b8;margin-top:4px;}
+.fn-ret{
+  margin-left:auto;flex-shrink:0;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;padding:3px 8px;border-radius:6px;
+  background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.2);
+}
+.fn-body{
+  border-top:1px solid var(--border);
+  padding:16px 18px;display:none;
+}
+.fn-body.acik{display:block;}
+.fn-params{margin-bottom:12px;}
+.fn-params-title{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;}
+.param-row{
+  display:flex;align-items:baseline;gap:10px;
+  padding:6px 0;border-bottom:1px solid rgba(30,30,46,.6);
+  font-size:13px;
+}
+.param-row:last-child{border-bottom:none;}
+.param-name{
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--orange);min-width:100px;
+}
+.param-tip{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--accent2);min-width:70px;
+}
+.param-desc{color:var(--muted);font-size:12px;}
+.param-opt{
+  font-size:10px;padding:1px 5px;border-radius:4px;
+  background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.2);
+}
+pre{
+  background:var(--code-bg);border:1px solid var(--border);
+  border-radius:8px;padding:16px;overflow-x:auto;
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  line-height:1.7;margin-top:12px;
+}
+.kw{color:#ff79c6;}
+.fn-c{color:#50fa7b;}
+.str{color:#f1fa8c;}
+.num{color:#bd93f9;}
+.cmt{color:#6272a4;font-style:italic;}
+.tp{color:#8be9fd;}
+
+/* ── TABLO ───────────────────────────────── */
+.ref-table{width:100%;border-collapse:collapse;margin-bottom:24px;}
+.ref-table th{
+  text-align:left;padding:10px 14px;
+  font-size:11px;font-weight:600;color:var(--muted);
+  letter-spacing:.5px;text-transform:uppercase;
+  border-bottom:1px solid var(--border);
+  background:var(--panel);
+}
+.ref-table td{
+  padding:10px 14px;font-size:13px;
+  border-bottom:1px solid rgba(30,30,46,.5);
+  vertical-align:top;
+}
+.ref-table tr:hover td{background:rgba(91,138,240,.03);}
+.ref-table td:first-child{
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);
+}
+.ref-table td:nth-child(2){color:var(--accent2);font-family:'JetBrains Mono',monospace;font-size:11px;}
+.ref-table td:nth-child(3){color:var(--muted);}
+
+/* ── UYARI KUTUSU ────────────────────────── */
+.callout{
+  padding:14px 16px;border-radius:8px;margin-bottom:16px;
+  display:flex;gap:10px;align-items:flex-start;font-size:13px;
+}
+.callout.info{background:rgba(91,138,240,.08);border:1px solid rgba(91,138,240,.2);color:#93c5fd;}
+.callout.warn{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);color:#fcd34d;}
+.callout.tip{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);color:#6ee7b7;}
+.callout-icon{font-size:16px;flex-shrink:0;}
+
+/* ── RESPONSIVE ──────────────────────────── */
+@media(max-width:768px){
+  #sidebar{display:none;}
+  #main{margin-left:0;}
+  .hero-grid{grid-template-columns:1fr;}
+  .page{padding:20px;}
+}
+
+/* ── SCROLL ──────────────────────────────── */
+html{scroll-behavior:smooth;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-title">Türkçe<em>Kod</em></div>
+    <div class="sb-logo-sub">v14 API Referansı</div>
+  </div>
+  <div class="sb-search-wrap">
+    <input id="sbSearch" placeholder="Fonksiyon ara..." oninput="araFilter(this.value)">
+  </div>
+  <div class="sb-nav" id="sbNav">
+    <div class="sb-section">
+      <div class="sb-section-title">Başlangıç</div>
+      <div class="sb-item aktif" onclick="sayfaGit('anasayfa')">🏠 Giriş</div>
+      <div class="sb-item" onclick="sayfaGit('sozdizimi')">📖 Söz Dizimi</div>
+      <div class="sb-item" onclick="sayfaGit('tipler')">🔢 Veri Tipleri</div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-section-title">Metin & Dizi</div>
+      <div class="sb-item" onclick="sayfaGit('metin')">✍️ Metin Fonksiyonları</div>
+      <div class="sb-item" onclick="sayfaGit('dizi')">📋 Dizi Fonksiyonları</div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-section-title">Matematik & Tarih</div>
+      <div class="sb-item" onclick="sayfaGit('matematik')">📐 Matematik</div>
+      <div class="sb-item" onclick="sayfaGit('tarih')">📅 Tarih & Saat</div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-section-title">GUI & Grafik</div>
+      <div class="sb-item" onclick="sayfaGit('pencere')">🪟 Pencere & Bileşenler</div>
+      <div class="sb-item" onclick="sayfaGit('kanvas')">🎨 Kanvas (2D)</div>
+      <div class="sb-item" onclick="sayfaGit('kanvas3d')">🧊 Kanvas (3D)</div>
+      <div class="sb-item" onclick="sayfaGit('ses')">🔊 Ses</div>
+      <div class="sb-item" onclick="sayfaGit('resim')">🖼️ Resim</div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-section-title">Veri & Depolama</div>
+      <div class="sb-item" onclick="sayfaGit('json')">📦 JSON</div>
+      <div class="sb-item" onclick="sayfaGit('depo')">💾 Depo & Çerez</div>
+      <div class="sb-item" onclick="sayfaGit('veritabani')" >🗄️ Veritabanı <span class="sb-badge yeni">YENİ</span></div>
+      <div class="sb-item" onclick="sayfaGit('dosya')">📁 Dosya</div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-section-title">Ağ & Sistem</div>
+      <div class="sb-item" onclick="sayfaGit('ag')">🌐 Ağ</div>
+      <div class="sb-item" onclick="sayfaGit('sistem')">⚙️ Sistem</div>
+      <div class="sb-item" onclick="sayfaGit('sifrele')">🔐 Şifreleme</div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-section-title">Oyun</div>
+      <div class="sb-item" onclick="sayfaGit('oyun')">🎮 Oyun Motoru</div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-section-title">İleri Seviye</div>
+      <div class="sb-item" onclick="sayfaGit('js')">⚡ JSKod / JSCalis</div>
+      <div class="sb-item" onclick="sayfaGit('sinif')">🧩 Sınıf & Yapı</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ANA İÇERİK -->
+<div id="main">
+  <div class="topbar">
+    <button onclick="sayfaGit('anasayfa')" style="background:rgba(91,138,240,.12);border:1px solid rgba(91,138,240,.25);color:var(--accent);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;margin-right:8px;">🏠 Ana Sayfa</button>
+    <div class="topbar-path" id="topbarPath">TürkçeKod › <span>Giriş</span></div>
+    <div class="topbar-badges">
+      <span class="badge badge-v">v14</span>
+      <span class="badge badge-tr">🇹🇷 Türkçe</span>
+    </div>
+  </div>
+
+  <!-- ANASAYFA -->
+  <div class="page aktif" id="page-anasayfa">
+    <div class="hero">
+      <h1>TürkçeKod <em>API Referansı</em></h1>
+      <p class="hero-sub">Türkçe söz dizimiyle yazılan, tarayıcıda çalışan programlama dilinin tam fonksiyon ve bileşen referansı.</p>
+      <div class="hero-grid">
+        <div class="hero-card" onclick="sayfaGit('metin')">
+          <div class="hero-card-icon">✍️</div>
+          <div class="hero-card-title">Metin & Dizi</div>
+          <div class="hero-card-desc">35+ string ve dizi fonksiyonu</div>
+        </div>
+        <div class="hero-card" onclick="sayfaGit('pencere')">
+          <div class="hero-card-icon">🪟</div>
+          <div class="hero-card-title">GUI Bileşenleri</div>
+          <div class="hero-card-desc">Pencere, Düğme, Kanvas ve daha fazlası</div>
+        </div>
+        <div class="hero-card" onclick="sayfaGit('veritabani')">
+          <div class="hero-card-icon">🗄️</div>
+          <div class="hero-card-title">Veritabanı</div>
+          <div class="hero-card-desc">SQLite online & Türkçe SQL offline</div>
+        </div>
+        <div class="hero-card" onclick="sayfaGit('matematik')">
+          <div class="hero-card-icon">📐</div>
+          <div class="hero-card-title">Matematik</div>
+          <div class="hero-card-desc">Trigonometri, istatistik, sayı teorisi</div>
+        </div>
+        <div class="hero-card" onclick="sayfaGit('oyun')">
+          <div class="hero-card-icon">🎮</div>
+          <div class="hero-card-title">Oyun Motoru</div>
+          <div class="hero-card-desc">60fps döngü, çarpışma, sahne yönetimi</div>
+        </div>
+        <div class="hero-card" onclick="sayfaGit('sifrele')">
+          <div class="hero-card-icon">🔐</div>
+          <div class="hero-card-title">Şifreleme</div>
+          <div class="hero-card-desc">MD5, SHA256, Base64, Caesar, XOR</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h2>Hızlı Başlangıç</h2>
+    </div>
+    <div class="callout info"><span class="callout-icon">ℹ️</span> TürkçeKod tamamen tarayıcıda çalışır. Kurulum gerekmez — sadece editörü açın ve yazmaya başlayın.</div>
+    <pre><span class="cmt">// Merhaba Dünya</span>
+<span class="kw">Yaz</span>(<span class="str">"Merhaba Dünya!"</span>);
+
+<span class="cmt">// Değişken tanımlama</span>
+<span class="tp">Sayi</span> yas = <span class="num">25</span>;
+<span class="tp">Metin</span> ad = <span class="str">"Ali"</span>;
+<span class="tp">Mantiksal</span> aktif = <span class="kw">Dogru</span>;
+
+<span class="cmt">// Koşul</span>
+<span class="kw">Eger</span> yas >= <span class="num">18</span> <span class="kw">Ise</span>
+  <span class="kw">Yaz</span>(<span class="str">"Yetişkin: "</span> + ad);
+<span class="kw">EgerBitti</span>
+
+<span class="cmt">// Döngü</span>
+<span class="kw">Dongu</span> i = <span class="num">0</span> To <span class="num">4</span> <span class="kw">Adim</span> <span class="num">1</span>
+  <span class="kw">Yaz</span>(<span class="str">"Adım: "</span> + i);
+<span class="kw">DonguBitti</span></pre>
+  </div>
+
+  <!-- SÖZ DİZİMİ -->
+  <div class="page" id="page-sozdizimi">
+    <div class="section-header"><h2>Söz Dizimi</h2><p>TürkçeKod'un temel yapı taşları</p></div>
+    <div class="fn-group">
+      <div class="fn-group-title">Kontrol Akışı</div>
+      <table class="ref-table">
+        <tr><th>Yapı</th><th>Söz Dizimi</th><th>Açıklama</th></tr>
+        <tr><td>Eger</td><td>Eger koşul Ise ... Degilse ... EgerBitti</td><td>If/Else bloğu</td></tr>
+        <tr><td>Dongu</td><td>Dongu i = 0 To N Adim 1 ... DonguBitti</td><td>For döngüsü</td></tr>
+        <tr><td>Suresince</td><td>Suresince koşul ... SuresinceBitti</td><td>While döngüsü</td></tr>
+        <tr><td>Tekrarla</td><td>Tekrarla N Kez ... TekrarlaBitti</td><td>N kez tekrar</td></tr>
+        <tr><td>Durum</td><td>Durum degisken ... Durum DurumBitti</td><td>Switch/Case</td></tr>
+        <tr><td>Dene</td><td>Dene ... Yakala hata ... DeneBitti</td><td>Try/Catch</td></tr>
+        <tr><td>Kes</td><td>Kes;</td><td>Break</td></tr>
+        <tr><td>Atla</td><td>Atla;</td><td>Continue</td></tr>
+      </table>
+    </div>
+    <div class="fn-group">
+      <div class="fn-group-title">Fonksiyon & Sınıf</div>
+      <pre><span class="cmt">// Fonksiyon tanımlama</span>
+<span class="kw">Fonksiyon</span> <span class="fn-c">Topla</span>(a, b)
+  <span class="kw">Don</span> a + b;
+<span class="kw">FonksiyonBitti</span>
+
+<span class="cmt">// Sınıf</span>
+<span class="kw">Sinif</span> Hayvan
+  <span class="tp">Metin</span> ad;
+  <span class="kw">Fonksiyon</span> <span class="fn-c">SesCikar</span>()
+    <span class="kw">Yaz</span>(<span class="kw">bu</span>.ad + <span class="str">" ses çıkardı"</span>);
+  <span class="kw">FonksiyonBitti</span>
+<span class="kw">SinifBitti</span>
+
+<span class="cmt">// Ternary operatör</span>
+<span class="tp">Metin</span> durum = (yas >= <span class="num">18</span>) ? <span class="str">"Yetişkin"</span> : <span class="str">"Çocuk"</span>;</pre>
+    </div>
+    <div class="fn-group">
+      <div class="fn-group-title">Operatörler</div>
+      <table class="ref-table">
+        <tr><th>Operatör</th><th>Anlamı</th><th>Örnek</th></tr>
+        <tr><td>+  -  *  /  Mod</td><td>Aritmetik</td><td>10 Mod 3 → 1</td></tr>
+        <tr><td>++  --</td><td>Artır / Azalt</td><td>x++</td></tr>
+        <tr><td>+=  -=  *=  /=</td><td>Bileşik atama</td><td>x += 5</td></tr>
+        <tr><td>Ve  Veya  Degil</td><td>Mantıksal</td><td>x>0 Ve y>0</td></tr>
+        <tr><td>&amp;  |  ^  ~  &lt;&lt;  &gt;&gt;</td><td>Bitwise</td><td>x &amp; 0xFF</td></tr>
+        <tr><td>?:</td><td>Ternary</td><td>(x>0) ? "+" : "-"</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- VERİ TİPLERİ -->
+  <div class="page" id="page-tipler">
+    <div class="section-header"><h2>Veri Tipleri</h2><p>TürkçeKod'un yerleşik tipleri</p></div>
+    <table class="ref-table">
+      <tr><th>Tip</th><th>JS Karşılığı</th><th>Varsayılan</th><th>Açıklama</th></tr>
+      <tr><td>Sayi</td><td>integer</td><td>0</td><td>Tam sayı</td></tr>
+      <tr><td>Ondalik</td><td>float</td><td>0</td><td>Ondalıklı sayı</td></tr>
+      <tr><td>Metin</td><td>string</td><td>""</td><td>Karakter dizisi</td></tr>
+      <tr><td>Mantiksal</td><td>boolean</td><td>Yanlis</td><td>Dogru / Yanlis</td></tr>
+      <tr><td>Dizi</td><td>Array</td><td>[]</td><td>Liste / dizi</td></tr>
+      <tr><td>Varyant</td><td>any</td><td>bos</td><td>Her tip değer</td></tr>
+      <tr><td>bos / Bos</td><td>null</td><td>—</td><td>Boş değer</td></tr>
+    </table>
+    <pre><span class="tp">Sayi</span> x = <span class="num">42</span>;
+<span class="tp">Ondalik</span> pi = <span class="num">3.14</span>;
+<span class="tp">Metin</span> isim = <span class="str">"TürkçeKod"</span>;
+<span class="tp">Mantiksal</span> tamam = <span class="kw">Dogru</span>;
+<span class="tp">Dizi</span> sayilar = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+<span class="tp">Varyant</span> herhangi = <span class="kw">bos</span>;
+
+<span class="cmt">// Hex ve Binary literaller</span>
+<span class="tp">Sayi</span> renk = <span class="num">0xFF5733</span>;
+<span class="tp">Sayi</span> bayrak = <span class="num">0b1010</span>;</pre>
+  </div>
+
+  <!-- METİN -->
+  <div class="page" id="page-metin">
+    <div class="section-header"><h2>Metin Fonksiyonları</h2><p>String işlemleri için tüm fonksiyonlar</p></div>
+
+    <div class="fn-group">
+      <div class="fn-group-title">Temel İşlemler</div>
+      <div id="fn-Uzunluk" class="fn-card">
+        <div class="fn-card-head" onclick="fnToggle('Uzunluk')">
+          <div><div class="fn-name">Uzunluk</div><div class="fn-sig">(metin)</div><div class="fn-desc">Metin veya dizinin eleman sayısını döndürür.</div></div>
+          <div class="fn-ret">Sayi</div>
+        </div>
+        <div class="fn-body" id="fnb-Uzunluk">
+          <div class="fn-params"><div class="fn-params-title">Parametreler</div>
+            <div class="param-row"><span class="param-name">metin</span><span class="param-tip">Metin</span><span class="param-desc">Uzunluğu ölçülecek metin</span></div>
+          </div>
+          <pre><span class="tp">Sayi</span> n = <span class="fn-c">Uzunluk</span>(<span class="str">"Merhaba"</span>); <span class="cmt">// 7</span>
+<span class="tp">Sayi</span> m = <span class="fn-c">Uzunluk</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]); <span class="cmt">// 3</span></pre>
+        </div>
+      </div>
+
+      <div id="fn-MetinKes" class="fn-card">
+        <div class="fn-card-head" onclick="fnToggle('MetinKes')">
+          <div><div class="fn-name">MetinKes</div><div class="fn-sig">(metin, baslangic, uzunluk?)</div><div class="fn-desc">Metnin belirli bir bölümünü keser ve döndürür.</div></div>
+          <div class="fn-ret">Metin</div>
+        </div>
+        <div class="fn-body" id="fnb-MetinKes">
+          <div class="fn-params"><div class="fn-params-title">Parametreler</div>
+            <div class="param-row"><span class="param-name">metin</span><span class="param-tip">Metin</span><span class="param-desc">Kaynak metin</span></div>
+            <div class="param-row"><span class="param-name">baslangic</span><span class="param-tip">Sayi</span><span class="param-desc">Başlangıç indeksi (0'dan başlar)</span></div>
+            <div class="param-row"><span class="param-name">uzunluk</span><span class="param-tip">Sayi</span><span class="param-desc">Kaç karakter alınacak <span class="param-opt">isteğe bağlı</span></span></div>
+          </div>
+          <pre><span class="fn-c">MetinKes</span>(<span class="str">"Merhaba"</span>, <span class="num">0</span>, <span class="num">3</span>); <span class="cmt">// "Mer"</span>
+<span class="fn-c">MetinKes</span>(<span class="str">"Merhaba"</span>, <span class="num">3</span>);    <span class="cmt">// "haba"</span></pre>
+        </div>
+      </div>
+
+      <div id="fn-MetinBol" class="fn-card">
+        <div class="fn-card-head" onclick="fnToggle('MetinBol')">
+          <div><div class="fn-name">MetinBol</div><div class="fn-sig">(metin, ayirici)</div><div class="fn-desc">Metni ayırıcıya göre böler, dizi döndürür.</div></div>
+          <div class="fn-ret">Dizi</div>
+        </div>
+        <div class="fn-body" id="fnb-MetinBol">
+          <pre><span class="tp">Dizi</span> parcalar = <span class="fn-c">MetinBol</span>(<span class="str">"a,b,c"</span>, <span class="str">","</span>); <span class="cmt">// ["a","b","c"]</span></pre>
+        </div>
+      </div>
+
+      <div id="fn-MetinDegistir" class="fn-card">
+        <div class="fn-card-head" onclick="fnToggle('MetinDegistir')">
+          <div><div class="fn-name">MetinDegistir</div><div class="fn-sig">(metin, aranan, yeni)</div><div class="fn-desc">Metindeki bir ifadeyi başka bir ifadeyle değiştirir.</div></div>
+          <div class="fn-ret">Metin</div>
+        </div>
+        <div class="fn-body" id="fnb-MetinDegistir">
+          <pre><span class="fn-c">MetinDegistir</span>(<span class="str">"Merhaba Dünya"</span>, <span class="str">"Dünya"</span>, <span class="str">"Türkiye"</span>);
+<span class="cmt">// "Merhaba Türkiye"</span></pre>
+        </div>
+      </div>
+
+      <div id="fn-MetinIceriyorMu" class="fn-card">
+        <div class="fn-card-head" onclick="fnToggle('MetinIceriyorMu')">
+          <div><div class="fn-name">MetinIceriyorMu</div><div class="fn-sig">(metin, aranan)</div><div class="fn-desc">Metnin içinde aranan ifade var mı kontrol eder.</div></div>
+          <div class="fn-ret">Mantiksal</div>
+        </div>
+        <div class="fn-body" id="fnb-MetinIceriyorMu">
+          <pre><span class="fn-c">MetinIceriyorMu</span>(<span class="str">"Merhaba"</span>, <span class="str">"rha"</span>); <span class="cmt">// Dogru</span></pre>
+        </div>
+      </div>
+
+      <div id="fn-MetinBirlestir" class="fn-card">
+        <div class="fn-card-head" onclick="fnToggle('MetinBirlestir')">
+          <div><div class="fn-name">MetinBirlestir</div><div class="fn-sig">(dizi, ayirici?)</div><div class="fn-desc">Dizi elemanlarını birleştirerek tek metin yapar.</div></div>
+          <div class="fn-ret">Metin</div>
+        </div>
+        <div class="fn-body" id="fnb-MetinBirlestir">
+          <pre><span class="fn-c">MetinBirlestir</span>([<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>], <span class="str">"-"</span>); <span class="cmt">// "a-b-c"</span></pre>
+        </div>
+      </div>
+
+      <div id="fn-BuyukHarf" class="fn-card">
+        <div class="fn-card-head" onclick="fnToggle('BuyukHarf')">
+          <div><div class="fn-name">BuyukHarf / KucukHarf</div><div class="fn-sig">(metin)</div><div class="fn-desc">Tüm harfleri büyük veya küçük yapar.</div></div>
+          <div class="fn-ret">Metin</div>
+        </div>
+        <div class="fn-body" id="fnb-BuyukHarf">
+          <pre><span class="fn-c">BuyukHarf</span>(<span class="str">"merhaba"</span>); <span class="cmt">// "MERHABA"</span>
+<span class="fn-c">KucukHarf</span>(<span class="str">"MERHABA"</span>); <span class="cmt">// "merhaba"</span>
+<span class="fn-c">MetinIlkBuyuk</span>(<span class="str">"merhaba dünya"</span>); <span class="cmt">// "Merhaba Dünya"</span></pre>
+        </div>
+      </div>
+
+      <div id="fn-EslesVarMi" class="fn-card">
+        <div class="fn-card-head" onclick="fnToggle('EslesVarMi')">
+          <div><div class="fn-name">EslesVarMi / EslesBul / EslesTumBul</div><div class="fn-sig">(metin, regex)</div><div class="fn-desc">Regex eşleşme kontrolü ve sonuç döndürme.</div></div>
+          <div class="fn-ret">Mantiksal / Metin / Dizi</div>
+        </div>
+        <div class="fn-body" id="fnb-EslesVarMi">
+          <pre><span class="fn-c">EslesVarMi</span>(<span class="str">"test@mail.com"</span>, <span class="str">"^[^@]+@[^@]+\.[^@]+$"</span>); <span class="cmt">// Dogru</span>
+<span class="fn-c">EslesBul</span>(<span class="str">"abc123"</span>, <span class="str">"[0-9]+"</span>);    <span class="cmt">// "123"</span>
+<span class="fn-c">EslesTumBul</span>(<span class="str">"a1 b2 c3"</span>, <span class="str">"[0-9]"</span>); <span class="cmt">// ["1","2","3"]</span>
+<span class="fn-c">EslesDegistir</span>(<span class="str">"a1b2"</span>, <span class="str">"[0-9]"</span>, <span class="str">"X"</span>); <span class="cmt">// "aXbX"</span></pre>
+        </div>
+      </div>
+
+      <div id="fn-MetinBaslangici" class="fn-card">
+        <div class="fn-card-head" onclick="fnToggle('MetinBaslangici')">
+          <div><div class="fn-name">MetinBaslangici / MetinSonu</div><div class="fn-sig">(metin, aranan)</div><div class="fn-desc">Metnin belirli bir ifadeyle başlayıp başlamadığını/bitip bitmediğini kontrol eder.</div></div>
+          <div class="fn-ret">Mantiksal</div>
+        </div>
+        <div class="fn-body" id="fnb-MetinBaslangici">
+          <pre><span class="fn-c">MetinBaslangici</span>(<span class="str">"Merhaba"</span>, <span class="str">"Mer"</span>); <span class="cmt">// Dogru</span>
+<span class="fn-c">MetinSonu</span>(<span class="str">"Merhaba"</span>, <span class="str">"aba"</span>);       <span class="cmt">// Dogru</span></pre>
+        </div>
+      </div>
+
+      <div id="fn-MetinIndeks" class="fn-card">
+        <div class="fn-card-head" onclick="fnToggle('MetinIndeks')">
+          <div><div class="fn-name">MetinIndeks</div><div class="fn-sig">(metin, aranan)</div><div class="fn-desc">Aranan ifadenin ilk bulunduğu indeksi döndürür. Bulunamazsa -1.</div></div>
+          <div class="fn-ret">Sayi</div>
+        </div>
+        <div class="fn-body" id="fnb-MetinIndeks">
+          <pre><span class="fn-c">MetinIndeks</span>(<span class="str">"Merhaba"</span>, <span class="str">"ha"</span>); <span class="cmt">// 3</span></pre>
+        </div>
+      </div>
+
+      <div id="fn-MetinTersCevir" class="fn-card">
+        <div class="fn-card-head" onclick="fnToggle('MetinTersCevir')">
+          <div><div class="fn-name">MetinTersCevir</div><div class="fn-sig">(metin)</div><div class="fn-desc">Metni tersine çevirir.</div></div>
+          <div class="fn-ret">Metin</div>
+        </div>
+        <div class="fn-body" id="fnb-MetinTersCevir">
+          <pre><span class="fn-c">MetinTersCevir</span>(<span class="str">"Merhaba"</span>); <span class="cmt">// "abahreM"</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DİZİ -->
+  <div class="page" id="page-dizi">
+    <div class="section-header"><h2>Dizi Fonksiyonları</h2><p>Liste ve koleksiyon işlemleri</p></div>
+    <div class="callout tip"><span class="callout-icon">💡</span> Dizi indeksleri 0'dan başlar. dd1[0].isim şeklinde zincir erişim desteklenir.</div>
+    <table class="ref-table">
+      <tr><th>Fonksiyon</th><th>Parametre</th><th>Açıklama</th></tr>
+      <tr><td>DiziEkle(d, eleman)</td><td>Dizi, herhangi</td><td>Dizinin sonuna eleman ekler</td></tr>
+      <tr><td>DiziBasaEkle(d, eleman)</td><td>Dizi, herhangi</td><td>Dizinin başına eleman ekler</td></tr>
+      <tr><td>DiziCikar(d)</td><td>Dizi</td><td>Son elemanı çıkarır ve döndürür</td></tr>
+      <tr><td>DiziUzunluk(d)</td><td>Dizi</td><td>Eleman sayısını döndürür</td></tr>
+      <tr><td>DiziSirala(d, siralama?)</td><td>Dizi, Metin</td><td>"artan" / "azalan" sıralar</td></tr>
+      <tr><td>DiziBul(d, eleman)</td><td>Dizi, herhangi</td><td>Elemanın indeksini döndürür (-1 bulunamazsa)</td></tr>
+      <tr><td>DiziDilim(d, bas, son?)</td><td>Dizi, Sayi</td><td>Alt dizi döndürür</td></tr>
+      <tr><td>DiziTers(d)</td><td>Dizi</td><td>Diziyi tersine çevirir</td></tr>
+      <tr><td>DiziMetin(d, ayirici?)</td><td>Dizi, Metin</td><td>Diziyi metne dönüştürür</td></tr>
+      <tr><td>DiziFiltrele(d, fonk)</td><td>Dizi, Fonksiyon</td><td>Koşulu sağlayan elemanları döndürür</td></tr>
+      <tr><td>DiziHepsiniDonustur(d, fonk)</td><td>Dizi, Fonksiyon</td><td>Her elemanı dönüştürür (map)</td></tr>
+      <tr><td>DiziToplam(d)</td><td>Dizi</td><td>Sayısal toplamı döndürür</td></tr>
+      <tr><td>DiziOrtalama(d)</td><td>Dizi</td><td>Ortalamayı döndürür</td></tr>
+      <tr><td>DiziEnBuyuk(d)</td><td>Dizi</td><td>En büyük değeri döndürür</td></tr>
+      <tr><td>DiziEnKucuk(d)</td><td>Dizi</td><td>En küçük değeri döndürür</td></tr>
+      <tr><td>DiziTekrarsiz(d)</td><td>Dizi</td><td>Tekrar eden elemanları kaldırır</td></tr>
+      <tr><td>DiziBirlestir(d1, d2)</td><td>Dizi, Dizi</td><td>İki diziyi birleştirir</td></tr>
+      <tr><td>DiziDoldur(uzunluk, deger)</td><td>Sayi, herhangi</td><td>Belirli değerle dolu dizi oluşturur</td></tr>
+    </table>
+    <pre><span class="tp">Dizi</span> sayilar = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>];
+<span class="fn-c">DiziEkle</span>(sayilar, <span class="num">9</span>);
+<span class="fn-c">DiziSirala</span>(sayilar, <span class="str">"artan"</span>); <span class="cmt">// [1,1,3,4,5,9]</span>
+<span class="kw">Yaz</span>(<span class="fn-c">DiziToplam</span>(sayilar));   <span class="cmt">// 23</span>
+
+<span class="cmt">// Zincir erişim — VTSorgu sonucu</span>
+<span class="tp">Dizi</span> kayitlar = <span class="fn-c">VTSorgu</span>(db, <span class="str">"SEC HEPSI kisiler"</span>);
+<span class="kw">Yaz</span>(kayitlar[<span class="num">0</span>].ad);   <span class="cmt">// İlk kaydın adı</span>
+<span class="kw">Yaz</span>(kayitlar[<span class="num">0</span>].yas);  <span class="cmt">// İlk kaydın yaşı</span></pre>
+  </div>
+
+  <!-- MATEMATİK -->
+  <div class="page" id="page-matematik">
+    <div class="section-header"><h2>Matematik Fonksiyonları</h2></div>
+    <table class="ref-table">
+      <tr><th>Fonksiyon</th><th>Parametre</th><th>Açıklama</th></tr>
+      <tr><td>KareKok(x)</td><td>Sayi</td><td>Karekök</td></tr>
+      <tr><td>UsKuvvet(taban, us)</td><td>Sayi, Sayi</td><td>Üs alma</td></tr>
+      <tr><td>MutlakDeger(x)</td><td>Sayi</td><td>Mutlak değer</td></tr>
+      <tr><td>Yuvarlak(x)</td><td>Ondalik</td><td>En yakın tam sayıya yuvarla</td></tr>
+      <tr><td>Tavan(x)</td><td>Ondalik</td><td>Yukarı yuvarla</td></tr>
+      <tr><td>Taban(x)</td><td>Ondalik</td><td>Aşağı yuvarla</td></tr>
+      <tr><td>Rastgele(min?, maks?)</td><td>Sayi, Sayi</td><td>Rastgele sayı (parametresiz: 0-1)</td></tr>
+      <tr><td>Min(a, b)</td><td>Sayi, Sayi</td><td>Küçük olanı döndürür</td></tr>
+      <tr><td>Maks(a, b)</td><td>Sayi, Sayi</td><td>Büyük olanı döndürür</td></tr>
+      <tr><td>Sin(x) / Cos(x) / Tan(x)</td><td>Ondalik</td><td>Trigonometri (radyan)</td></tr>
+      <tr><td>Log(x) / Log10(x)</td><td>Sayi</td><td>Logaritma</td></tr>
+      <tr><td>Pi</td><td>—</td><td>π sabitini döndürür (3.14159...)</td></tr>
+      <tr><td>Yuzde(deger, toplam)</td><td>Sayi, Sayi</td><td>Yüzde hesapla</td></tr>
+      <tr><td>Faktoriyel(n)</td><td>Sayi</td><td>n! (maks 20)</td></tr>
+      <tr><td>AsalMi(n)</td><td>Sayi</td><td>Asal sayı mı?</td></tr>
+      <tr><td>EBOB(a, b)</td><td>Sayi, Sayi</td><td>En büyük ortak bölen</td></tr>
+      <tr><td>Kombinasyon(n, r)</td><td>Sayi, Sayi</td><td>C(n,r)</td></tr>
+      <tr><td>Permutasyon(n, r)</td><td>Sayi, Sayi</td><td>P(n,r)</td></tr>
+      <tr><td>ArtikMi(n)</td><td>Sayi</td><td>Artık yıl mı?</td></tr>
+      <tr><td>TekMi(n) / CiftMi(n)</td><td>Sayi</td><td>Tek veya çift</td></tr>
+    </table>
+  </div>
+
+  <!-- TARİH -->
+  <div class="page" id="page-tarih">
+    <div class="section-header"><h2>Tarih & Saat</h2></div>
+    <table class="ref-table">
+      <tr><th>Fonksiyon</th><th>Dönüş</th><th>Açıklama</th></tr>
+      <tr><td>Simdi()</td><td>Metin</td><td>Şu anki tarih-saat (ISO string)</td></tr>
+      <tr><td>TarihGun()</td><td>Sayi</td><td>Ayın günü (1-31)</td></tr>
+      <tr><td>TarihAy()</td><td>Sayi</td><td>Ay (1-12)</td></tr>
+      <tr><td>TarihYil()</td><td>Sayi</td><td>Yıl</td></tr>
+      <tr><td>SaatSaat()</td><td>Sayi</td><td>Saat (0-23)</td></tr>
+      <tr><td>SaatDakika()</td><td>Sayi</td><td>Dakika (0-59)</td></tr>
+      <tr><td>SaatSaniye()</td><td>Sayi</td><td>Saniye (0-59)</td></tr>
+      <tr><td>ZamanDamgasi()</td><td>Sayi</td><td>Unix timestamp (ms)</td></tr>
+    </table>
+    <pre><span class="kw">Yaz</span>(<span class="fn-c">TarihGun</span>() + <span class="str">"."</span> + <span class="fn-c">TarihAy</span>() + <span class="str">"."</span> + <span class="fn-c">TarihYil</span>());
+<span class="kw">Yaz</span>(<span class="str">"Saat: "</span> + <span class="fn-c">SaatSaat</span>() + <span class="str">":"</span> + <span class="fn-c">SaatDakika</span>());</pre>
+  </div>
+
+  <!-- PENCERE -->
+  <div class="page" id="page-pencere">
+    <div class="section-header"><h2>Pencere & GUI Bileşenleri</h2><p>Masaüstü benzeri pencere sistemi</p></div>
+    <div class="callout info"><span class="callout-icon">ℹ️</span> Tüm bileşenler önce özellikler atanarak hazırlanır, sonra pen.Ekle() ile pencereye eklenir, son olarak pen.Goster() ile gösterilir.</div>
+
+    <div class="fn-group">
+      <div class="fn-group-title">Pencere Özellikleri</div>
+      <table class="ref-table">
+        <tr><th>Özellik</th><th>Tip</th><th>Açıklama</th></tr>
+        <tr><td>baslik</td><td>Metin</td><td>Başlık çubuğu yazısı</td></tr>
+        <tr><td>genislik</td><td>Sayi</td><td>Pencere genişliği (px)</td></tr>
+        <tr><td>yukseklik</td><td>Sayi</td><td>Pencere yüksekliği (px)</td></tr>
+        <tr><td>arkaplan</td><td>Metin</td><td>Arka plan rengi</td></tr>
+        <tr><td>yuklenince</td><td>Fonksiyon</td><td>Pencere açıldığında tetiklenir</td></tr>
+        <tr><td>kapaninca</td><td>Fonksiyon</td><td>Pencere kapandığında tetiklenir</td></tr>
+      </table>
+    </div>
+
+    <div class="fn-group">
+      <div class="fn-group-title">Pencere Metodları</div>
+      <table class="ref-table">
+        <tr><th>Metod</th><th>Açıklama</th></tr>
+        <tr><td>pen.Ekle(bilesen)</td><td>Bileşeni pencereye ekler</td></tr>
+        <tr><td>pen.Goster()</td><td>Pencereyi açar</td></tr>
+        <tr><td>pen.Gizle()</td><td>Pencereyi gizler</td></tr>
+        <tr><td>pen.Kapat()</td><td>Pencereyi kapatır ve DOM'dan kaldırır</td></tr>
+        <tr><td>pen.ModalGoster()</td><td>Modal (arka planı karartarak) açar</td></tr>
+        <tr><td>pen.Buyut()</td><td>Tam ekrana büyütür, önceki boyutu kaydeder</td></tr>
+        <tr><td>pen.Kucult()</td><td>Simge durumuna küçültür</td></tr>
+        <tr><td>pen.Geri()</td><td>Önceki boyuta döndürür</td></tr>
+        <tr><td>pen.ortala()</td><td>Ekranda ortalar</td></tr>
+        <tr><td>pen.KontrolGizle()</td><td>□ − ✕ butonlarını gizler</td></tr>
+        <tr><td>pen.KontrolGoster()</td><td>□ − ✕ butonlarını gösterir</td></tr>
+        <tr><td>pen.SuruklenebilirYap()</td><td>Pencereyi sürüklenebilir yapar</td></tr>
+        <tr><td>btn.SuruklenebilirYap(pen)</td><td>Butonu pencere tutamağı yapar</td></tr>
+      </table>
+    </div>
+
+    <div class="fn-group">
+      <div class="fn-group-title">Bileşenler & Ortak Özellikler</div>
+      <table class="ref-table">
+        <tr><th>Bileşen</th><th>Özel Özellikler</th><th>Olaylar</th></tr>
+        <tr><td>Dugme</td><td>yazi, arkaplan, renk, genislik, yukseklik</td><td>tiklaninca</td></tr>
+        <tr><td>Etiket</td><td>yazi, renk, hizalama, kalinlik</td><td>—</td></tr>
+        <tr><td>GirisSatiri</td><td>deger, ipucu, sifreGizle, genislik</td><td>degisince, enterBasinca</td></tr>
+        <tr><td>CokluMetin</td><td>deger, ipucu, genislik, yukseklik</td><td>degisince</td></tr>
+        <tr><td>OnayKutusu</td><td>yazi, isaretli</td><td>degisince</td></tr>
+        <tr><td>RadioDugme</td><td>yazi, isaretli, grup</td><td>degisince</td></tr>
+        <tr><td>Liste</td><td>ogeler:[], secili</td><td>secince</td></tr>
+        <tr><td>IlerlemeCubuqu</td><td>deger (0-100), renk</td><td>—</td></tr>
+        <tr><td>Kaydirici</td><td>deger, min, maks, adim</td><td>degisince</td></tr>
+        <tr><td>Zamanlayici</td><td>aralik (ms), tekrar</td><td>tetiklenince</td></tr>
+        <tr><td>WebTarayici</td><td>url, genislik, yukseklik</td><td>—</td></tr>
+        <tr><td>Kanvas</td><td>genislik, yukseklik</td><td>tiklaninca, fareHareketi</td></tr>
+      </table>
+    </div>
+    <pre><span class="tp">Pencere</span> pen;
+pen.baslik = <span class="str">"Örnek Pencere"</span>;
+pen.genislik = <span class="num">400</span>; pen.yukseklik = <span class="num">300</span>;
+
+<span class="tp">Dugme</span> btn;
+btn.yazi = <span class="str">"Tıkla"</span>;
+btn.x = <span class="num">10</span>; btn.y = <span class="num">10</span>;
+btn.arkaplan = <span class="str">"mavi"</span>; btn.renk = <span class="str">"beyaz"</span>;
+btn.tiklaninca = <span class="kw">Fonksiyon</span>()
+  <span class="kw">Yaz</span>(<span class="str">"Tıklandı!"</span>);
+<span class="kw">FonksiyonBitti</span>
+
+pen.Ekle(btn);
+pen.Goster();</pre>
+  </div>
+
+  <!-- KANVAS 2D -->
+  <div class="page" id="page-kanvas">
+    <div class="section-header"><h2>Kanvas (2D Grafik)</h2></div>
+    <table class="ref-table">
+      <tr><th>Fonksiyon</th><th>Parametreler</th><th>Açıklama</th></tr>
+      <tr><td>KanvasTemizle(kv)</td><td>Kanvas</td><td>Tüm kanvası temizler</td></tr>
+      <tr><td>KanvasArkaplan(kv, renk)</td><td>Kanvas, Metin</td><td>Arka plan rengini ayarlar</td></tr>
+      <tr><td>KanvasDikdortgen(kv, x, y, g, y, renk, dolu?)</td><td></td><td>Dikdörtgen çizer</td></tr>
+      <tr><td>KanvasDaire(kv, cx, cy, r, renk, dolu?)</td><td></td><td>Daire çizer</td></tr>
+      <tr><td>KanvasCizgi(kv, x1, y1, x2, y2, renk, kalinlik?)</td><td></td><td>Çizgi çizer</td></tr>
+      <tr><td>KanvasMetin(kv, x, y, yazi, renk, font?)</td><td></td><td>Metin yazar</td></tr>
+      <tr><td>ResimCiz(kv, resim, x, y, g?, y?)</td><td></td><td>Resim çizer</td></tr>
+      <tr><td>ResimYukle(url)</td><td>Metin</td><td>URL'den resim yükler</td></tr>
+      <tr><td>ResimBase64Yukle(url)</td><td>Metin</td><td>URL'yi base64'e dönüştürür</td></tr>
+      <tr><td>ResimGom(kv, format?, kalite?)</td><td>Kanvas</td><td>Kanvası base64 PNG/JPEG olarak döndürür</td></tr>
+    </table>
+    <pre><span class="tp">Kanvas</span> kv;
+kv.genislik = <span class="num">400</span>; kv.yukseklik = <span class="num">300</span>;
+pen.Ekle(kv); pen.Goster();
+
+<span class="fn-c">KanvasArkaplan</span>(kv, <span class="str">"#1e1e1e"</span>);
+<span class="fn-c">KanvasDaire</span>(kv, <span class="num">200</span>, <span class="num">150</span>, <span class="num">80</span>, <span class="str">"#569cd6"</span>, <span class="kw">Dogru</span>);
+<span class="fn-c">KanvasMetin</span>(kv, <span class="num">160</span>, <span class="num">155</span>, <span class="str">"Merhaba!"</span>, <span class="str">"#fff"</span>, <span class="str">"16px bold"</span>);
+
+<span class="cmt">// Resim yükle ve çiz</span>
+<span class="tp">Varyant</span> img = <span class="fn-c">ResimYukle</span>(<span class="str">"https://example.com/foto.png"</span>);
+<span class="fn-c">ResimCiz</span>(kv, img, <span class="num">0</span>, <span class="num">0</span>);</pre>
+  </div>
+
+  <!-- KANVAS 3D -->
+  <div class="page" id="page-kanvas3d">
+    <div class="section-header"><h2>Kanvas 3D (Three.js tabanlı)</h2></div>
+    <table class="ref-table">
+      <tr><th>Fonksiyon</th><th>Parametreler</th><th>Açıklama</th></tr>
+      <tr><td>Kanvas3DKup(kv, g, y, d, renk?, x?, y?, z?)</td><td></td><td>Küp ekler</td></tr>
+      <tr><td>Kanvas3DKure(kv, r, renk?, x?, y?, z?)</td><td></td><td>Küre ekler</td></tr>
+      <tr><td>Kanvas3DSilindir(kv, r, y, renk?, x?, y?, z?)</td><td></td><td>Silindir ekler</td></tr>
+      <tr><td>Kanvas3DKoni(kv, r, y, renk?, x?, y?, z?)</td><td></td><td>Koni ekler</td></tr>
+      <tr><td>Kanvas3DKamera(kv, x, y, z)</td><td></td><td>Kamera konumunu ayarlar</td></tr>
+      <tr><td>Kanvas3DIsik(kv, renk, siddet?, x?, y?, z?)</td><td></td><td>Işık kaynağı ekler</td></tr>
+      <tr><td>Kanvas3DArkaplan(kv, renk)</td><td></td><td>Sahne arka plan rengi</td></tr>
+      <tr><td>Kanvas3DRender(kv)</td><td></td><td>Sahneyi render eder</td></tr>
+      <tr><td>Kanvas3DTemizle(kv)</td><td></td><td>Tüm nesneleri kaldırır</td></tr>
+      <tr><td>Kanvas3DSil(kv, id)</td><td></td><td>Belirli nesneyi kaldırır</td></tr>
+    </table>
+  </div>
+
+  <!-- SES -->
+  <div class="page" id="page-ses">
+    <div class="section-header"><h2>Ses Fonksiyonları</h2></div>
+    <table class="ref-table">
+      <tr><th>Fonksiyon</th><th>Parametreler</th><th>Açıklama</th></tr>
+      <tr><td>SesNotaCal(nota, sure?, ses?)</td><td>Metin, Sayi, Sayi</td><td>"Do","Re","Mi"... notayı çalar</td></tr>
+      <tr><td>SesEfekti(tip)</td><td>Metin</td><td>"bip","alarm","zil" gibi efektler</td></tr>
+      <tr><td>SesKapat()</td><td>—</td><td>Sesi durdurur</td></tr>
+    </table>
+    <pre><span class="fn-c">SesNotaCal</span>(<span class="str">"Do"</span>, <span class="num">500</span>, <span class="num">0.5</span>); <span class="cmt">// Do notası 500ms</span>
+<span class="fn-c">SesEfekti</span>(<span class="str">"bip"</span>);</pre>
+  </div>
+
+  <!-- RESİM -->
+  <div class="page" id="page-resim">
+    <div class="section-header"><h2>Resim Fonksiyonları</h2></div>
+    <table class="ref-table">
+      <tr><th>Fonksiyon</th><th>Dönüş</th><th>Açıklama</th></tr>
+      <tr><td>ResimYukle(url)</td><td>Resim</td><td>URL veya data: URI'den resim yükler. CORS uyumlu domainlerde çalışır.</td></tr>
+      <tr><td>ResimBase64Yukle(url)</td><td>Metin</td><td>URL'yi fetch edip base64 data URI döndürür (internet gerektirir)</td></tr>
+      <tr><td>ResimGom(kv, format?, kalite?)</td><td>Metin</td><td>Kanvası "image/png" veya "image/jpeg" base64 string olarak döndürür</td></tr>
+      <tr><td>ResimGenislik(resim)</td><td>Sayi</td><td>Resmin piksel genişliği</td></tr>
+      <tr><td>ResimYukseklik(resim)</td><td>Sayi</td><td>Resmin piksel yüksekliği</td></tr>
+      <tr><td>ResimCiz(kv, resim, x, y, g?, y?)</td><td>—</td><td>Kanvasa çizer, g/y verilirse ölçekler</td></tr>
+    </table>
+    <pre><span class="cmt">// URL'den yükle</span>
+<span class="tp">Varyant</span> r = <span class="fn-c">ResimYukle</span>(<span class="str">"https://example.com/foto.png"</span>);
+<span class="fn-c">ResimCiz</span>(kv, r, <span class="num">0</span>, <span class="num">0</span>);
+
+<span class="cmt">// Kanvası base64 olarak kaydet</span>
+<span class="tp">Metin</span> b64 = <span class="fn-c">ResimGom</span>(kv);             <span class="cmt">// PNG</span>
+<span class="tp">Metin</span> jpg = <span class="fn-c">ResimGom</span>(kv, <span class="str">"image/jpeg"</span>, <span class="num">0.9</span>); <span class="cmt">// JPEG %90</span></pre>
+  </div>
+
+  <!-- JSON -->
+  <div class="page" id="page-json">
+    <div class="section-header"><h2>JSON Fonksiyonları</h2></div>
+    <table class="ref-table">
+      <tr><th>Fonksiyon</th><th>Parametre</th><th>Açıklama</th></tr>
+      <tr><td>JSONOlustur(k1, v1, k2, v2, ...)</td><td>çiftler</td><td>JSON string oluşturur</td></tr>
+      <tr><td>JSONOku(json, anahtar)</td><td>Metin, Metin</td><td>JSON'dan değer okur</td></tr>
+      <tr><td>JSONDiziyeDonustur(json)</td><td>Metin</td><td>JSON string → TürkçeKod nesnesi/dizisi</td></tr>
+      <tr><td>JSONMetineDonustur(nesne)</td><td>herhangi</td><td>Nesne/dizi → JSON string</td></tr>
+    </table>
+    <pre><span class="tp">Metin</span> j = <span class="fn-c">JSONOlustur</span>(<span class="str">"ad"</span>, <span class="str">"Ali"</span>, <span class="str">"yas"</span>, <span class="num">25</span>);
+<span class="cmt">// '{"ad":"Ali","yas":25}'</span>
+
+<span class="tp">Metin</span> ad = <span class="fn-c">JSONOku</span>(j, <span class="str">"ad"</span>); <span class="cmt">// "Ali"</span>
+
+<span class="tp">Varyant</span> obj = <span class="fn-c">JSONDiziyeDonustur</span>(j);
+<span class="kw">Yaz</span>(obj.ad); <span class="cmt">// "Ali"</span></pre>
+  </div>
+
+  <!-- DEPO -->
+  <div class="page" id="page-depo">
+    <div class="section-header"><h2>Depo & Çerez</h2><p>Tarayıcı kalıcı depolama</p></div>
+    <table class="ref-table">
+      <tr><th>Fonksiyon</th><th>Parametre</th><th>Açıklama</th></tr>
+      <tr><td>DepoBilgiAyarla(anahtar, deger)</td><td>Metin, Metin</td><td>LocalStorage'a yazar</td></tr>
+      <tr><td>DepoBilgiOku(anahtar)</td><td>Metin</td><td>LocalStorage'dan okur</td></tr>
+      <tr><td>DepoBilgiSil(anahtar)</td><td>Metin</td><td>LocalStorage'dan siler</td></tr>
+      <tr><td>CerezAyarla(ad, deger, gun?)</td><td>Metin, Metin, Sayi</td><td>Cookie yazar (varsayılan 30 gün)</td></tr>
+      <tr><td>CerezOku(ad)</td><td>Metin</td><td>Cookie okur</td></tr>
+      <tr><td>CerezSil(ad)</td><td>Metin</td><td>Cookie siler</td></tr>
+    </table>
+    <pre><span class="fn-c">DepoBilgiAyarla</span>(<span class="str">"kullanici"</span>, <span class="str">"Ali"</span>);
+<span class="tp">Metin</span> k = <span class="fn-c">DepoBilgiOku</span>(<span class="str">"kullanici"</span>); <span class="cmt">// "Ali"</span></pre>
+  </div>
+
+  <!-- VERİTABANI -->
+  <div class="page" id="page-veritabani">
+    <div class="section-header"><h2>Veritabanı</h2><p>İki ayrı sistem — online SQLite ve offline Türkçe SQL</p></div>
+    <div class="callout warn"><span class="callout-icon">⚠️</span> <strong>VTAc</strong> internet gerektirir (sql.js). İnternetsiz kullanım için <strong>VTOAc</strong> kullanın. Her iki sistemde de VTCalistir / VTSorgu / VTKaydet / VTKapat aynı şekilde çalışır.</div>
+
+    <div class="fn-group">
+      <div class="fn-group-title">Veritabanı Fonksiyonları</div>
+      <table class="ref-table">
+        <tr><th>Fonksiyon</th><th>Dönüş</th><th>Açıklama</th></tr>
+        <tr><td>VTAc(isim)</td><td>VT</td><td>SQLite veritabanı açar (internet şart). IndexedDB'ye otomatik kaydeder.</td></tr>
+        <tr><td>VTOAc(isim)</td><td>VT</td><td>Offline VT açar (internet gerekmez). Türkçe SQL destekler.</td></tr>
+        <tr><td>VTCalistir(db, sql, params?)</td><td>Mantiksal</td><td>SQL komutunu çalıştırır. 3. parametre: güvenli params dizisi</td></tr>
+        <tr><td>VTSorgu(db, sql, params?)</td><td>Dizi</td><td>SELECT sorgusu — her eleman bir satır nesnesi</td></tr>
+        <tr><td>VTKaydet(db, dosyaAdi?)</td><td>Mantiksal</td><td>IndexedDB'ye kaydeder. dosyaAdi verilirse dosya indirir.</td></tr>
+        <tr><td>VTKapat(db)</td><td>—</td><td>Veritabanını kapatır ve otomatik kaydeder</td></tr>
+      </table>
+    </div>
+
+    <div class="fn-group">
+      <div class="fn-group-title">Türkçe SQL (VTOAc)</div>
+      <table class="ref-table">
+        <tr><th>Türkçe</th><th>SQL Karşılığı</th></tr>
+        <tr><td>TABLO_OLUSTUR EGER_YOKSA</td><td>CREATE TABLE IF NOT EXISTS</td></tr>
+        <tr><td>EKLE tablo (k) DEGERLER (v)</td><td>INSERT INTO tablo (k) VALUES (v)</td></tr>
+        <tr><td>SEC HEPSI tablo</td><td>SELECT * FROM tablo</td></tr>
+        <tr><td>NEREDE</td><td>WHERE</td></tr>
+        <tr><td>GUNCELLE tablo AYARLA</td><td>UPDATE tablo SET</td></tr>
+        <tr><td>SIL tablo NEREDE</td><td>DELETE FROM tablo WHERE</td></tr>
+        <tr><td>SIRALA / SINIR / ATLA</td><td>ORDER BY / LIMIT / OFFSET</td></tr>
+        <tr><td>SAYI / METIN / ONDALIK</td><td>INTEGER / TEXT / REAL</td></tr>
+        <tr><td>BIRINCAL_ANAHTAR / OTOMATIK_ARTAN</td><td>PRIMARY KEY / AUTOINCREMENT</td></tr>
+      </table>
+    </div>
+
+    <pre><span class="cmt">// ── Offline Türkçe SQL ──────────────────────</span>
+<span class="tp">Varyant</span> db = <span class="fn-c">VTOAc</span>(<span class="str">"rehber"</span>);
+
+<span class="fn-c">VTCalistir</span>(db, <span class="str">"TABLO_OLUSTUR EGER_YOKSA kisiler (id SAYI BIRINCAL_ANAHTAR OTOMATIK_ARTAN, ad METIN, yas SAYI)"</span>);
+<span class="fn-c">VTCalistir</span>(db, <span class="str">"EKLE kisiler (ad, yas) DEGERLER (?, ?)"</span>, [<span class="str">"Ali"</span>, <span class="num">25</span>]);
+
+<span class="tp">Dizi</span> sonuc = <span class="fn-c">VTSorgu</span>(db, <span class="str">"SEC HEPSI kisiler NEREDE yas > ?"</span>, [<span class="num">18</span>]);
+<span class="kw">Yaz</span>(sonuc[<span class="num">0</span>].ad);  <span class="cmt">// Zincir erişim</span>
+
+<span class="fn-c">VTKapat</span>(db); <span class="cmt">// IndexedDB'ye otomatik kaydeder</span></pre>
+  </div>
+
+  <!-- DOSYA -->
+  <div class="page" id="page-dosya">
+    <div class="section-header"><h2>Dosya İşlemleri</h2></div>
+    <table class="ref-table">
+      <tr><th>Fonksiyon</th><th>Dönüş</th><th>Açıklama</th></tr>
+      <tr><td>DosyaAc(filtre?)</td><td>Nesne</td><td>Dosya seç. Döndürür: {ad, icerik, boyut, tip, satirlar:[]}</td></tr>
+      <tr><td>DosyaKaydet(icerik, dosyaAdi, tip?)</td><td>—</td><td>Dosya olarak indirir</td></tr>
+      <tr><td>DosyaAkimi(filtre?)</td><td>Nesne</td><td>Binary dosya okur. Döndürür: {ad, boyut, baytlar:[], Oku(offset,n), OkuAralik(bas,son), OkuBayt(offset), OkuMetin()}</td></tr>
+    </table>
+    <div class="callout tip"><span class="callout-icon">💡</span> Filtre örnekleri: ".txt", ".nes", "image/*", ".json,.csv"</div>
+    <pre><span class="cmt">// Metin dosya oku</span>
+<span class="tp">Varyant</span> dosya = <span class="fn-c">DosyaAc</span>(<span class="str">".txt"</span>);
+<span class="kw">Yaz</span>(dosya.ad + <span class="str">": "</span> + dosya.icerik);
+
+<span class="cmt">// Dosya kaydet</span>
+<span class="fn-c">DosyaKaydet</span>(<span class="str">"Merhaba Dünya"</span>, <span class="str">"not.txt"</span>, <span class="str">"text/plain"</span>);
+
+<span class="cmt">// Binary akım</span>
+<span class="tp">Varyant</span> akm = <span class="fn-c">DosyaAkimi</span>(<span class="str">"*"</span>);
+<span class="tp">Dizi</span> ilk16 = akm.Oku(<span class="num">0</span>, <span class="num">16</span>); <span class="cmt">// 0. byte'tan 16 byte</span>
+<span class="tp">Sayi</span> b = akm.OkuBayt(<span class="num">0</span>);     <span class="cmt">// Tek byte</span>
+akm.Kapat();</pre>
+  </div>
+
+  <!-- AĞ -->
+  <div class="page" id="page-ag">
+    <div class="section-header"><h2>Ağ Fonksiyonları</h2></div>
+    <div class="callout warn"><span class="callout-icon">⚠️</span> VeriCek ve PostGonder asenkrondur. BekleVeYap ile veya tiklaninca/yuklenince içinde kullanın.</div>
+    <table class="ref-table">
+      <tr><th>Fonksiyon</th><th>Parametre</th><th>Açıklama</th></tr>
+      <tr><td>VeriCek(url)</td><td>Metin</td><td>GET isteği yapar, metin döndürür</td></tr>
+      <tr><td>PostGonder(url, veri, tip?)</td><td>Metin, Metin</td><td>POST isteği gönderir</td></tr>
+      <tr><td>BekleVeYap(ms)</td><td>Sayi</td><td>ms milisaniye bekler</td></tr>
+    </table>
+    <pre><span class="tp">Varyant</span> cevap = <span class="fn-c">VeriCek</span>(<span class="str">"https://api.example.com/veri"</span>);
+<span class="tp">Varyant</span> obj = <span class="fn-c">JSONDiziyeDonustur</span>(cevap);
+<span class="kw">Yaz</span>(obj.sonuc);</pre>
+  </div>
+
+  <!-- SİSTEM -->
+  <div class="page" id="page-sistem">
+    <div class="section-header"><h2>Sistem & Dönüşüm</h2></div>
+    <table class="ref-table">
+      <tr><th>Fonksiyon</th><th>Dönüş</th><th>Açıklama</th></tr>
+      <tr><td>IsletimSistemi()</td><td>Metin</td><td>"Windows","MacOS","Linux","Android","iOS"</td></tr>
+      <tr><td>TipAl(deger)</td><td>Metin</td><td>"Sayi","Metin","Mantiksal","Dizi","Nesne","bos"</td></tr>
+      <tr><td>SayiyaKonvert(x)</td><td>Sayi</td><td>Değeri sayıya çevirir</td></tr>
+      <tr><td>MetineKonvert(x)</td><td>Metin</td><td>Değeri metne çevirir</td></tr>
+      <tr><td>HexCevir(sayi)</td><td>Metin</td><td>Sayıyı hex stringe çevirir</td></tr>
+      <tr><td>BinaryeKonvert(sayi)</td><td>Metin</td><td>Sayıyı binary stringe çevirir</td></tr>
+      <tr><td>AsciiyeKonvert(char)</td><td>Sayi</td><td>Karakterin ASCII kodunu döndürür</td></tr>
+      <tr><td>JSCalis(kod)</td><td>—</td><td>Saf JavaScript çalıştırır (return yok)</td></tr>
+      <tr><td>JSKod(kod)</td><td>herhangi</td><td>JS çalıştırır, return değeri döndürür. tk.oku("degisken") ile TürkçeKod değişkenlerine erişir.</td></tr>
+      <tr><td>Yaz(deger)</td><td>—</td><td>Konsola yazar</td></tr>
+      <tr><td>YazSatir(deger)</td><td>—</td><td>Konsola yazar (satır sonu ekler)</td></tr>
+    </table>
+  </div>
+
+  <!-- ŞİFRELEME -->
+  <div class="page" id="page-sifrele">
+    <div class="section-header"><h2>Şifreleme & Güvenlik</h2></div>
+    <table class="ref-table">
+      <tr><th>Fonksiyon</th><th>Parametre</th><th>Açıklama</th></tr>
+      <tr><td>MD5(metin)</td><td>Metin</td><td>MD5 hash (32 karakter hex)</td></tr>
+      <tr><td>SHA256(metin)</td><td>Metin</td><td>SHA-256 hash (async)</td></tr>
+      <tr><td>SHA1(metin)</td><td>Metin</td><td>SHA-1 hash (async)</td></tr>
+      <tr><td>CRC32(metin)</td><td>Sayi</td><td>CRC32 checksum</td></tr>
+      <tr><td>Base64Kodla(metin)</td><td>Metin</td><td>Base64 encode</td></tr>
+      <tr><td>Base64Coz(b64)</td><td>Metin</td><td>Base64 decode</td></tr>
+      <tr><td>CaesarSifrele(metin, kaydirma)</td><td>Metin, Sayi</td><td>Caesar şifrelemesi</td></tr>
+      <tr><td>CaesarCoz(metin, kaydirma)</td><td>Metin, Sayi</td><td>Caesar çözme</td></tr>
+      <tr><td>ROT13(metin)</td><td>Metin</td><td>ROT13 dönüşümü</td></tr>
+      <tr><td>XORSifrele(metin, anahtar)</td><td>Metin, Metin</td><td>XOR şifreleme</td></tr>
+      <tr><td>XORCoz(metin, anahtar)</td><td>Metin, Metin</td><td>XOR çözme</td></tr>
+    </table>
+    <pre><span class="fn-c">MD5</span>(<span class="str">"merhaba"</span>); <span class="cmt">// "bbb3b8f9..."</span>
+<span class="fn-c">Base64Kodla</span>(<span class="str">"TürkçeKod"</span>);
+<span class="fn-c">CaesarSifrele</span>(<span class="str">"abc"</span>, <span class="num">3</span>); <span class="cmt">// "def"</span></pre>
+  </div>
+
+  <!-- OYUN -->
+  <div class="page" id="page-oyun">
+    <div class="section-header"><h2>Oyun Motoru</h2><p>60fps döngü, çarpışma, sahne ve giriş yönetimi</p></div>
+    <table class="ref-table">
+      <tr><th>Fonksiyon</th><th>Parametre</th><th>Açıklama</th></tr>
+      <tr><td>OyunBaslat(kv, fonk)</td><td>Kanvas, Fonksiyon</td><td>60fps döngüsü başlatır</td></tr>
+      <tr><td>OyunDurdur(kv)</td><td>Kanvas</td><td>Döngüyü durdurur</td></tr>
+      <tr><td>OyunFPS(kv)</td><td>Sayi</td><td>Anlık FPS değeri</td></tr>
+      <tr><td>OyunKare(kv)</td><td>Sayi</td><td>Kare sayacı</td></tr>
+      <tr><td>OyunCarpismaMi(x1,y1,g1,y1, x2,y2,g2,y2)</td><td>Sayi x8</td><td>İki dikdörtgen çarpışıyor mu?</td></tr>
+      <tr><td>OyunCarpismaNokta(nx,ny, x,y,g,y)</td><td>Sayi x6</td><td>Nokta dikdörtgen içinde mi?</td></tr>
+      <tr><td>OyunTusBasildi(tus)</td><td>Metin</td><td>"ArrowUp","Space"... tuş basılı mı?</td></tr>
+      <tr><td>OyunFareMi(kv)</td><td>Nesne</td><td>{x,y,basili} fare durumu</td></tr>
+      <tr><td>OyunYazi(kv, x, y, yazi, renk?, font?)</td><td></td><td>Oyun içi metin (her kare)</td></tr>
+      <tr><td>OyunResim(kv, resim, x, y, g?, y?)</td><td></td><td>Oyun içi resim çizimi</td></tr>
+      <tr><td>OyunArkaplan(kv, renk)</td><td></td><td>Her karede arka planı temizler</td></tr>
+    </table>
+    <pre><span class="tp">Kanvas</span> kv; kv.genislik=<span class="num">400</span>; kv.yukseklik=<span class="num">300</span>;
+pen.Ekle(kv); pen.Goster();
+
+<span class="tp">Sayi</span> topX=<span class="num">200</span>; <span class="tp">Sayi</span> topY=<span class="num">150</span>;
+<span class="tp">Sayi</span> hiz=<span class="num">3</span>;
+
+<span class="fn-c">OyunBaslat</span>(kv, <span class="kw">Fonksiyon</span>()
+  <span class="fn-c">OyunArkaplan</span>(kv, <span class="str">"#111"</span>);
+  <span class="kw">Eger</span> <span class="fn-c">OyunTusBasildi</span>(<span class="str">"ArrowLeft"</span>) <span class="kw">Ise</span> topX = topX - hiz; <span class="kw">EgerBitti</span>
+  <span class="kw">Eger</span> <span class="fn-c">OyunTusBasildi</span>(<span class="str">"ArrowRight"</span>) <span class="kw">Ise</span> topX = topX + hiz; <span class="kw">EgerBitti</span>
+  <span class="fn-c">KanvasDaire</span>(kv, topX, topY, <span class="num">20</span>, <span class="str">"#569cd6"</span>, <span class="kw">Dogru</span>);
+  <span class="fn-c">OyunYazi</span>(kv, <span class="num">10</span>, <span class="num">20</span>, <span class="str">"FPS: "</span> + <span class="fn-c">OyunFPS</span>(kv), <span class="str">"#fff"</span>);
+<span class="kw">FonksiyonBitti</span>)</pre>
+  </div>
+
+  <!-- JSKOD -->
+  <div class="page" id="page-js">
+    <div class="section-header"><h2>JSKod / JSCalis</h2><p>Saf JavaScript ile entegrasyon</p></div>
+    <div class="callout warn"><span class="callout-icon">⚠️</span> JSKod string'i çift tırnak ile sarın. İçinde tek tırnak kullanabilirsiniz ama çift tırnak kullanamazsınız. Büyük JS kodları için Base64 encoding kullanın.</div>
+    <table class="ref-table">
+      <tr><th>Komut</th><th>Fark</th><th>Kullanım</th></tr>
+      <tr><td>JSCalis(kod)</td><td>Return yok</td><td>DOM işlemleri, global değişken ayarlama</td></tr>
+      <tr><td>JSKod(kod)</td><td>Return var, tk.oku() köprüsü</td><td>Değer hesaplama, TürkçeKod değişkenine erişim</td></tr>
+    </table>
+    <pre><span class="cmt">// JSCalis — return gerekmez</span>
+<span class="fn-c">JSCalis</span>(<span class="str">"document.title = 'Yeni Başlık'"</span>);
+
+<span class="cmt">// JSKod — değer döndürür</span>
+<span class="tp">Varyant</span> ekran = <span class="fn-c">JSKod</span>(<span class="str">"return window.innerWidth + 'x' + window.innerHeight;"</span>);
+
+<span class="cmt">// tk.oku() — TürkçeKod değişkenine JS'ten eriş</span>
+<span class="tp">Metin</span> kullanici = <span class="str">"Ali"</span>;
+<span class="tp">Varyant</span> sonuc = <span class="fn-c">JSKod</span>(<span class="str">"var u = tk.oku('kullanici'); return u.toUpperCase();"</span>);
+<span class="cmt">// sonuc = "ALI"</span></pre>
+  </div>
+
+  <!-- SINIF -->
+  <div class="page" id="page-sinif">
+    <div class="section-header"><h2>Sınıf & Yapı</h2></div>
+    <pre><span class="cmt">// Sınıf tanımlama</span>
+<span class="kw">Sinif</span> Araba
+  <span class="tp">Metin</span> marka;
+  <span class="tp">Sayi</span> yil;
+  <span class="tp">Sayi</span> km;
+
+  <span class="kw">Fonksiyon</span> <span class="fn-c">Bilgi</span>()
+    <span class="kw">Yaz</span>(<span class="kw">bu</span>.marka + <span class="str">" ("</span> + <span class="kw">bu</span>.yil + <span class="str">") — "</span> + <span class="kw">bu</span>.km + <span class="str">" km"</span>);
+  <span class="kw">FonksiyonBitti</span>
+
+  <span class="kw">Fonksiyon</span> <span class="fn-c">Surukle</span>(mesafe)
+    <span class="kw">bu</span>.km = <span class="kw">bu</span>.km + mesafe;
+  <span class="kw">FonksiyonBitti</span>
+<span class="kw">SinifBitti</span>
+
+<span class="tp">Araba</span> araba1;
+araba1.marka = <span class="str">"Toyota"</span>;
+araba1.yil = <span class="num">2020</span>;
+araba1.km = <span class="num">15000</span>;
+araba1.Surukle(<span class="num">500</span>);
+araba1.Bilgi(); <span class="cmt">// Toyota (2020) — 15500 km</span>
+
+<span class="cmt">// Yapi — hafif veri yapısı</span>
+<span class="kw">Yapi</span> Nokta
+  <span class="tp">Sayi</span> x;
+  <span class="tp">Sayi</span> y;
+<span class="kw">YapiBitti</span>
+
+<span class="tp">Nokta</span> n; n.x=<span class="num">10</span>; n.y=<span class="num">20</span>;</pre>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ── Sayfa geçiş ─────────────────────────────────────────
+var pathMap={
+  'anasayfa':'Giriş','sozdizimi':'Söz Dizimi','tipler':'Veri Tipleri',
+  'metin':'Metin Fonksiyonları','dizi':'Dizi Fonksiyonları',
+  'matematik':'Matematik','tarih':'Tarih & Saat','pencere':'Pencere & GUI',
+  'kanvas':'Kanvas 2D','kanvas3d':'Kanvas 3D','ses':'Ses','resim':'Resim',
+  'json':'JSON','depo':'Depo & Çerez','veritabani':'Veritabanı',
+  'dosya':'Dosya','ag':'Ağ','sistem':'Sistem','sifrele':'Şifreleme',
+  'oyun':'Oyun Motoru','js':'JSKod / JSCalis','sinif':'Sınıf & Yapı'
+};
+
+function sayfaGit(id){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('aktif');});
+  document.querySelectorAll('.sb-item').forEach(function(i){i.classList.remove('aktif');});
+  var p=document.getElementById('page-'+id);
+  if(p)p.classList.add('aktif');
+  document.querySelectorAll('.sb-item').forEach(function(el){
+    if(el.getAttribute('onclick')&&el.getAttribute('onclick').indexOf("'"+id+"'")>=0)
+      el.classList.add('aktif');
+  });
+  document.getElementById('topbarPath').innerHTML=
+    'TürkçeKod › <span>'+(pathMap[id]||id)+'</span>';
+  window.scrollTo(0,0);
+}
+
+// ── Fonksiyon kart aç/kapa ──────────────────────────────
+function fnToggle(id){
+  var b=document.getElementById('fnb-'+id);
+  if(b)b.classList.toggle('acik');
+}
+
+// ── Sidebar arama ────────────────────────────────────────
+function araFilter(q){
+  q=q.toLowerCase().trim();
+  // Tüm sayfaları tara
+  if(!q){
+    document.querySelectorAll('.sb-item').forEach(function(el){el.style.display='';});
+    return;
+  }
+  // Fn kartlarını filtrele
+  var sayfa=document.querySelector('.page.aktif');
+  if(sayfa){
+    var kartlar=sayfa.querySelectorAll('.fn-card');
+    kartlar.forEach(function(k){
+      var txt=k.textContent.toLowerCase();
+      k.style.display=txt.indexOf(q)>=0?'':'none';
+    });
+  }
+}
+
+// ── Arama: sidebar item filtrele ─────────────────────────
+document.getElementById('sbSearch').addEventListener('input',function(){
+  var q=this.value.toLowerCase().trim();
+  if(!q){document.querySelectorAll('.sb-item').forEach(function(el){el.style.display='';});return;}
+  document.querySelectorAll('.sb-item').forEach(function(el){
+    el.style.display=el.textContent.toLowerCase().indexOf(q)>=0?'':'none';
+  });
+});
+
+// ── Hero kartları ─────────────────────────────────────────
+document.querySelectorAll('.hero-card').forEach(function(c){
+  c.addEventListener('click',function(){sayfaGit(c.getAttribute('onclick').match(/'([^']+)'/)[1]);});
+});
+</script>
+</body>
+</html>
