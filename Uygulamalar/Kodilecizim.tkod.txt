@@ -1,0 +1,276 @@
+// ✏️ ULTRA PREMIUM KOD İLE ÇİZİM - TAM ÇALIŞAN
+Pencere p;
+p.baslik = "✏️ Kod ile Cizim | Ultra Premium";
+p.genislik = 680;
+p.yukseklik = 580;
+p.arkaplan = "#0d1117";
+
+// SOL PANEL
+Etiket lblEditor;
+lblEditor.x = 15; lblEditor.y = 10;
+lblEditor.yazi = "📝 KOD EDITORU";
+lblEditor.renk = "#8b949e"; lblEditor.stil = "font-size:10px;font-weight:bold;letter-spacing:1px;";
+
+CokluMetin cm;
+cm.x = 15; cm.y = 32;
+cm.genislik = 280; cm.yukseklik = 420;
+cm.ipucu = "// Cizim kodunu buraya yaz...";
+cm.deger = "KalemRenk turuncu
+Kalem 4
+Dikdortgen 20 20 260 380
+KalemRenk yesil
+Kalem 2
+Cizgi 30 50 270 50
+Cizgi 30 100 270 100
+Cizgi 30 150 270 150
+Cizgi 30 200 270 200
+Cizgi 30 250 270 250
+Cizgi 30 300 270 300
+Cizgi 30 350 270 350
+KalemRenk kirmizi
+Daire 150 210 60 kirmizi
+KalemRenk sari
+Daire 150 210 30 sari
+KalemRenk mavi
+Metin PREMIUM 85 370 18 mavi";
+cm.stil = "background:#161b22;color:#e8eaf0;border:1px solid #30363d;border-radius:10px;padding:14px;font-family:'Courier New',monospace;font-size:11px;line-height:1.6;";
+
+// SAG PANEL
+Etiket lblKanvas;
+lblKanvas.x = 310; lblKanvas.y = 10;
+lblKanvas.yazi = "🎨 KANVAS";
+lblKanvas.renk = "#8b949e"; lblKanvas.stil = "font-size:10px;font-weight:bold;letter-spacing:1px;";
+
+Kanvas kv;
+kv.x = 310; kv.y = 32;
+kv.genislik = 350; kv.yukseklik = 420;
+kv.arkaplan = "#ffffff";
+kv.stil = "border-radius:10px;border:2px solid #30363d;box-shadow:0 4px 20px rgba(0,0,0,0.5);";
+
+// BUTONLAR
+Dugme btnCalistir;
+btnCalistir.yazi = "▶ CALISTIR";
+btnCalistir.x = 15; btnCalistir.y = 465;
+btnCalistir.genislik = 130; btnCalistir.yukseklik = 38;
+btnCalistir.arkaplan = "#2ea043"; btnCalistir.renk = "#fff";
+btnCalistir.stil = "font-size:12px;font-weight:bold;border-radius:8px;box-shadow:0 2px 8px rgba(46,160,67,0.3);";
+
+Dugme btnTemizle;
+btnTemizle.yazi = "🗑️ TEMIZLE";
+btnTemizle.x = 155; btnTemizle.y = 465;
+btnTemizle.genislik = 140; btnTemizle.yukseklik = 38;
+btnTemizle.arkaplan = "#30363d"; btnTemizle.renk = "#e8eaf0";
+btnTemizle.stil = "font-size:11px;font-weight:bold;border-radius:8px;";
+
+Dugme btnOrnek1;
+btnOrnek1.yazi = "🏠 Ev";
+btnOrnek1.x = 310; btnOrnek1.y = 465;
+btnOrnek1.genislik = 80; btnOrnek1.yukseklik = 38;
+btnOrnek1.arkaplan = "#1f6feb"; btnOrnek1.renk = "#fff";
+btnOrnek1.stil = "font-size:10px;font-weight:bold;border-radius:8px;";
+
+Dugme btnOrnek2;
+btnOrnek2.yazi = "🌸 Cicek";
+btnOrnek2.x = 398; btnOrnek2.y = 465;
+btnOrnek2.genislik = 80; btnOrnek2.yukseklik = 38;
+btnOrnek2.arkaplan = "#a78bfa"; btnOrnek2.renk = "#fff";
+btnOrnek2.stil = "font-size:10px;font-weight:bold;border-radius:8px;";
+
+Dugme btnOrnek3;
+btnOrnek3.yazi = "🚗 Araba";
+btnOrnek3.x = 486; btnOrnek3.y = 465;
+btnOrnek3.genislik = 80; btnOrnek3.yukseklik = 38;
+btnOrnek3.arkaplan = "#f4a261"; btnOrnek3.renk = "#000";
+btnOrnek3.stil = "font-size:10px;font-weight:bold;border-radius:8px;";
+
+Dugme btnOrnek4;
+btnOrnek4.yazi = "⭐ Yildiz";
+btnOrnek4.x = 574; btnOrnek4.y = 465;
+btnOrnek4.genislik = 80; btnOrnek4.yukseklik = 38;
+btnOrnek4.arkaplan = "#ffd700"; btnOrnek4.renk = "#000";
+btnOrnek4.stil = "font-size:10px;font-weight:bold;border-radius:8px;";
+
+Etiket lblDurum;
+lblDurum.x = 15; lblDurum.y = 515;
+lblDurum.yazi = "🟢 Hazir";
+lblDurum.renk = "#4ade80"; lblDurum.stil = "font-size:9px;";
+
+// ===== SATIR TEMIZLEME (CALISAN YONTEM) =====
+Fonksiyon satirTemizle(kod)
+  Metin rChar = KaraktereKonvert(13);
+  Metin nChar = KaraktereKonvert(10);
+  Metin temizKod = MetinDegistir(kod, rChar + nChar, nChar);
+  temizKod = MetinDegistir(temizKod, rChar, nChar);
+  Don MetinBol(temizKod, nChar);
+FonksiyonBitti
+
+// ===== RENK CEVIRME =====
+Fonksiyon renkCevir(renk)
+  Eger renk == "kirmizi" Ise Don "#e63946"; EgerBitti
+  Eger renk == "mavi" Ise Don "#1f6feb"; EgerBitti
+  Eger renk == "yesil" Ise Don "#2ec4b6"; EgerBitti
+  Eger renk == "sari" Ise Don "#ffd700"; EgerBitti
+  Eger renk == "siyah" Ise Don "#000000"; EgerBitti
+  Eger renk == "turuncu" Ise Don "#f4a261"; EgerBitti
+  Eger renk == "mor" Ise Don "#a78bfa"; EgerBitti
+  Eger renk == "beyaz" Ise Don "#ffffff"; EgerBitti
+  Eger renk == "pembe" Ise Don "#f472b6"; EgerBitti
+  Don renk;
+FonksiyonBitti
+
+// ===== ANA CIZIM =====
+Fonksiyon cizimYap(kod)
+  Dizi satirlar = satirTemizle(kod);
+  Metin renk = "#000000";
+  Sayi kalinlik = 2;
+  Sayi cizilen = 0;
+  
+  Sayi i = 0;
+  Tekrarla DiziUzunluk(satirlar) Kez
+    Metin satir = MetinBosYer(satirlar[i]);
+    
+    Eger MetinIceriyorMu(satir, "KalemRenk") Ise
+      Dizi p = MetinBol(satir, " ");
+      Eger DiziUzunluk(p) >= 2 Ise
+        renk = renkCevir(MetinBosYer(p[1]));
+        cizilen = cizilen + 1;
+      EgerBitti
+    EgerBitti
+    
+    Eger MetinIceriyorMu(satir, "Kalem") Ve !MetinIceriyorMu(satir, "KalemRenk") Ise
+      Dizi p = MetinBol(satir, " ");
+      Eger DiziUzunluk(p) >= 2 Ise
+        kalinlik = SayiyaKonvert(MetinBosYer(p[1]));
+        Eger kalinlik < 1 Ise kalinlik = 1; EgerBitti
+        cizilen = cizilen + 1;
+      EgerBitti
+    EgerBitti
+    
+    Eger MetinIceriyorMu(satir, "Cizgi") Ise
+      Dizi p = MetinBol(satir, " ");
+      Eger DiziUzunluk(p) >= 5 Ise
+        KanvasCizgi(kv, SayiyaKonvert(p[1]), SayiyaKonvert(p[2]), SayiyaKonvert(p[3]), SayiyaKonvert(p[4]), renk, kalinlik);
+        cizilen = cizilen + 1;
+      EgerBitti
+    EgerBitti
+    
+    Eger MetinIceriyorMu(satir, "Dikdortgen") Ise
+      Dizi p = MetinBol(satir, " ");
+      Eger DiziUzunluk(p) >= 5 Ise
+        KanvasDikdortgen(kv, SayiyaKonvert(p[1]), SayiyaKonvert(p[2]), SayiyaKonvert(p[3]), SayiyaKonvert(p[4]), renk);
+        cizilen = cizilen + 1;
+      EgerBitti
+    EgerBitti
+    
+    Eger MetinIceriyorMu(satir, "Daire") Ise
+      Dizi p = MetinBol(satir, " ");
+      Eger DiziUzunluk(p) >= 4 Ise
+        Metin dr = renk;
+        Eger DiziUzunluk(p) >= 5 Ise dr = renkCevir(p[4]); EgerBitti
+        KanvasDaire(kv, SayiyaKonvert(p[1]), SayiyaKonvert(p[2]), SayiyaKonvert(p[3]), dr);
+        cizilen = cizilen + 1;
+      EgerBitti
+    EgerBitti
+    
+    Eger MetinIceriyorMu(satir, "Metin") Ise
+      Dizi p = MetinBol(satir, " ");
+      Eger DiziUzunluk(p) >= 5 Ise
+        Metin mr = renk;
+        Eger DiziUzunluk(p) >= 6 Ise mr = renkCevir(p[5]); EgerBitti
+        KanvasMetin(kv, p[1], SayiyaKonvert(p[2]), SayiyaKonvert(p[3]), mr, p[4] + "px Arial");
+        cizilen = cizilen + 1;
+      EgerBitti
+    EgerBitti
+    
+    i = i + 1;
+  TekrarlaBitti
+  
+  lblDurum.yazi = "✅ Cizildi: " + cizilen + " komut";
+  lblDurum.renk = "#4ade80";
+FonksiyonBitti
+
+// ===== BUTON OLAYLARI =====
+btnCalistir.tiklaninca = Fonksiyon()
+  KanvasTemizle(kv);
+  KanvasArkaplan(kv, "#ffffff");
+  lblDurum.yazi = "⏳ Ciziliyor...";
+  lblDurum.renk = "#ffd700";
+  cizimYap(cm.deger);
+FonksiyonBitti
+
+btnTemizle.tiklaninca = Fonksiyon()
+  KanvasTemizle(kv);
+  KanvasArkaplan(kv, "#ffffff");
+  cm.deger = "";
+  lblDurum.yazi = "🟢 Temizlendi";
+FonksiyonBitti
+
+btnOrnek1.tiklaninca = Fonksiyon()
+  cm.deger = "KalemRenk turuncu
+Kalem 4
+Dikdortgen 60 250 150 150
+Dikdortgen 100 150 200 120
+KalemRenk kirmizi
+Dikdortgen 110 180 60 70
+KalemRenk yesil
+Dikdortgen 80 330 30 70
+Dikdortgen 140 330 30 70
+KalemRenk mavi
+Daire 180 80 40 mavi";
+  btnCalistir.tiklaninca();
+FonksiyonBitti
+
+btnOrnek2.tiklaninca = Fonksiyon()
+  cm.deger = "KalemRenk yesil
+Kalem 2
+Cizgi 150 350 150 250
+KalemRenk kirmizi
+Daire 150 220 30 kirmizi
+Daire 120 190 25 kirmizi
+Daire 180 190 25 kirmizi
+Daire 150 160 30 kirmizi
+Daire 120 130 25 kirmizi
+Daire 180 130 25 kirmizi
+KalemRenk sari
+Daire 150 100 20 sari";
+  btnCalistir.tiklaninca();
+FonksiyonBitti
+
+btnOrnek3.tiklaninca = Fonksiyon()
+  cm.deger = "KalemRenk mavi
+Kalem 6
+Dikdortgen 50 280 200 80
+KalemRenk siyah
+Daire 70 380 25 siyah
+Daire 230 380 25 siyah
+KalemRenk kirmizi
+Dikdortgen 180 260 70 30
+KalemRenk sari
+Daire 80 290 15 sari
+Daire 220 290 15 sari";
+  btnCalistir.tiklaninca();
+FonksiyonBitti
+
+btnOrnek4.tiklaninca = Fonksiyon()
+  cm.deger = "KalemRenk sari
+Kalem 2
+Cizgi 150 50 150 300
+Cizgi 50 150 250 150
+Cizgi 80 80 220 220
+Cizgi 220 80 80 220
+KalemRenk turuncu
+Daire 150 150 30 turuncu";
+  btnCalistir.tiklaninca();
+FonksiyonBitti
+
+// ===== PENCERE =====
+p.Ekle(lblEditor); p.Ekle(cm);
+p.Ekle(lblKanvas); p.Ekle(kv);
+p.Ekle(btnCalistir); p.Ekle(btnTemizle);
+p.Ekle(btnOrnek1); p.Ekle(btnOrnek2); p.Ekle(btnOrnek3); p.Ekle(btnOrnek4);
+p.Ekle(lblDurum);
+p.Goster();
+
+cizimYap(cm.deger);
+
+Yaz("✏️ Ultra Premium Kod ile Cizim - CALISIYOR!");

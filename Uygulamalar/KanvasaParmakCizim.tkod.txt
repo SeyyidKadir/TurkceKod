@@ -1,0 +1,177 @@
+// 🎨 PARMAK İLE ÇİZİM UYGULAMASI v2 - DÜZELTİLDİ
+Pencere p;
+p.baslik = "🎨 Cizim Uygulamasi v2";
+p.genislik = 450;
+p.yukseklik = 520;
+p.arkaplan = "#1a1a2e";
+
+Kanvas kv;
+kv.x = 10;
+kv.y = 10;
+kv.genislik = 420;
+kv.yukseklik = 380;
+kv.arkaplan = "#ffffff";
+
+Dizi renkler = ["#000000","#e63946","#f4a261","#2ec4b6","#1f6feb","#a78bfa","#ffffff"];
+Sayi seciliRenk = 0;
+Sayi kalinlik = 3;
+
+Mantiksal ciziyor = Yanlis;
+Ondalik oncekiX = -1;
+Ondalik oncekiY = -1;
+Mantiksal hazir = Yanlis;
+Sayi frameSay = 0;
+
+// Araclar
+Dugme btnTemizle;
+btnTemizle.yazi = "🗑️ Temizle";
+btnTemizle.x = 10; btnTemizle.y = 400; btnTemizle.genislik = 100; btnTemizle.yukseklik = 30;
+btnTemizle.arkaplan = "#e63946"; btnTemizle.renk = "#fff";
+btnTemizle.stil = "font-size:11px;font-weight:bold;border-radius:6px;";
+
+Dugme btnInce;
+btnInce.yazi = "✏️ Ince";
+btnInce.x = 120; btnInce.y = 400; btnInce.genislik = 60; btnInce.yukseklik = 30;
+btnInce.arkaplan = "#1f6feb"; btnInce.renk = "#fff";
+btnInce.stil = "font-size:10px;border-radius:6px;";
+
+Dugme btnKalin;
+btnKalin.yazi = "🖍️ Kalin";
+btnKalin.x = 185; btnKalin.y = 400; btnKalin.genislik = 60; btnKalin.yukseklik = 30;
+btnKalin.arkaplan = "#1f6feb"; btnKalin.renk = "#fff";
+btnKalin.stil = "font-size:10px;border-radius:6px;";
+
+// Renk butonlari - HER BIRI AYRI TANIMLANMALI
+Dugme btnRenk0; btnRenk0.yazi=""; btnRenk0.x=260; btnRenk0.y=400; btnRenk0.genislik=25; btnRenk0.yukseklik=30; btnRenk0.arkaplan="#000000"; btnRenk0.stil="border-radius:4px;border:2px solid #fff;";
+Dugme btnRenk1; btnRenk1.yazi=""; btnRenk1.x=290; btnRenk1.y=400; btnRenk1.genislik=25; btnRenk1.yukseklik=30; btnRenk1.arkaplan="#e63946"; btnRenk1.stil="border-radius:4px;border:1px solid #555;";
+Dugme btnRenk2; btnRenk2.yazi=""; btnRenk2.x=320; btnRenk2.y=400; btnRenk2.genislik=25; btnRenk2.yukseklik=30; btnRenk2.arkaplan="#f4a261"; btnRenk2.stil="border-radius:4px;border:1px solid #555;";
+Dugme btnRenk3; btnRenk3.yazi=""; btnRenk3.x=350; btnRenk3.y=400; btnRenk3.genislik=25; btnRenk3.yukseklik=30; btnRenk3.arkaplan="#2ec4b6"; btnRenk3.stil="border-radius:4px;border:1px solid #555;";
+Dugme btnRenk4; btnRenk4.yazi=""; btnRenk4.x=380; btnRenk4.y=400; btnRenk4.genislik=25; btnRenk4.yukseklik=30; btnRenk4.arkaplan="#1f6feb"; btnRenk4.stil="border-radius:4px;border:1px solid #555;";
+Dugme btnRenk5; btnRenk5.yazi=""; btnRenk5.x=410; btnRenk5.y=400; btnRenk5.genislik=25; btnRenk5.yukseklik=30; btnRenk5.arkaplan="#a78bfa"; btnRenk5.stil="border-radius:4px;border:1px solid #555;";
+Dugme btnRenk6; btnRenk6.yazi=""; btnRenk6.x=260; btnRenk6.y=435; btnRenk6.genislik=25; btnRenk6.yukseklik=30; btnRenk6.arkaplan="#ffffff"; btnRenk6.stil="border-radius:4px;border:1px solid #555;";
+
+Dugme btnKaydet;
+btnKaydet.yazi = "💾 Kaydet";
+btnKaydet.x = 295; btnKaydet.y = 435; btnKaydet.genislik = 140; btnKaydet.yukseklik = 30;
+btnKaydet.arkaplan = "#2ea043"; btnKaydet.renk = "#fff";
+btnKaydet.stil = "font-size:11px;font-weight:bold;border-radius:6px;";
+
+Etiket lblBilgi;
+lblBilgi.x = 10; lblBilgi.y = 470; lblBilgi.yazi = "Siyah | Ince";
+lblBilgi.renk = "#aaa"; lblBilgi.stil = "font-size:10px;";
+
+// ===== BUTON OLAYLARI =====
+btnRenk0.tiklaninca = Fonksiyon() seciliRenk=0; lblBilgi.yazi="Siyah | " + ((kalinlik==2)?"Ince":"Kalin"); FonksiyonBitti
+btnRenk1.tiklaninca = Fonksiyon() seciliRenk=1; lblBilgi.yazi="Kirmizi | " + ((kalinlik==2)?"Ince":"Kalin"); FonksiyonBitti
+btnRenk2.tiklaninca = Fonksiyon() seciliRenk=2; lblBilgi.yazi="Turuncu | " + ((kalinlik==2)?"Ince":"Kalin"); FonksiyonBitti
+btnRenk3.tiklaninca = Fonksiyon() seciliRenk=3; lblBilgi.yazi="Yesil | " + ((kalinlik==2)?"Ince":"Kalin"); FonksiyonBitti
+btnRenk4.tiklaninca = Fonksiyon() seciliRenk=4; lblBilgi.yazi="Mavi | " + ((kalinlik==2)?"Ince":"Kalin"); FonksiyonBitti
+btnRenk5.tiklaninca = Fonksiyon() seciliRenk=5; lblBilgi.yazi="Mor | " + ((kalinlik==2)?"Ince":"Kalin"); FonksiyonBitti
+btnRenk6.tiklaninca = Fonksiyon() seciliRenk=6; lblBilgi.yazi="Beyaz | " + ((kalinlik==2)?"Ince":"Kalin"); FonksiyonBitti
+
+btnInce.tiklaninca = Fonksiyon() kalinlik=2; lblBilgi.yazi="Ince | " + renkIsim; FonksiyonBitti
+btnKalin.tiklaninca = Fonksiyon() kalinlik=8; lblBilgi.yazi="Kalin | " + renkIsim; FonksiyonBitti
+
+Metin renkIsim = "Siyah";
+btnRenk0.tiklaninca = Fonksiyon() seciliRenk=0; renkIsim="Siyah"; lblBilgi.yazi=renkIsim+" | "+((kalinlik==2)?"Ince":"Kalin"); FonksiyonBitti
+btnRenk1.tiklaninca = Fonksiyon() seciliRenk=1; renkIsim="Kirmizi"; lblBilgi.yazi=renkIsim+" | "+((kalinlik==2)?"Ince":"Kalin"); FonksiyonBitti
+btnRenk2.tiklaninca = Fonksiyon() seciliRenk=2; renkIsim="Turuncu"; lblBilgi.yazi=renkIsim+" | "+((kalinlik==2)?"Ince":"Kalin"); FonksiyonBitti
+btnRenk3.tiklaninca = Fonksiyon() seciliRenk=3; renkIsim="Yesil"; lblBilgi.yazi=renkIsim+" | "+((kalinlik==2)?"Ince":"Kalin"); FonksiyonBitti
+btnRenk4.tiklaninca = Fonksiyon() seciliRenk=4; renkIsim="Mavi"; lblBilgi.yazi=renkIsim+" | "+((kalinlik==2)?"Ince":"Kalin"); FonksiyonBitti
+btnRenk5.tiklaninca = Fonksiyon() seciliRenk=5; renkIsim="Mor"; lblBilgi.yazi=renkIsim+" | "+((kalinlik==2)?"Ince":"Kalin"); FonksiyonBitti
+btnRenk6.tiklaninca = Fonksiyon() seciliRenk=6; renkIsim="Beyaz"; lblBilgi.yazi=renkIsim+" | "+((kalinlik==2)?"Ince":"Kalin"); FonksiyonBitti
+
+btnTemizle.tiklaninca = Fonksiyon()
+  KanvasTemizle(kv); KanvasArkaplan(kv,"#ffffff"); oncekiX=-1; oncekiY=-1;
+FonksiyonBitti
+
+btnKaydet.tiklaninca = Fonksiyon()
+  JSKod("
+    var tumCv = document.querySelectorAll('canvas');
+    for(var i=0; i<tumCv.length; i++){
+      if(tumCv[i].width > 300 && tumCv[i].height > 300){
+        var a = document.createElement('a');
+        a.href = tumCv[i].toDataURL('image/png');
+        a.download = 'cizim.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        return 'kaydedildi';
+      }
+    }
+    return 'canvas bulunamadi, sayi:'+tumCv.length;
+  ");
+  lblBilgi.yazi = "💾 Kaydedildi!";
+FonksiyonBitti
+
+// ===== ZAMANLAYICI =====
+Zamanlayici zm;
+zm.aralik = 10;
+
+zm.her_tikta = Fonksiyon()
+  frameSay = frameSay + 1;
+  
+  Eger frameSay == 1 Ise
+    JSKod("
+      var el = _tkEnv.get('kv')._el;
+      if(!el) return 'el yok';
+      el.addEventListener('mousedown', function(e){
+        var r = el.getBoundingClientRect();
+        _tkEnv.set('ciziyor', true);
+        _tkEnv.set('oncekiX', e.clientX - r.left);
+        _tkEnv.set('oncekiY', e.clientY - r.top);
+      });
+      el.addEventListener('mousemove', function(e){
+        if(!_tkEnv.get('ciziyor')) return;
+        var r = el.getBoundingClientRect();
+        _tkEnv.set('_mx', e.clientX - r.left);
+        _tkEnv.set('_my', e.clientY - r.top);
+        _tkEnv.set('_hareket', true);
+      });
+      el.addEventListener('mouseup', function(){ _tkEnv.set('ciziyor', false); _tkEnv.set('oncekiX', -1); });
+      el.addEventListener('mouseleave', function(){ _tkEnv.set('ciziyor', false); _tkEnv.set('oncekiX', -1); });
+      el.addEventListener('touchstart', function(e){
+        e.preventDefault();
+        var r = el.getBoundingClientRect();
+        var t = e.touches[0];
+        _tkEnv.set('ciziyor', true);
+        _tkEnv.set('oncekiX', t.clientX - r.left);
+        _tkEnv.set('oncekiY', t.clientY - r.top);
+      }, {passive: false});
+      el.addEventListener('touchmove', function(e){
+        e.preventDefault();
+        if(!_tkEnv.get('ciziyor')) return;
+        var r = el.getBoundingClientRect();
+        var t = e.touches[0];
+        _tkEnv.set('_mx', t.clientX - r.left);
+        _tkEnv.set('_my', t.clientY - r.top);
+        _tkEnv.set('_hareket', true);
+      }, {passive: false});
+      el.addEventListener('touchend', function(){ _tkEnv.set('ciziyor', false); _tkEnv.set('oncekiX', -1); });
+      _tkEnv.set('hazir', true);
+      'ok';
+    ");
+  EgerBitti
+  
+  Eger hazir Ise
+    Eger _hareket Ise
+      _hareket = Yanlis;
+      Eger oncekiX >= 0 Ise
+        KanvasCizgi(kv, oncekiX, oncekiY, _mx, _my, renkler[seciliRenk], kalinlik);
+      EgerBitti
+      oncekiX = _mx;
+      oncekiY = _my;
+    EgerBitti
+  EgerBitti
+FonksiyonBitti
+
+// ===== PENCERE =====
+p.Ekle(kv);
+p.Ekle(btnTemizle); p.Ekle(btnInce); p.Ekle(btnKalin);
+p.Ekle(btnRenk0); p.Ekle(btnRenk1); p.Ekle(btnRenk2); p.Ekle(btnRenk3); p.Ekle(btnRenk4); p.Ekle(btnRenk5); p.Ekle(btnRenk6);
+p.Ekle(btnKaydet); p.Ekle(lblBilgi);
+p.Goster();
+zm.Baslat();
+
+Yaz("🎨 Cizim v2 - Düzeltildi!");
+Yaz("Renkler, kalinlik ve kaydetme calisiyor!");
