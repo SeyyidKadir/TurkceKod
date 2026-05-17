@@ -1,0 +1,296 @@
+// 🎹 2 OKTAV PİYANO - Diyezler Dahil
+// TürkçeKod v12 - Canvas GUI ile
+
+Pencere pen;
+pen.baslik = "🎹 2 Oktav Piyano | v12";
+pen.genislik = 900;
+pen.yukseklik = 450;
+pen.arkaplan = "#1a1a2e";
+
+// ========== SES ==========
+Ses ses;
+
+// ========== PİYANO VERİLERİ ==========
+// 2 Oktav: C4 (Do) -> B5 (Si) = 24 tuş (14 beyaz + 10 siyah)
+// Beyaz tuşlar: C, D, E, F, G, A, B (Do, Re, Mi, Fa, Sol, La, Si)
+// Siyah tuşlar: C#, D#, F#, G#, A# (Do diyez, Re diyez, Fa diyez, Sol diyez, La diyez)
+
+Sayi beyazSayisi = 14;
+Sayi siyahSayisi = 10;
+
+// Frekanslar (2 oktav, A4=440Hz)
+Dizi beyazFrekans = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77];
+Dizi siyahFrekans = [277.18, 311.13, 369.99, 415.30, 466.16, 554.37, 622.25, 739.99, 830.61, 932.33];
+
+// Beyaz tuş notaları
+Dizi beyazNota = ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si", "Do", "Re", "Mi", "Fa", "Sol", "La", "Si"];
+// Siyah tuş notaları
+Dizi siyahNota = ["Do#", "Re#", "Fa#", "Sol#", "La#", "Do#", "Re#", "Fa#", "Sol#", "La#"];
+
+// Tuş durumları
+Dizi beyazBasili = [];
+Dizi siyahBasili = [];
+Sayi i = 0;
+Tekrarla beyazSayisi Kez
+    DiziEkle(beyazBasili, Yanlis);
+    i = i + 1;
+TekrarlaBitti
+i = 0;
+Tekrarla siyahSayisi Kez
+    DiziEkle(siyahBasili, Yanlis);
+    i = i + 1;
+TekrarlaBitti
+
+// ========== KANVAS ==========
+Kanvas kv;
+kv.x = 10;
+kv.y = 10;
+kv.genislik = 880;
+kv.yukseklik = 320;
+kv.arkaplan = "#16213e";
+
+// ========== UI ELEMANLARI ==========
+Etiket lblBaslik;
+lblBaslik.x = 10;
+lblBaslik.y = 340;
+lblBaslik.yazi = "🎹 2 Oktav Piyano | Beyaz tuş: Do-Re-Mi-Fa-Sol-La-Si | Siyah tuş: Diyezler";
+lblBaslik.renk = "#e8eaf0";
+lblBaslik.stil = "font-size: 13px; font-family: 'Segoe UI';";
+
+Etiket lblCalinan;
+lblCalinan.x = 10;
+lblCalinan.y = 365;
+lblCalinan.yazi = "Çalınan nota: —";
+lblCalinan.renk = "#00ff88";
+lblCalinan.stil = "font-size: 18px; font-weight: bold; font-family: 'Courier New';";
+
+Etiket lblFrekans;
+lblFrekans.x = 300;
+lblFrekans.y = 365;
+lblFrekans.yazi = "Frekans: — Hz";
+lblFrekans.renk = "#5ba8f5";
+lblFrekans.stil = "font-size: 14px; font-family: 'Courier New';";
+
+// Butonlar
+Dugme btnTemizle;
+btnTemizle.yazi = "🔄 TEMİZLE";
+btnTemizle.x = 10;
+btnTemizle.y = 400;
+btnTemizle.genislik = 120;
+btnTemizle.yukseklik = 35;
+btnTemizle.arkaplan = "#6e7681";
+btnTemizle.renk = "#ffffff";
+btnTemizle.stil = "font-size: 12px; font-weight: bold; border-radius: 6px;";
+
+Dugme btnOrnek;
+btnOrnek.yazi = "🎵 ÖRNEK ÇAL";
+btnOrnek.x = 140;
+btnOrnek.y = 400;
+btnOrnek.genislik = 120;
+btnOrnek.yukseklik = 35;
+btnOrnek.arkaplan = "#1f6feb";
+btnOrnek.renk = "#ffffff";
+btnOrnek.stil = "font-size: 12px; font-weight: bold; border-radius: 6px;";
+
+// ========== TUŞ BOYUTLARI ==========
+Sayi beyazGenislik = 60;
+Sayi beyazYukseklik = 250;
+Sayi siyahGenislik = 38;
+Sayi siyahYukseklik = 155;
+
+Sayi baslangicX = 10;
+Sayi baslangicY = 30;
+
+// ========== TUŞ POZİSYONLARINI HESAPLA ==========
+// Beyaz tuş pozisyonları
+Dizi beyazX = [];
+i = 0;
+Tekrarla beyazSayisi Kez
+    DiziEkle(beyazX, baslangicX + i * beyazGenislik);
+    i = i + 1;
+TekrarlaBitti
+
+// Siyah tuş pozisyonları (beyaz tuşların aralarına)
+// Desen: C#(1), D#(2), boş, F#(4), G#(5), A#(6), boş, C#(8), D#(9), boş, F#(11), G#(12), A#(13)
+Dizi siyahIndex = [0, 1, 3, 4, 5, 7, 8, 10, 11, 12];
+Dizi siyahX = [];
+i = 0;
+Tekrarla siyahSayisi Kez
+    Sayi idx = siyahIndex[i];
+    Sayi x = baslangicX + idx * beyazGenislik + beyazGenislik - siyahGenislik / 2;
+    DiziEkle(siyahX, x);
+    i = i + 1;
+TekrarlaBitti
+
+// ========== TUŞ TIKLAMA KONTROLÜ ==========
+Fonksiyon beyazTusBul(mouseX, mouseY)
+    Eger mouseY < baslangicY Veya mouseY > baslangicY + beyazYukseklik Ise
+        Don -1;
+    EgerBitti
+    
+    i = 0;
+    Tekrarla beyazSayisi Kez
+        Eger mouseX >= beyazX[i] Ve mouseX <= beyazX[i] + beyazGenislik Ise
+            Don i;
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    Don -1;
+FonksiyonBitti
+
+Fonksiyon siyahTusBul(mouseX, mouseY)
+    Eger mouseY < baslangicY Veya mouseY > baslangicY + siyahYukseklik Ise
+        Don -1;
+    EgerBitti
+    
+    i = 0;
+    Tekrarla siyahSayisi Kez
+        Eger mouseX >= siyahX[i] Ve mouseX <= siyahX[i] + siyahGenislik Ise
+            Don i;
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    Don -1;
+FonksiyonBitti
+
+// ========== NOTA ÇAL ==========
+Fonksiyon beyazNotaCal(index)
+    Eger index >= 0 Ve index < beyazSayisi Ise
+        SesNotaCal(ses, beyazFrekans[index], 0.3, 0.5);
+        lblCalinan.yazi = "Çalınan nota: " + beyazNota[index];
+        lblFrekans.yazi = "Frekans: " + MetineKonvert(Yuvarla(beyazFrekans[index], 2)) + " Hz";
+        
+        // Görsel geri bildirim
+        beyazBasili[index] = Dogru;
+        piyanoCiz();
+        BekleVeYap(100);
+        beyazBasili[index] = Yanlis;
+        piyanoCiz();
+    EgerBitti
+FonksiyonBitti
+
+Fonksiyon siyahNotaCal(index)
+    Eger index >= 0 Ve index < siyahSayisi Ise
+        SesNotaCal(ses, siyahFrekans[index], 0.3, 0.5);
+        lblCalinan.yazi = "Çalınan nota: " + siyahNota[index];
+        lblFrekans.yazi = "Frekans: " + MetineKonvert(Yuvarla(siyahFrekans[index], 2)) + " Hz";
+        
+        siyahBasili[index] = Dogru;
+        piyanoCiz();
+        BekleVeYap(100);
+        siyahBasili[index] = Yanlis;
+        piyanoCiz();
+    EgerBitti
+FonksiyonBitti
+
+// ========== PİYANO ÇİZİM ==========
+Fonksiyon piyanoCiz()
+    KanvasTemizle(kv);
+    KanvasArkaplan(kv, "#16213e");
+    
+    // Beyaz tuşları çiz
+    i = 0;
+    Tekrarla beyazSayisi Kez
+        Metin renk = "#ffffff";
+        Eger beyazBasili[i] == Dogru Ise
+            renk = "#aaaaaa";
+        EgerBitti
+        
+        Sayi x = beyazX[i];
+        KanvasDikdortgen(kv, x, baslangicY, beyazGenislik, beyazYukseklik, renk);
+        KanvasCizgi(kv, x, baslangicY, x + beyazGenislik, baslangicY, "#333333", 1);
+        KanvasCizgi(kv, x, baslangicY, x, baslangicY + beyazYukseklik, "#333333", 1);
+        KanvasCizgi(kv, x + beyazGenislik, baslangicY, x + beyazGenislik, baslangicY + beyazYukseklik, "#333333", 1);
+        
+        // Nota adını yaz
+        Eger i < 7 Ise
+            KanvasMetin(kv, beyazNota[i] + "4", x + 15, baslangicY + beyazYukseklik - 15, "#666666", "11px 'Segoe UI'");
+        Degilse
+            KanvasMetin(kv, beyazNota[i] + "5", x + 15, baslangicY + beyazYukseklik - 15, "#666666", "11px 'Segoe UI'");
+        EgerBitti
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Siyah tuşları çiz
+    i = 0;
+    Tekrarla siyahSayisi Kez
+        Metin renk = "#1a1a1a";
+        Eger siyahBasili[i] == Dogru Ise
+            renk = "#555555";
+        EgerBitti
+        
+        Sayi x = siyahX[i];
+        KanvasDikdortgen(kv, x, baslangicY, siyahGenislik, siyahYukseklik, renk);
+        KanvasCizgi(kv, x, baslangicY, x + siyahGenislik, baslangicY, "#000000", 1);
+        KanvasCizgi(kv, x, baslangicY, x, baslangicY + siyahYukseklik, "#000000", 1);
+        KanvasCizgi(kv, x + siyahGenislik, baslangicY, x + siyahGenislik, baslangicY + siyahYukseklik, "#000000", 1);
+        
+        // Diyez işareti
+        KanvasMetin(kv, siyahNota[i], x + 8, baslangicY + siyahYukseklik - 15, "#cccccc", "10px 'Segoe UI'");
+        i = i + 1;
+    TekrarlaBitti
+    
+    // Klavye kapağı
+    KanvasDikdortgen(kv, baslangicX - 5, baslangicY + beyazYukseklik, beyazGenislik * beyazSayisi + 10, 8, "#0f3460");
+FonksiyonBitti
+
+// ========== TEMİZLE ==========
+Fonksiyon temizle()
+    lblCalinan.yazi = "Çalınan nota: —";
+    lblFrekans.yazi = "Frekans: — Hz";
+FonksiyonBitti
+
+// ========== ÖRNEK MELODİ ==========
+Fonksiyon ornekCal()
+    // Do Re Mi Fa Sol La Si Do (gam)
+    Dizi melodi = [0, 2, 4, 5, 7, 9, 11, 12];
+    
+    i = 0;
+    Tekrarla DiziUzunluk(melodi) Kez
+        beyazNotaCal(melodi[i]);
+        BekleVeYap(300);
+        i = i + 1;
+    TekrarlaBitti
+FonksiyonBitti
+
+// ========== KANVAS TIKLAMA OLAYI ==========
+kv.tiklaninca = Fonksiyon()
+    Sayi mx = kv._mouseX;
+    Sayi my = kv._mouseY;
+    
+    // Önce siyah tuşları kontrol et (üstte oldukları için)
+    Sayi siyahIdx = siyahTusBul(mx, my);
+    Eger siyahIdx >= 0 Ise
+        siyahNotaCal(siyahIdx);
+        Don;
+    EgerBitti
+    
+    // Sonra beyaz tuşları kontrol et
+    Sayi beyazIdx = beyazTusBul(mx, my);
+    Eger beyazIdx >= 0 Ise
+        beyazNotaCal(beyazIdx);
+    EgerBitti
+FonksiyonBitti
+
+// ========== BUTON BAĞLANTILARI ==========
+btnTemizle.tiklaninca = temizle;
+btnOrnek.tiklaninca = ornekCal;
+
+// ========== PENCEREYE EKLE ==========
+pen.Ekle(kv);
+pen.Ekle(lblBaslik);
+pen.Ekle(lblCalinan);
+pen.Ekle(lblFrekans);
+pen.Ekle(btnTemizle);
+pen.Ekle(btnOrnek);
+
+pen.Goster();
+
+piyanoCiz();
+
+Yaz("🎹 2 Oktav Piyano hazır!");
+Yaz("✅ Beyaz tuşlar: Do-Re-Mi-Fa-Sol-La-Si (2 oktav)");
+Yaz("✅ Siyah tuşlar: Diyezler (#) dahil!");
+Yaz("🎵 Tuşlara tıkla veya ÖRNEK ÇAL butonuna bas!");
