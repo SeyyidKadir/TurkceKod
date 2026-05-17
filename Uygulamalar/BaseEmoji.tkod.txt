@@ -1,0 +1,86 @@
+Dizi EMOJI_ALFABE = ["😀","😎","🥸","🤖","👽","🎃","👻","💀",
+  "🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐨","🐯","🦁","🐮",
+  "🐷","🐸","🐵","🐔","🐧","🐦","🐤","🦆","🦅","🦉","🦇","🐺",
+  "🐗","🐴","🦄","🐝","🐛","🦋","🐌","🐞","🐜","🪲","🦗","🕷️",
+  "🦂","🦟","🦠","🧞","🧟","🧛","🧜","🧚","🧙","🧌","🧔","🧓",
+  "👶","👲","👳","👴","👵","👮","👷","👸","💂","🕵️","🧑","👨",
+  "👩","🧑‍🦰","👨‍🦰","👩‍🦰"];
+
+Fonksiyon KarakterIndeks(ch)
+  Don AsciiyeKonvert(ch);
+FonksiyonBitti
+
+Fonksiyon EmojiKodla(metin)
+  Metin sonuc = "";
+  Sayi i = 0;
+  Suresince i < Uzunluk(metin) Ise
+    Sayi kod = AsciiyeKonvert(MetinKes(metin, i, i+1));
+    // Her byte'ı 2 emoji ile temsil et: üst 6 bit + alt 2 bit
+    Sayi ust = (kod >> 2) & 63;  // üst 6 bit
+    Sayi alt = kod & 3;          // alt 2 bit (0-3)
+    sonuc = sonuc + EMOJI_ALFABE[ust] + EMOJI_ALFABE[alt];
+    i = i + 1;
+  SuresinceBitti
+  Don sonuc;
+FonksiyonBitti
+
+Fonksiyon EmojiCoz(emojiMetin)
+  Metin sonuc = "";
+  // En uzun emoji'den başla - eşleşme için
+  Sayi i = 0;
+  Suresince i < Uzunluk(emojiMetin) Ise
+    // İki emoji ara (üst + alt bitler)
+    Metin em1 = "";
+    Metin em2 = "";
+    Sayi bul1 = -1;
+    Sayi bul2 = -1;
+    
+    // İlk emojiyi bul
+    Sayi j = 0;
+    Suresince j < DiziUzunluk(EMOJI_ALFABE) Ise
+      Metin emj = EMOJI_ALFABE[j];
+      Eger i + Uzunluk(emj) <= Uzunluk(emojiMetin) Ise
+        Eger MetinKes(emojiMetin, i, i + Uzunluk(emj)) == emj Ise
+          em1 = emj;
+          bul1 = j;
+          i = i + Uzunluk(emj);
+          Kes;
+        EgerBitti
+      EgerBitti
+      j = j + 1;
+    SuresinceBitti
+    
+    // İkinci emojiyi bul
+    j = 0;
+    Suresince j < DiziUzunluk(EMOJI_ALFABE) Ise
+      Metin emj = EMOJI_ALFABE[j];
+      Eger i + Uzunluk(emj) <= Uzunluk(emojiMetin) Ise
+        Eger MetinKes(emojiMetin, i, i + Uzunluk(emj)) == emj Ise
+          em2 = emj;
+          bul2 = j;
+          i = i + Uzunluk(emj);
+          Kes;
+        EgerBitti
+      EgerBitti
+      j = j + 1;
+    SuresinceBitti
+    
+    Eger bul1 >= 0 Ve bul2 >= 0 Ise
+      Sayi kod = (bul1 << 2) | bul2;
+      sonuc = sonuc + KaraktereKonvert(kod);
+    Degilse
+      i = i + 1;
+    EgerBitti
+  SuresinceBitti
+  Don sonuc;
+FonksiyonBitti
+
+// Test
+Metin mesaj = "Merhaba!";
+Metin sifreli = EmojiKodla(mesaj);
+Metin cozulen = EmojiCoz(sifreli);
+
+Yaz("Orijinal: " + mesaj);
+Yaz("Emoji: " + sifreli);
+Yaz("Çözülen: " + cozulen);
+Yaz("OK: " + (mesaj == cozulen ? "✅" : "❌"));
