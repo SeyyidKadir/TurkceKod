@@ -255,7 +255,7 @@ TürkçeKod is a programming language and IDE built entirely in a single HTML fi
 
 Open in your browser → [https://seyyidkadir.github.io/TurkceKod/](https://seyyidkadir.github.io/TurkceKod/)
 
-Or download `turkceprogramlamaV14.html` and open it locally in any browser.
+Or download `index.html` and open it locally in any browser.
 
 ### Features
 
